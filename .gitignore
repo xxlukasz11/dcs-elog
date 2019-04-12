@@ -1,0 +1,19 @@
+#Workspace
+build/
+bin/
+.vscode/
+dcs-elog/
+tmp/
+
+#SQLite files
+lib/
+include/sqlite3.h
+
+#Visual Studio files
+Debug/
+Release/
+/.vs
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln

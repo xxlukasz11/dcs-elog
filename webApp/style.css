@@ -1,0 +1,28 @@
+*{
+	font-family: Arial;
+}
+
+input{
+	margin: 2px;
+}
+
+table{
+	margin-top: 20px;
+	border-collapse: collapse;
+}
+
+table td, th{
+	padding: 5px;
+	margin: 0px;
+	text-align: center;
+	min-width: 100px;
+	border: 1px solid black;
+}
+
+table tr:nth-child(odd) {
+  background-color: #9cb6e2;
+}
+
+table tr:nth-child(even) {
+  background-color: #9bd0ef;
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="style.css" type="text/css" />
+		<!-- Angular -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	</head>
+	
+	<body>
+		<div>
+			<div id="appContainer" ng-app="DCS" ng-controller="selectData">
+				
+				<div>	<span>Date min: </span>	<input id="minDateInput" type="date" />	</div>
+				<div>	<span>Date max: </span>	<input id="maxDateInput" type="date" />	</div>
+				<div>	<span>Tags: 	</span>	<input id="tagsInput" type="text" />	</div>
+				
+				<button ng-click="sendRequest()">Load</button>
+				
+				<table>
+					<tr>
+						<th ng-click="orderByTh('Id')">Id</th>
+						<th ng-click="orderByTh('Date')">Date</th>
+						<th ng-click="orderByTh('Title')">Title</th>
+						<th ng-click="orderByTh('Description')">Description</th>
+						<th ng-click="orderByTh('Tags')">Tags</th>
+					</tr>
+					<tr ng-repeat="x in myData | orderBy:activeTh:sortOrder">
+						<td>{{ x.Id }}</td>
+						<td>{{ x.Date }}</td>
+						<td>{{ x.Title }}</td>
+						<td>{{ x.Description }}</td>
+						<td>{{ x.Tags }}</td>
+					</tr>
+				</table>
+				<p id="errorInfoTab">{{ errorInfo }}</p>
+			</div>
+		</div>
+		
+		<script src="app.js"></script>
+	</body>
+</html>
