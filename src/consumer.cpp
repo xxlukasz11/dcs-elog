@@ -51,8 +51,8 @@ void Consumer::consume(Socket_queue& queue) {
 		try{
 			configure_socket_timeout(client_socket, server.timeout_seconds_, 0);
 			
-
-			auto recv_msg = recv_data_from_client(client_socket);
+			
+			auto recv_msg = recv_string_from_client(client_socket);
 			utils::out_log(client_socket, "Message from client: " + recv_msg);
 
 			process_message(recv_msg, client_socket);
@@ -78,7 +78,6 @@ void Consumer::consume(Socket_queue& queue) {
 
 void Consumer::process_message(const std::string& message, const int client_socket){
 	Msg_parser parser(message);
-
 	auto mode = parser.get_mode();
 
 	try{
@@ -137,30 +136,64 @@ void Consumer::select_data(Msg_parser& parser, const int client_socket){
 
 	auto stmt = query.create_statement();
 	auto res = db.execute(stmt);
-
-	//std::cout << res << std::endl;
 	
-	send_data_to_client(client_socket, Json::stringify(std::move(res)));
+	send_string_to_client(client_socket, Json::stringify(std::move(res)));
 }
 
-void Consumer::send_data_to_client(const int client_socket, std::string msg){
-	int err_code = send( client_socket, msg.c_str(), msg.size() , 0 );
+std::string Consumer::recv_string_from_client(const int client_socket){
+	std::string msg;
 
-    if( err_code <= 0 ) {
-        throw Send_error();
-    }
+	int length = 0;
+	recv(client_socket, &length, sizeof(length), 0);
+
+	int total_bytes_read = 0;
+	int buffer_size = Tcp_server::get_instance().message_length_;
+
+	std::cout << length << std::endl;
+
+	while (total_bytes_read < length) {
+		char recv_buffer[buffer_size + 1];
+		int bytes_read = recv(client_socket, recv_buffer, buffer_size, 0);
+
+		if (bytes_read == 0) {
+			throw Client_disconnected_error();
+		}
+		else if (bytes_read < 0) {
+			throw Timeout_error();
+		}
+		std::cout << bytes_read << std::endl;
+
+		total_bytes_read += bytes_read;
+		recv_buffer[bytes_read] = '\0';
+		msg += recv_buffer;
+	}
+
+
+	return msg;
 }
 
-std::string Consumer::recv_data_from_client(const int client_socket){
-	char recv_buffer[ Tcp_server::get_instance().message_length_ ];
-	int err_code = recv( client_socket, recv_buffer, sizeof(recv_buffer), 0 );
+void Consumer::send_string_to_client(const int client_socket, const std::string & msg) {
+	int length = msg.size();
+	int err_code = send(client_socket, &length, 4, 0);
 
-	if( err_code == 0 ) {
-		throw Client_disconnected_error();
-	}
-	else if( err_code < 0){
-		throw Timeout_error();
+	if (err_code <= 0) {
+		throw Send_error();
 	}
 
-	return recv_buffer;
+	int total_bytes_sent = 0;
+	const char* buffer = msg.c_str();
+	int max_buffer_size = Tcp_server::get_instance().message_length_;
+
+	while (total_bytes_sent < length) {
+		int remaining_bytes = length - total_bytes_sent;
+		int packet_size = (max_buffer_size < remaining_bytes) ? max_buffer_size : remaining_bytes;
+		int bytes_sent = send(client_socket, buffer + total_bytes_sent, packet_size, 0);
+
+		if (bytes_sent <= 0) {
+			throw Send_error();
+		}
+
+		total_bytes_sent += bytes_sent;
+	}
+
 }

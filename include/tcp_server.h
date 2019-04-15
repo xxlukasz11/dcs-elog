@@ -50,7 +50,7 @@ private:
 	// configuration
 	std::string ip_address_{ "0.0.0.0" };
 	int port_ = { 9100 };
-	int message_length_{ 1000 };
+	int message_length_{ 1024 };
 	int max_connections_{ 50 };
 	int timeout_seconds_{ 5 };
 	int number_of_consumers_{ 3 };

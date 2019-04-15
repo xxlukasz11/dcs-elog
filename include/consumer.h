@@ -22,9 +22,9 @@ private:
 	static void insert_data(Msg_parser& query);
 	static void select_data(Msg_parser& query, const int client_socket);
 
-	static void send_data_to_client(const int client_socket, std::string msg);
-	static std::string recv_data_from_client(const int client_socket);
-	
+	static void send_string_to_client(const int client_socket, const std::string& msg);
+	static std::string recv_string_from_client(const int client_socket);
+
 	// private members
 	static std::mutex mtx_;
 	Raii_thread thread_;

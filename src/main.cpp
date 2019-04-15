@@ -11,7 +11,7 @@ int main(){
 	server.set_ip_address( "0.0.0.0" );
 	server.set_port( 9100 );
 	server.set_max_connections( 50 );
-	server.set_message_length( 5000 );
+	server.set_message_length( 10 );
 	server.set_number_of_consumers( 3 );
 
 	try{
