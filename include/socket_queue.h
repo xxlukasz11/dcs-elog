@@ -11,8 +11,8 @@ class Socket_queue {
 	std::deque<int> sockets_;
 
 public:
-	Socket_queue();
-	~Socket_queue();
+	Socket_queue() = default;
+	~Socket_queue() = default;
 	Socket_queue(const Socket_queue&) = delete;
 	Socket_queue(Socket_queue&&) = delete;
 	Socket_queue& operator=(const Socket_queue&) = delete;
