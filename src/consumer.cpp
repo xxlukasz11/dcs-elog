@@ -149,8 +149,6 @@ std::string Consumer::recv_string_from_client(const int client_socket){
 	int total_bytes_read = 0;
 	int buffer_size = Tcp_server::get_instance().message_length_;
 
-	std::cout << length << std::endl;
-
 	while (total_bytes_read < length) {
 		char recv_buffer[buffer_size + 1];
 		int bytes_read = recv(client_socket, recv_buffer, buffer_size, 0);
@@ -161,7 +159,6 @@ std::string Consumer::recv_string_from_client(const int client_socket){
 		else if (bytes_read < 0) {
 			throw Timeout_error();
 		}
-		std::cout << bytes_read << std::endl;
 
 		total_bytes_read += bytes_read;
 		recv_buffer[bytes_read] = '\0';
@@ -174,12 +171,6 @@ std::string Consumer::recv_string_from_client(const int client_socket){
 
 void Consumer::send_string_to_client(const int client_socket, const std::string & msg) {
 	int length = msg.size();
-	int err_code = send(client_socket, &length, 4, 0);
-
-	if (err_code <= 0) {
-		throw Send_error();
-	}
-
 	int total_bytes_sent = 0;
 	const char* buffer = msg.c_str();
 	int max_buffer_size = Tcp_server::get_instance().message_length_;

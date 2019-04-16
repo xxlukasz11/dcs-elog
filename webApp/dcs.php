@@ -1,10 +1,17 @@
 <?php
-//header("Access-Control-Allow-Origin: *");
+
+// to run on localhost
+header("Access-Control-Allow-Origin: *");
+
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET");
 
 if(isset($_GET['content'])){
 	$params = json_decode($_GET['content']);
+	
+	// debug
+	//$params = json_decode('{"min_date":"","max_date":"","tags":""}');
+	
 	$str = prepare_message($params);
 	$response = send_data($str);
 	
@@ -44,14 +51,19 @@ function prepare_message($params){
 
 function send_data($data){
 	error_reporting(E_ALL);
-
-	$service_port = 9100;
-	$address = "194.29.174.79";
+	
+	$server_port = 9100;
+	
+	// remote server
+	//$server_address = "194.29.174.79";
+	
+	// localhost
+	$server_address = "127.0.0.1";
 
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 	if ($socket === false) {
 	    http_response_code(-1);
-		echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . "\n";
+		echo "socket_create() failed: reason: " . socket_strerror(socket_last_error()) . PHP_EOL;
 		exit(1);
 	}
 	
@@ -67,18 +79,22 @@ function send_data($data){
 		exit(1);
 	}
 
-	$result = socket_connect($socket, $address, $service_port);
+	$result = socket_connect($socket, $server_address, $server_port);
 	if ($result === false) {
 	    http_response_code(-1);
-		echo "socket_connect() failed.\nReason: ($result) " . socket_strerror(socket_last_error($socket)) . "\n";
+		echo "socket_connect() failed.\nReason: ($result) " . socket_strerror(socket_last_error($socket)) . PHP_EOL;
 		exit(1);
 	}
 
 	$resp = '';
-
-	socket_send($socket, $data, strlen($data), 0);
-
-	while ($bff = socket_read($socket, 1000)) {
+	
+	$length = strlen($data);
+	$binary_length = strrev( pack("N", $length) );
+	
+	socket_send($socket, $binary_length, 4, 0);
+	socket_send($socket, $data, $length, 0);
+	
+	while ($bff = socket_read($socket, 1024)) {
 		$resp .= $bff;
 	}
 	

@@ -15,7 +15,12 @@ app.controller('selectData', function($scope, $http){
 	$scope.sendRequest = function(){
 		
 		$http({
+			// remote
 			url: "http://lukboz.000webhostapp.com/dcs.php",
+			
+			// localhost
+			//url: "dcs.php",
+			
 			method: "GET",
 			params: {
 				date: new Date().getTime(),
@@ -25,8 +30,8 @@ app.controller('selectData', function($scope, $http){
 			$scope.myData = response.data;
 			$scope.errorInfo = "";
 		}, function(response){
-			console.log("Can't load data. Server may be unavialiable.");
 			$scope.errorInfo = "Can't load data. Server may be unavialiable.";
+			console.log(response);
 		});
 	}
 	
