@@ -2,14 +2,24 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="style.css" type="text/css" />
 		<!-- Angular -->
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 	</head>
 	
 	<body>
-		<div>
-			<div id="appContainer" ng-app="DCS" ng-controller="selectData">
+		<div id="menu">
+			<ul>
+				<li id="select" class=" active">SELECT</li>
+				<li id="insert">INSERT</li>
+				<li id="update">UPDATE</li>
+				<li id="tags">TAGS</li>
+			</ul>
+		</div>
+	
+		<div id="app_container" ng-app="DCS">
+			<div id="select_tab" class="tab" ng-controller="selectData">
 				
 				<div>	<span>Date min: </span>	<input id="minDateInput" type="date" />	</div>
 				<div>	<span>Date max: </span>	<input id="maxDateInput" type="date" />	</div>
@@ -33,10 +43,25 @@
 						<td>{{ x.Tags }}</td>
 					</tr>
 				</table>
-				<p id="errorInfoTab">{{ errorInfo }}</p>
+				<p id="error_info">{{ errorInfo }}</p>
 			</div>
+			
+			<div id="insert_tab" class="tab">
+				Insert
+			</div>
+			
+			<div id="update_tab" class="tab">
+				Update
+			</div>
+			
+			<div id="tags_tab" class="tab">
+				Tags
+			</div>
+			
+			
 		</div>
 		
 		<script src="app.js"></script>
+		<script src="tabs_controller.js"></script>
 	</body>
 </html>
