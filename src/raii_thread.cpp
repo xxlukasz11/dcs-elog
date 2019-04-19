@@ -8,5 +8,6 @@ void Raii_thread::join(){
 }
 
 Raii_thread::~Raii_thread() {
-	join();
+	if (thread_.joinable())
+		join();
 }
