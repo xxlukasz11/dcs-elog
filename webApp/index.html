@@ -4,64 +4,64 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="style.css" type="text/css" />
-		<!-- Angular -->
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 	</head>
 	
-	<body>
-		<div id="menu">
-			<ul>
-				<li id="select" class=" active">SELECT</li>
-				<li id="insert">INSERT</li>
-				<li id="update">UPDATE</li>
-				<li id="tags">TAGS</li>
-			</ul>
-		</div>
-	
-		<div id="app_container" ng-app="DCS">
-			<div id="select_tab" class="tab" ng-controller="select_data">
-				
-				<div>	<span>Date min: </span>	<input id="minDateInput" type="date" />	</div>
-				<div>	<span>Date max: </span>	<input id="maxDateInput" type="date" />	</div>
-				<div>	<span>Tags: 	</span>	<input id="tagsInput" type="text" />	</div>
-				
-				<button ng-click="sendRequest()">Load</button>
-				
-				<table>
-					<tr>
-						<th ng-click="orderByTh('Id')">Id</th>
-						<th ng-click="orderByTh('Date')">Date</th>
-						<th ng-click="orderByTh('Title')">Title</th>
-						<th ng-click="orderByTh('Description')">Description</th>
-						<th ng-click="orderByTh('Tags')">Tags</th>
-					</tr>
-					<tr ng-repeat="x in myData | orderBy:activeTh:sortOrder">
-						<td>{{ x.Id }}</td>
-						<td>{{ x.Date }}</td>
-						<td>{{ x.Title }}</td>
-						<td>{{ x.Description }}</td>
-						<td>{{ x.Tags }}</td>
-					</tr>
-				</table>
-				<p id="error_info">{{ errorInfo }}</p>
-			</div>
-			
-			<div id="insert_tab" class="tab" ng-controller="insert_data">
-				Insert
-			</div>
-			
-			<div id="update_tab" class="tab">
-				Update
-			</div>
-			
-			<div id="tags_tab" class="tab">
-				Tags
-			</div>
-			
-			
-		</div>
-		
-		<script src="app.js"></script>
-		<script src="tabs_controller.js"></script>
-	</body>
+    <body>
+        <div id="menu">
+            <ul>
+                <li id="select" class=" active">SELECT</li>
+                <li id="insert">INSERT</li>
+                <li id="update">UPDATE</li>
+                <li id="tags">TAGS</li>
+            </ul>
+        </div>
+
+        <div id="app_container" ng-app="DCS">
+            <div id="select_tab" class="tab" ng-controller="select_data">
+
+                <div>	<span>Date min: </span>	<input id="minDateInput" type="date" />	</div>
+                <div>	<span>Date max: </span>	<input id="maxDateInput" type="date" />	</div>
+                <div>	<span>Tags: 	</span>	<input id="tagsInput" type="text" />	</div>
+
+                <button ng-click="sendRequest()">Load</button>
+
+                <table>
+                    <tr>
+                        <th ng-click="orderByTh('Id')">Id</th>
+                        <th ng-click="orderByTh('Date')">Date</th>
+                        <th ng-click="orderByTh('Title')">Title</th>
+                        <th ng-click="orderByTh('Description')">Description</th>
+                        <th ng-click="orderByTh('Tags')">Tags</th>
+                    </tr>
+                    <tr ng-repeat="x in myData | orderBy:activeTh:sortOrder">
+                        <td>{{ x.Id }}</td>
+                        <td>{{ x.Date }}</td>
+                        <td>{{ x.Title }}</td>
+                        <td>{{ x.Description }}</td>
+                        <td>{{ x.Tags }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="insert_tab" class="tab" ng-controller="insert_data">
+                Insert
+            </div>
+
+            <div id="update_tab" class="tab">
+                Update
+            </div>
+
+            <div id="tags_tab" class="tab">
+                Tags
+            </div>
+
+            <p class="error_info">{{ errorInfo }}</p>
+        </div>
+
+        <script src="app.js"></script>
+        <script src="select_controller.js"></script>
+        <script src="insert_controller.js"></script>
+        <script src="tabs_controller.js"></script>
+    </body>
 </html>

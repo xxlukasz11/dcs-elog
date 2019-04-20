@@ -27,7 +27,7 @@ table tr:nth-child(even) {
 	margin-top: 10px;
 }
 
-#error_info {
+.error_info {
 	color: red;
 }
 
