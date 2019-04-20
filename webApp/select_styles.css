@@ -1,0 +1,28 @@
+#select_tab {
+	display: block;
+}
+
+#select_tab input{
+	margin: 2px;
+}
+
+#select_tab table {
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+#select_tab td, th {
+    padding: 5px;
+    margin: 0px;
+    text-align: center;
+    min-width: 100px;
+    border: 1px solid black;
+}
+
+#select_tab table tr:nth-child(odd) {
+    background-color: #9cb6e2;
+}
+
+#select_tab table tr:nth-child(even) {
+    background-color: #9bd0ef;
+}

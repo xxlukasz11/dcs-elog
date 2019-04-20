@@ -1,0 +1,34 @@
+* {
+    font-family: Arial;
+}
+
+#app_container {
+    margin-top: 10px;
+}
+
+.error_info {
+    color: red;
+}
+
+.tab {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    #menu li {
+        float: none;
+    }
+
+    td, th {
+        min-width: 50px;
+    }
+
+    #menu li {
+        border-right: none;
+        border-bottom: 1px solid black;
+    }
+}
+
+.input_wrapper div {
+    padding: 3px;
+}

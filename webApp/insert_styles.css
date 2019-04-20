@@ -1,0 +1,13 @@
+#insert_tab textarea {
+   width: 350px;
+   height: 200px;
+}
+
+#insert_tab input {
+    width: 300px;
+}
+
+.text_area_caption {
+    margin: 0px;
+    padding 0px;
+}

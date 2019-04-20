@@ -1,11 +1,18 @@
 ﻿<!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="style.css" type="text/css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-	</head>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- stylesheets -->
+	<link rel="stylesheet" href="global_styles.css" type="text/css" />
+	<link rel="stylesheet" href="menu_styles.css" type="text/css" />
+	<link rel="stylesheet" href="select_styles.css" type="text/css" />
+	<link rel="stylesheet" href="insert_styles.css" type="text/css" />
+
+	<!-- AngularJS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
 	
     <body>
         <div id="menu">
@@ -18,23 +25,32 @@
         </div>
 
         <div id="app_container" ng-app="DCS">
+
             <div id="select_tab" class="tab" ng-controller="select_data">
-
-                <div>	<span>Date min: </span>	<input id="minDateInput" type="date" />	</div>
-                <div>	<span>Date max: </span>	<input id="maxDateInput" type="date" />	</div>
-                <div>	<span>Tags: 	</span>	<input id="tagsInput" type="text" />	</div>
-
-                <button ng-click="sendRequest()">Load</button>
+				<div class="input_wrapper">
+					<div>
+						<span>Date min: </span>	<input id="min_date_input" type="date" />
+					</div>
+					<div>
+						<span>Date max: </span>	<input id="max_date_input" type="date" />
+					</div>
+					<div>
+						<span>Tags: 	</span>	<input id="tags_input" type="text" />
+					</div>
+					<div>
+						<button ng-click="send_request()">Search</button>
+					</div>
+				</div>
 
                 <table>
                     <tr>
-                        <th ng-click="orderByTh('Id')">Id</th>
-                        <th ng-click="orderByTh('Date')">Date</th>
-                        <th ng-click="orderByTh('Title')">Title</th>
-                        <th ng-click="orderByTh('Description')">Description</th>
-                        <th ng-click="orderByTh('Tags')">Tags</th>
+                        <th ng-click="order_by_th('Id')">Id</th>
+                        <th ng-click="order_by_th('Date')">Date</th>
+                        <th ng-click="order_by_th('Title')">Title</th>
+                        <th ng-click="order_by_th('Description')">Description</th>
+                        <th ng-click="order_by_th('Tags')">Tags</th>
                     </tr>
-                    <tr ng-repeat="x in myData | orderBy:activeTh:sortOrder">
+                    <tr ng-repeat="x in table_data | orderBy:active_th:sort_order">
                         <td>{{ x.Id }}</td>
                         <td>{{ x.Date }}</td>
                         <td>{{ x.Title }}</td>
@@ -44,10 +60,23 @@
                 </table>
             </div>
 
-            <div id="insert_tab" class="tab" ng-controller="insert_data">
-                Insert
-            </div>
+			<div id="insert_tab" class="tab" ng-controller="insert_data">
 
+				<div class="input_wrapper">
+					<div>
+						<span>Title: </span>
+						<input id="title_input" type="text" />
+					</div>
+					<div>
+						<p class="text_area_caption">Description:</p>
+						<textarea id="description_input">No description</textarea>
+					</div>
+					<div>
+						<button ng-click="send_insert_request()">Add</button>
+					</div>
+				</div>
+
+			</div>
             <div id="update_tab" class="tab">
                 Update
             </div>
@@ -56,7 +85,7 @@
                 Tags
             </div>
 
-            <p class="error_info">{{ errorInfo }}</p>
+            <p class="error_info">{{ error_info }}</p>
         </div>
 
         <script src="app.js"></script>

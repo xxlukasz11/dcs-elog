@@ -1,6 +1,6 @@
 <?php
 
-// to run on localhost
+// in order to run on localhost
 header("Access-Control-Allow-Origin: *");
 
 header("Content-Type: application/json; charset=UTF-8");

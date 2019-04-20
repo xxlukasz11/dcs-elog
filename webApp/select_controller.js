@@ -1,24 +1,24 @@
-let minDateInput = document.getElementById('minDateInput');
-let maxDateInput = document.getElementById('maxDateInput');
-let tagsInput = document.getElementById('tagsInput');
+let min_date_input = document.getElementById('min_date_input');
+let max_date_input = document.getElementById('max_date_input');
+let tags_input = document.getElementById('tags_input');
 
 function getParams() {
     return {
-        min_date: minDateInput.value,
-        max_date: maxDateInput.value,
-        tags: tagsInput.value
+        min_date: min_date_input.value,
+        max_date: max_date_input.value,
+        tags: tags_input.value
     };
 }
 
 app.controller('select_data', function ($scope, $http) {
-    $scope.sendRequest = function () {
+    $scope.send_request = function () {
 
         $http({
             // remote
-            url: "http://lukboz.000webhostapp.com/select.php",
+            //url: "http://lukboz.000webhostapp.com/select.php",
 
             // localhost
-            //url: "select.php",
+            url: "select.php",
 
             method: "GET",
             params: {
@@ -26,19 +26,19 @@ app.controller('select_data', function ($scope, $http) {
                 content: JSON.stringify(getParams())
             }
         }).then(function (response) {
-            $scope.myData = response.data;
-            $scope.errorInfo = "";
+            $scope.table_data = response.data;
+            $scope.error_info = "";
         }, function (response) {
-            $scope.errorInfo = "Can't load data. Server may be unavialiable.";
+            $scope.error_info = "Can't load data. Server may be unavialiable.";
             console.log(response);
         });
     }
 
-    $scope.sortOrder = false;
+    $scope.sort_order = false;
 
-    $scope.orderByTh = function (th) {
-        $scope.activeTh = th;
-        $scope.sortOrder = !$scope.sortOrder;
+    $scope.order_by_th = function (th) {
+        $scope.active_th = th;
+        $scope.sort_order = !$scope.sort_order;
     }
 
 });
