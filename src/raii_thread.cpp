@@ -9,5 +9,5 @@ void Raii_thread::join(){
 
 Raii_thread::~Raii_thread() {
 	if (thread_.joinable())
-		join();
+		thread_.join();
 }
