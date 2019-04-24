@@ -14,6 +14,7 @@
 #include "msg_parser.h"
 #include "prepared_statement.h"
 #include "json.h"
+#include "utils.h"
 
 #include "consumer.h"
 
@@ -144,28 +145,14 @@ std::string Consumer::recv_string_from_client(const int client_socket){
 	std::string msg;
 
 	int length = 0;
-	int bytes_read = recv(client_socket, &length, sizeof(length), 0);
-
-	if (bytes_read == 0) {
-		throw Client_disconnected_error();
-	}
-	else if (bytes_read < 0) {
-		throw Timeout_error();
-	}
+	utils::safe_recv(client_socket, &length, sizeof(length), 0);
 
 	int total_bytes_read = 0;
 	int buffer_size = Tcp_server::get_instance().message_length_;
 
 	while (total_bytes_read < length) {
 		char recv_buffer[buffer_size + 1];
-		int bytes_read = recv(client_socket, recv_buffer, buffer_size, 0);
-
-		if (bytes_read == 0) {
-			throw Client_disconnected_error();
-		}
-		else if (bytes_read < 0) {
-			throw Timeout_error();
-		}
+		int bytes_read = utils::safe_recv(client_socket, recv_buffer, buffer_size, 0);
 
 		total_bytes_read += bytes_read;
 		recv_buffer[bytes_read] = '\0';
