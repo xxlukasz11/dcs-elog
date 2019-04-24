@@ -32,3 +32,24 @@
 .input_wrapper div {
     padding: 3px;
 }
+
+button {
+    background-color: #0f0fc1;
+    color: white;
+    padding: 5px 10px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: 0.2s;
+    border: none;
+    box-shadow: 0 3px #999;
+}
+
+button:hover {
+    background-color: darkblue;
+}
+
+button:active {
+    box-shadow: 0 0px #999;
+    transform: translateY(3px);
+}

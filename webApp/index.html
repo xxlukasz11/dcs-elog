@@ -26,7 +26,7 @@
 
         <div id="app_container" ng-app="DCS">
 
-            <div id="select_tab" class="tab" ng-controller="select_data">
+			<div id="select_tab" class="tab" ng-controller="select_data">
 				<div class="input_wrapper">
 					<div>
 						<span>Date min: </span>	<input id="min_date_input" type="date" />
@@ -41,24 +41,24 @@
 						<button ng-click="send_request()">Search</button>
 					</div>
 				</div>
-
-                <table>
-                    <tr>
-                        <th ng-click="order_by_th('Id')">Id</th>
-                        <th ng-click="order_by_th('Date')">Date</th>
-                        <th ng-click="order_by_th('Title')">Title</th>
-                        <th ng-click="order_by_th('Description')">Description</th>
-                        <th ng-click="order_by_th('Tags')">Tags</th>
-                    </tr>
-                    <tr ng-repeat="x in table_data | orderBy:active_th:sort_order">
-                        <td>{{ x.Id }}</td>
-                        <td>{{ x.Date }}</td>
-                        <td>{{ x.Title }}</td>
-                        <td>{{ x.Description }}</td>
-                        <td>{{ x.Tags }}</td>
-                    </tr>
-                </table>
-            </div>
+				<p class="error_info">{{ error_info }}</p>
+				<table>
+					<tr>
+						<th ng-click="order_by_th('Id')">Id</th>
+						<th ng-click="order_by_th('Date')">Date</th>
+						<th ng-click="order_by_th('Title')">Title</th>
+						<th ng-click="order_by_th('Description')">Description</th>
+						<th ng-click="order_by_th('Tags')">Tags</th>
+					</tr>
+					<tr ng-repeat="x in table_data | orderBy:active_th:sort_order">
+						<td>{{ x.Id }}</td>
+						<td>{{ x.Date }}</td>
+						<td>{{ x.Title }}</td>
+						<td>{{ x.Description }}</td>
+						<td>{{ x.Tags }}</td>
+					</tr>
+				</table>
+			</div>
 
 			<div id="insert_tab" class="tab" ng-controller="insert_data">
 
@@ -85,7 +85,7 @@
                 Tags
             </div>
 
-            <p class="error_info">{{ error_info }}</p>
+            
         </div>
 
         <script src="app.js"></script>

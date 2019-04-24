@@ -1,8 +1,8 @@
-let min_date_input = document.getElementById('min_date_input');
-let max_date_input = document.getElementById('max_date_input');
-let tags_input = document.getElementById('tags_input');
-
 function getParams() {
+    let min_date_input = document.getElementById('min_date_input');
+    let max_date_input = document.getElementById('max_date_input');
+    let tags_input = document.getElementById('tags_input');
+
     return {
         min_date: min_date_input.value,
         max_date: max_date_input.value,
@@ -28,9 +28,12 @@ app.controller('select_data', function ($scope, $http) {
         }).then(function (response) {
             $scope.table_data = response.data;
             $scope.error_info = "";
-        }, function (response) {
-            $scope.error_info = "Can't load data. Server may be unavialiable.";
-            console.log(response);
+        }, function (res) {
+			let error_msg = res.data.message;
+			if(error_msg)
+				$scope.error_info = res.data.message;
+			else
+				$scope.error_info = "Can't load data. Server may be unavialiable.";
         });
     }
 
