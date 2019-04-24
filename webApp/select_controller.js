@@ -33,7 +33,7 @@ app.controller('select_data', function ($scope, $http) {
 			if(error_msg)
 				$scope.error_info = res.data.message;
 			else
-				$scope.error_info = "Can't load data. Server may be unavialiable.";
+			    $scope.error_info = standard_error_message;
         });
     }
 

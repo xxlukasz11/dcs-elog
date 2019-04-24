@@ -1,5 +1,11 @@
 <?php
 
+function create_error_response($message){
+	$obj = array('message' => $message);
+	$msg = json_encode($obj);
+	return $msg;
+}
+
 function send_data($data){
 	// debug
 	//error_reporting(E_ALL);
@@ -18,24 +24,21 @@ function send_data($data){
 
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 	if ($socket === false) {
-		$obj = array('message' => 'Internal server error: CREATE_ERROR');
-		$msg = json_encode($obj);
+		$msg = create_error_response('Internal server error: CREATE_ERROR');
 	    http_response_code(500);
 		echo $msg;
 		exit();
 	}
 	
 	if (!socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1)) {
-		$obj = array('message' => 'Internal server error: REUSEADDR_ERROR');
-		$msg = json_encode($obj);
+		$msg = create_error_response('Internal server error: REUSEADDR_ERROR');
 	    http_response_code(500);
 		echo $msg;
 		exit();
 	}
 	
 	if (!socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 10, "usec" => 0))) {
-		$obj = array('message' => 'Internal server error: RCVTIMEO_ERROR');
-		$msg = json_encode($obj);
+		$msg = create_error_response('Internal server error: RCVTIMEO_ERROR');
 	    http_response_code(500);
 		echo $msg;
 		exit();
@@ -43,8 +46,16 @@ function send_data($data){
 
 	$conn = socket_connect($socket, $server_address, $server_port);
 	if ($conn === false) {
-		$obj = array('message' => 'Cant connect to the server');
-		$msg = json_encode($obj);
+		$error_code = socket_last_error($socket);
+
+		$msg = "";
+		if($error_code == ETIMEDOUT){
+			$msg = create_error_response('Connection timed out');
+		}
+		else{
+			$msg = create_error_response('Cant connect to the server');
+		}
+
 	    http_response_code(500);
 		echo $msg;
 		exit();
