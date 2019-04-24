@@ -60,6 +60,10 @@ void Tcp_server::set_number_of_consumers(int n_consumers){
 	number_of_consumers_ = n_consumers;
 }
 
+int Tcp_server::get_message_length() const {
+	return message_length_;
+}
+
 void Tcp_server::initialize(){
 
 	struct sockaddr_in server_config = {

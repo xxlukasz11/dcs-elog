@@ -53,7 +53,7 @@ void Consumer::consume(Socket_queue& queue) {
 			configure_socket_timeout(client_socket, server.timeout_seconds_, 0);
 			
 			
-			auto recv_msg = recv_string_from_client(client_socket);
+			auto recv_msg = utils::recv_string_from_client(client_socket);
 			utils::out_log(client_socket, "Message from client: " + recv_msg);
 
 			process_message(recv_msg, client_socket);
@@ -83,7 +83,7 @@ void Consumer::process_message(const std::string& message, const int client_sock
 
 	try{
 		switch(mode){
-			case Msg_parser::mode::insert : insert_data(parser); break;
+			case Msg_parser::mode::insert : insert_data(parser, client_socket); break;
 			case Msg_parser::mode::select : select_data(parser, client_socket); break;
 
 			default: throw Unknown_message_format();
@@ -98,7 +98,7 @@ void Consumer::process_message(const std::string& message, const int client_sock
 	}
 }
 
-void Consumer::insert_data(Msg_parser& parser){
+void Consumer::insert_data(Msg_parser& parser, int client_socket){
 	Insert_query query;
 	query.set_title( parser.next() );
 	query.set_desc( parser.next() );
@@ -113,6 +113,7 @@ void Consumer::insert_data(Msg_parser& parser){
 	std::string last_id = res.get_last_row_id();
 	db.execute( query.create_tags_statements(last_id) );
 
+	utils::send_string_to_client(client_socket, "Data has been recievied");
 }
 
 void Consumer::select_data(Msg_parser& parser, const int client_socket){
@@ -138,47 +139,5 @@ void Consumer::select_data(Msg_parser& parser, const int client_socket){
 	auto stmt = query.create_statement();
 	auto res = db.execute(stmt);
 	
-	send_string_to_client(client_socket, Json::stringify(std::move(res)));
-}
-
-std::string Consumer::recv_string_from_client(const int client_socket){
-	std::string msg;
-
-	int length = 0;
-	utils::safe_recv(client_socket, &length, sizeof(length), 0);
-
-	int total_bytes_read = 0;
-	int buffer_size = Tcp_server::get_instance().message_length_;
-
-	while (total_bytes_read < length) {
-		char recv_buffer[buffer_size + 1];
-		int bytes_read = utils::safe_recv(client_socket, recv_buffer, buffer_size, 0);
-
-		total_bytes_read += bytes_read;
-		recv_buffer[bytes_read] = '\0';
-		msg += recv_buffer;
-	}
-
-
-	return msg;
-}
-
-void Consumer::send_string_to_client(const int client_socket, const std::string & msg) {
-	int length = msg.size();
-	int total_bytes_sent = 0;
-	const char* buffer = msg.c_str();
-	int max_buffer_size = Tcp_server::get_instance().message_length_;
-
-	while (total_bytes_sent < length) {
-		int remaining_bytes = length - total_bytes_sent;
-		int packet_size = (max_buffer_size < remaining_bytes) ? max_buffer_size : remaining_bytes;
-		int bytes_sent = send(client_socket, buffer + total_bytes_sent, packet_size, 0);
-
-		if (bytes_sent <= 0) {
-			throw Send_error();
-		}
-
-		total_bytes_sent += bytes_sent;
-	}
-
+	utils::send_string_to_client(client_socket, Json::stringify(std::move(res)));
 }

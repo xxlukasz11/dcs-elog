@@ -27,6 +27,9 @@ public:
 	void set_timeout_seconds(int seconds);
 	void set_number_of_consumers(int n_consumers);
 
+	// getters
+	int get_message_length() const;
+
 	// public methods
 	void initialize();
 	void start_server();

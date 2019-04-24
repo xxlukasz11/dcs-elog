@@ -19,11 +19,8 @@ private:
 	static void consume(Socket_queue& queue);
 	static void process_message(const std::string& message, const int client_socket);
 
-	static void insert_data(Msg_parser& query);
+	static void insert_data(Msg_parser& query, int client_socket);
 	static void select_data(Msg_parser& query, const int client_socket);
-
-	static void send_string_to_client(const int client_socket, const std::string& msg);
-	static std::string recv_string_from_client(const int client_socket);
 
 	// private members
 	static std::mutex mtx_;
