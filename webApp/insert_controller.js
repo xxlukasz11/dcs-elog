@@ -27,14 +27,14 @@ app.controller('insert_data', function ($scope, $http) {
                 content: JSON.stringify(get_input_data())
             }
         }).then(function (response) {
-            $scope.success_info = "Success!"
+            $scope.success_info = response.data.message;
             $scope.error_info = "";
-        }, function (res) {
+        }, function (response) {
             $scope.success_info = "";
 
-            let error_msg = res.data.message;
+            let error_msg = response.data.message;
             if (error_msg)
-                $scope.error_info = res.data.message;
+                $scope.error_info = response.data.message;
             else
                 $scope.error_info = standard_error_message;
         });
