@@ -144,7 +144,14 @@ std::string Consumer::recv_string_from_client(const int client_socket){
 	std::string msg;
 
 	int length = 0;
-	recv(client_socket, &length, sizeof(length), 0);
+	int bytes_read = recv(client_socket, &length, sizeof(length), 0);
+
+	if (bytes_read == 0) {
+		throw Client_disconnected_error();
+	}
+	else if (bytes_read < 0) {
+		throw Timeout_error();
+	}
 
 	int total_bytes_read = 0;
 	int buffer_size = Tcp_server::get_instance().message_length_;
