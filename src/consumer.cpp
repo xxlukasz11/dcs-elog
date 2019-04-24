@@ -77,7 +77,7 @@ void Consumer::consume(Socket_queue& queue) {
 	}
 }
 
-void Consumer::process_message(const std::string& message, const int client_socket){
+void Consumer::process_message(const std::string& message, int client_socket){
 	Msg_parser parser(message);
 	auto mode = parser.get_mode();
 
@@ -116,7 +116,7 @@ void Consumer::insert_data(Msg_parser& parser, int client_socket){
 	utils::send_string_to_client(client_socket, "Data has been recievied");
 }
 
-void Consumer::select_data(Msg_parser& parser, const int client_socket){
+void Consumer::select_data(Msg_parser& parser, int client_socket){
 	auto min_date_str = parser.next();
 	auto max_date_str = parser.next();
 	auto tags_str = parser.next();
