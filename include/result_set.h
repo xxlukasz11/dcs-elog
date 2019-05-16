@@ -9,6 +9,7 @@ class Result_set{
 public:
 	using data_type = std::vector<std::vector<std::string>>;
 	using header_type = std::vector<std::string>;
+	using column_type = std::vector<std::string>;
 
 	bool is_header_empty() const;
 	void set_header(char** c_header, int c_header_size);
@@ -21,6 +22,7 @@ public:
 
 	const header_type& get_header() const;
 	const data_type& get_data() const;
+	column_type get_column(size_t index);
 
 	Result_set& operator+=(Result_set&& result_set);
 	friend std::ostream& operator<<(std::ostream& stream, const Result_set& result_set);

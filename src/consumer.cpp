@@ -137,11 +137,7 @@ void Consumer::select_data(Msg_parser& parser, int client_socket){
 			res = db.execute(stmt);
 		}
 		
-		auto rows = res.get_data();
-		tags_vector.reserve(rows.size());
-		for (auto& row : rows) {
-			tags_vector.push_back(row[0]);
-		}
+		tags_vector = res.get_column(0);
 	}
 
 	Select_query query;

@@ -45,6 +45,20 @@ const Result_set::data_type& Result_set::get_data() const {
 	return data_;
 }
 
+Result_set::column_type Result_set::get_column(size_t index) {
+
+	Result_set::column_type column;
+	if (data_.size() == 0 || data_[0].size() <= index || index < 0)
+		return column;
+
+	column.reserve(data_.size());
+	for (const auto& row : data_) {
+		column.push_back( row[index] );
+	}
+
+	return column;
+}
+
 void Result_set::set_last_row_id(std::string id){
 	last_row_id = id;
 }
