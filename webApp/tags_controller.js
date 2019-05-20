@@ -100,7 +100,7 @@ function test(){
 
 app.controller('edit_tags', function ($scope, $http) {
     $scope.load_tags = function () {
-
+		
         $http({
             // remote
             //url: "http://lukboz.000webhostapp.com/insert.php",
@@ -115,13 +115,12 @@ app.controller('edit_tags', function ($scope, $http) {
             }
         }).then(function (response) {
 			let tree = from_table_to_tree(response.data);
-			let tab = document.getElementById('tags_tab');
-			tree.display(tab);
+			let container = document.getElementById('tags_tree_container');
+			container.innerHTML = "";
+			tree.display(container);
 			
-            $scope.success_info = response.data.message;
             $scope.error_info = "";
         }, function (response) {
-			$scope.success_info = "";
 			$scope.error_info = read_error_msg(response);
         });
     }
