@@ -21,6 +21,7 @@ private:
 
 	static void insert_data(Msg_parser& query, int client_socket);
 	static void select_data(Msg_parser& query, int client_socket);
+	static void return_tags_table(int client_socket);
 
 	// private members
 	static std::mutex mtx_;

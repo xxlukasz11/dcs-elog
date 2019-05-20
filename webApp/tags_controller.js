@@ -106,7 +106,7 @@ app.controller('edit_tags', function ($scope, $http) {
             //url: "http://lukboz.000webhostapp.com/insert.php",
 
             // localhost
-            url: "edita_tags.php",
+            url: "edit_tags.php",
 
             method: "GET",
             params: {
@@ -146,6 +146,7 @@ app.controller('edit_tags', function ($scope, $http) {
 		parent.insertBefore(input, element);
 		parent.removeChild(element);
 		input.focus();
+		input.select();
 	}
 	
 	$scope.bind_events = function(){

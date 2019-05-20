@@ -11,6 +11,7 @@
 #include "database.h"
 #include "insert_query.h"
 #include "select_query.h"
+#include "select_tags_query.h"
 #include "msg_parser.h"
 #include "prepared_statement.h"
 #include "json.h"
@@ -86,6 +87,7 @@ void Consumer::process_message(const std::string& message, int client_socket){
 		switch(mode){
 			case Msg_parser::mode::insert : insert_data(parser, client_socket); break;
 			case Msg_parser::mode::select : select_data(parser, client_socket); break;
+			case Msg_parser::mode::return_tags_tree : return_tags_table(client_socket); break;
 
 			default: throw Unknown_message_format();
 		}
@@ -160,5 +162,20 @@ void Consumer::select_data(Msg_parser& parser, int client_socket){
 		res = db.execute(stmt);
 	}
 	
+	utils::send_string_to_client(client_socket, Json::stringify(std::move(res)));
+}
+
+void Consumer::return_tags_table(int client_socket) {
+	Result_set res;
+	{
+		Select_tags_query query;
+		auto stmt = query.create_sql();
+
+		std::lock_guard<std::mutex> lock(mtx_);
+		Database db("../resources/database.db");
+		db.open();
+		res = db.execute(stmt);
+	}
+
 	utils::send_string_to_client(client_socket, Json::stringify(std::move(res)));
 }
