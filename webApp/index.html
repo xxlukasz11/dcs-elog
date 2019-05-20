@@ -88,8 +88,13 @@
                 Update
             </div>
 
-            <div id="tags_tab" class="tab">
-                Tags
+            <div id="tags_tab" class="tab" ng-controller="edit_tags">
+			
+                <div>
+					<button ng-click="load_tags()">Load</button>
+				</div>
+				<p class="success_info">{{ success_info }}</p>
+				<p class="error_info">{{ error_info }}</p>
             </div>
 
             
@@ -98,6 +103,7 @@
         <script src="app.js"></script>
         <script src="select_controller.js"></script>
         <script src="insert_controller.js"></script>
+		<script src="tags_controller.js"></script>
         <script src="tabs_controller.js"></script>
     </body>
 </html>

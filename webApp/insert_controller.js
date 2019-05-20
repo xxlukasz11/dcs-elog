@@ -31,12 +31,7 @@ app.controller('insert_data', function ($scope, $http) {
             $scope.error_info = "";
         }, function (response) {
             $scope.success_info = "";
-
-            let error_msg = response.data.message;
-            if (error_msg)
-                $scope.error_info = response.data.message;
-            else
-                $scope.error_info = standard_error_message;
+			$scope.error_info = read_error_msg(response);
         });
     }
 });

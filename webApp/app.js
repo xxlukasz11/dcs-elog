@@ -1,2 +1,9 @@
 let app = angular.module('DCS', []);
-let standard_error_message = "Connection failed: Server may be unavialiable.";
+
+function read_error_msg(response){
+	let error_msg = response.data.message;
+	if (error_msg)
+		return error_msg;
+	else
+		return "Connection failed: Server may be unavialiable.";
+}

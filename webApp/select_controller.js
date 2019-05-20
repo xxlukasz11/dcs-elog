@@ -28,12 +28,8 @@ app.controller('select_data', function ($scope, $http) {
         }).then(function (response) {
             $scope.table_data = response.data;
             $scope.error_info = "";
-        }, function (res) {
-			let error_msg = res.data.message;
-			if(error_msg)
-				$scope.error_info = res.data.message;
-			else
-			    $scope.error_info = standard_error_message;
+        }, function (response) {
+			$scope.error_info = read_error_msg(response);
         });
     }
 
