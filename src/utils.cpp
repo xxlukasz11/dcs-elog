@@ -68,11 +68,11 @@ void utils::send_string_to_client(int client_socket, const std::string & msg) {
 
 std::string utils::get_date_time_str(){
 	time_t abs_sec = std::time(nullptr);
-    tm t_local = *std::localtime(&abs_sec);
+	tm t_local = *std::localtime(&abs_sec);
 
-    std::ostringstream ss;
-    ss << std::put_time(&t_local, "%Y-%m-%d %H:%M:%S");
-    
+	std::ostringstream ss;
+	ss << std::put_time(&t_local, "%Y-%m-%d %H:%M:%S");
+	
 	return ss.str();
 }
 

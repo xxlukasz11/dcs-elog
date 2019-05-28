@@ -20,7 +20,7 @@ private:
 template<typename... T>
 Variadic_exception::Variadic_exception(T&&... args){
 	std::ostringstream stream;
-    (int[]){0, ( (stream << args), 0 ) ... };
+	(int[]){0, ( (stream << args), 0 ) ... };
 	message_ = stream.str();
 }
 
