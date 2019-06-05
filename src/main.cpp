@@ -37,9 +37,9 @@ int main(){
 	std::cout << std::endl;
 	try{
 		db.execute(
-			"SELECT Events.Id, datetime(Events.Date, 'unixepoch') as Date, Events.Title, Events.Description, group_concat(Tags.Tag) as Tags "
-			"FROM (SELECT DISTINCT events.id FROM Events JOIN Tags ON Events.id = Tags.Id) sub "
-			"JOIN Tags ON sub.Id = Tags.Id JOIN Events ON sub.Id = Events.Id GROUP BY sub.Id;"
+			"SELECT Events.Id, datetime(Events.Date, 'unixepoch') as Date, Events.Title, Events.Description, group_concat(Tags_of_events.Tag) as Tags "
+			"FROM (SELECT DISTINCT events.id FROM Events JOIN Tags_of_events ON Events.id = Tags_of_events.Id) sub "
+			"JOIN Tags_of_events ON sub.Id = Tags_of_events.Id JOIN Events ON sub.Id = Events.Id GROUP BY sub.Id;"
 			, [](Result_set&& ans){
 				std::cout << ans << std::endl;
 		});
