@@ -2,9 +2,9 @@
 #include "expand_tree_query.h"
 
 namespace sql_string {
-	std::string before_tags = "WITH RECURSIVE nodes(tag) AS ( SELECT Tags_tree.tag FROM Tags_tree WHERE ";
-	std::string after_tags = "UNION ALL SELECT Tags_tree.tag FROM Tags_tree JOIN nodes ON Tags_tree.parent = nodes.tag ) SELECT DISTINCT tag FROM nodes;";
-	std::string tag_str = "Tags_tree.tag = ? ";
+	std::string before_tags = "WITH RECURSIVE nodes(tag_id) AS (SELECT Tags_tree.id FROM Tags_tree WHERE Tags_tree.id IN (SELECT id FROM Tags_list WHERE ";
+	std::string after_tags = ") UNION ALL SELECT Tags_tree.id FROM Tags_tree JOIN nodes ON Tags_tree.parent_id = nodes.tag_id) SELECT tag FROM Tags_list JOIN (SELECT DISTINCT tag_id FROM nodes) tmp_table ON tmp_table.tag_id = Tags_list.id;";
+	std::string tag_str = "Tags_list.tag = ? ";
 }
 
 Expand_tree_query::Expand_tree_query(const std::vector<std::string>& tags_vector) : tags_(tags_vector) {
