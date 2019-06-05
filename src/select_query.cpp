@@ -6,10 +6,10 @@
 #include "select_query.h"
 
 namespace sql_string{
-	static const std::string before_where = "SELECT Events.Id, datetime(Events.Date, 'unixepoch') as Date, Events.Title, Events.Description, group_concat(Tags.Tag) as Tags FROM (SELECT DISTINCT events.id FROM Events JOIN Tags ON Events.id = Tags.Id";
-	static const std::string after_where = ") sub JOIN Tags ON sub.Id = Tags.Id JOIN Events ON sub.Id = Events.Id GROUP BY sub.Id;";
+	static const std::string before_where = "SELECT Events.Id, datetime(Events.Date, 'unixepoch') as Date, Events.Title, Events.Description, group_concat(Tags_of_events.Tag) as Tags FROM (SELECT DISTINCT events.id FROM Events JOIN tags_of_events ON Events.id = tags_of_events.Id";
+	static const std::string after_where = ") sub JOIN tags_of_events ON sub.Id = tags_of_events.Id JOIN Events ON sub.Id = Events.Id GROUP BY sub.Id;";
+	static const std::string tag_sql = "Tags_of_events.Tag = ?";
 }
-
 
 void Select_query::set_min_date(std::string date){
 	min_date_ = date;
@@ -49,7 +49,7 @@ std::string Select_query::create_sql() const {
 	if(!tags_.empty()) {
 		std::vector<std::string> or_conds;
 		for(const auto& tag : tags_){
-			std::string sql = "Tags.Tag = '";
+			std::string sql = "Tags_of_events.Tag = '";
 			sql += tag + "'";
 			or_conds.push_back(sql);
 		}
@@ -107,7 +107,7 @@ Prepared_statement Select_query::create_statement() const {
 	if(!tags_.empty()) {
 		std::vector<std::string> or_conds;
 		for(const auto& tag : tags_){
-			std::string sql = "Tags.Tag = ?";
+			std::string sql = sql_string::tag_sql;
 			or_conds.push_back(sql);
 			p_stmt.add_param(tag);
 		}
