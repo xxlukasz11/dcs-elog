@@ -68,4 +68,5 @@ JOIN Events ON sub.Id = Events.Id
 -- specify date range
 WHERE Events.Date >= strftime('%s', '2019-05-01') AND Events.Date <= strftime('%s', '2019-07-01')
 --group for group_concat function
-GROUP BY sub.Id;
+GROUP BY sub.Id
+ORDER BY Events.Date DESC;
