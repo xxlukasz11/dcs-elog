@@ -19,6 +19,10 @@
     border: 1px solid black;
 }
 
+    #select_tab th {
+        cursor: pointer;
+    }
+
 #select_tab table tr:nth-child(odd) {
     background-color: #9cb6e2;
 }
