@@ -19,7 +19,6 @@
             <ul>
                 <li id="select" class=" active">SELECT</li>
                 <li id="insert">INSERT</li>
-                <li id="update">UPDATE</li>
                 <li id="tags">TAGS</li>
             </ul>
         </div>
@@ -51,6 +50,7 @@
 						<th ng-click="order_by_th('Title')">Title</th>
 						<th ng-click="order_by_th('Description')">Description</th>
 						<th ng-click="order_by_th('Tags')">Tags</th>
+						<th>Author</th>
 					</tr>
 					<tr ng-repeat="x in table_data | orderBy:active_th:sort_order">
 						<td>{{ x.Id }}</td>
@@ -58,6 +58,7 @@
 						<td>{{ x.Title }}</td>
 						<td>{{ x.Description }}</td>
 						<td>{{ x.Tags }}</td>
+						<td>{{ x.Author }}</td>
 					</tr>
 				</table>
 			</div>
@@ -84,9 +85,6 @@
 				<p class="success_info">{{ success_info }}</p>
 				<p class="error_info">{{ error_info }}</p>
 			</div>
-            <div id="update_tab" class="tab">
-                Update
-            </div>
 
             <div id="tags_tab" class="tab" ng-controller="edit_tags">
                 <div>
