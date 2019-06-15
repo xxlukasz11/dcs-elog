@@ -14,16 +14,16 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 </head>
 	
-    <body>
-        <div id="menu">
-            <ul>
-                <li id="select" class=" active">SELECT</li>
-                <li id="insert">INSERT</li>
-                <li id="tags">TAGS</li>
-            </ul>
-        </div>
+	<body>
+		<div id="menu">
+			<ul>
+				<li id="select" class=" active">SELECT</li>
+				<li id="insert">INSERT</li>
+				<li id="tags">TAGS</li>
+			</ul>
+		</div>
 
-        <div id="app_container" ng-app="DCS">
+		<div id="app_container" ng-app="DCS">
 
 			<div id="select_tab" class="tab" ng-controller="select_data">
 				<div class="input_wrapper">
@@ -90,23 +90,23 @@
 				<p class="error_info">{{ error_info }}</p>
 			</div>
 
-            <div id="tags_tab" class="tab" ng-controller="edit_tags">
-                <div>
+			<div id="tags_tab" class="tab" ng-controller="edit_tags">
+				<div>
 					<button ng-click="load_tags()">Load</button>
 				</div>
 				<div id="tags_tree_container">
 					
 				</div>
 				<p class="error_info">{{ error_info }}</p>
-            </div>
+			</div>
 
-            
-        </div>
+			
+		</div>
 
-        <script src="app.js"></script>
-        <script src="select_controller.js"></script>
-        <script src="insert_controller.js"></script>
+		<script src="app.js"></script>
+		<script src="select_controller.js"></script>
+		<script src="insert_controller.js"></script>
 		<script src="tags_controller.js"></script>
-        <script src="tabs_controller.js"></script>
-    </body>
+		<script src="tabs_controller.js"></script>
+	</body>
 </html>
