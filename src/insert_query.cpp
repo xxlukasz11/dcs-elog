@@ -23,6 +23,11 @@ void Insert_query::set_tags(std::vector<std::string>&& tags){
 	tags_ = std::move(tags);
 }
 
+void Insert_query::set_author(const std::string& author) {
+	author_ = author;
+	author_is_set_ = true;
+}
+
 std::string Insert_query::create_events_sql() const {
 	if(!title_is_set_ && !desc_is_set_){
 		throw Query_error("Insert query for Events table is empty");
@@ -81,8 +86,15 @@ Prepared_statement Insert_query::create_events_statement() const {
 		p_stmt += "null, ";
 
 	if(desc_is_set_){
-		p_stmt += "?";
+		p_stmt += "?, ";
 		p_stmt.add_param(desc_);
+	}
+	else
+		p_stmt += "null, ";
+
+	if (author_is_set_) {
+		p_stmt += "?";
+		p_stmt.add_param(author_);
 	}
 	else
 		p_stmt += "null";
@@ -96,7 +108,7 @@ std::vector<Prepared_statement> Insert_query::create_tags_statements(const std::
 	std::vector<Prepared_statement> statements;
 
 	for(const auto& tag : tags_){
-		Prepared_statement p_stmt{ "INSERT INTO Tags VALUES(?, ?);" };
+		Prepared_statement p_stmt{ "INSERT INTO Tags_of_events VALUES(?, ?);" };
 		p_stmt.add_param(event_id);
 		p_stmt.add_param(tag);
 

@@ -12,7 +12,6 @@ public:
 	void add_tag(std::string tag);
 	void set_tags(std::vector<std::string>&& tags);
 
-	std::string create_sql() const;
 	Prepared_statement create_statement() const;
 private:
 	bool min_date_is_set_{ false };

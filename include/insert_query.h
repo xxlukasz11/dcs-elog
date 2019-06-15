@@ -14,6 +14,7 @@ public:
 	void set_desc(std::string desc);
 	void add_tag(std::string tag);
 	void set_tags(std::vector<std::string>&& tags);
+	void set_author(const std::string& author);
 
 	std::string create_events_sql() const;
 	std::string create_tags_sql(const std::string& event_id) const;
@@ -24,10 +25,12 @@ private:
 
 	bool title_is_set_{ false };
 	bool desc_is_set_{ false };
+	bool author_is_set_{ false };
 
 	std::string title_;
 	std::string desc_;
 	std::vector<std::string> tags_;
+	std::string author_;
 };
 
 #endif

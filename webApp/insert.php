@@ -31,8 +31,11 @@ function prepare_message($params){
 	
 	$tags = $params->tags;
 	$tags_len = strlen($tags);
+
+	$author = $params->author;
+	$author_len = strlen($author);
 	
-	$str = "[0][$title_len $description_len $tags_len][$title][$description][$tags]";
+	$str = "[0][$title_len $description_len $tags_len $author_len][$title][$description][$tags][$author]";
 	return $str;
 }
 

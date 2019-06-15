@@ -2,11 +2,13 @@ function get_input_data() {
     let title_input = document.getElementById('title_input');
     let description_input = document.getElementById('description_input');
     let tags_input = document.getElementById('insert_tags_input');
+    let author_input = document.getElementById('author_input');
 
     return {
         title: title_input.value,
         description: description_input.value,
-        tags: tags_input.value
+        tags: tags_input.value,
+        author: author_input.value
     };
 }
 

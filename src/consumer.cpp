@@ -103,9 +103,14 @@ void Consumer::process_message(const std::string& message, int client_socket){
 
 void Consumer::insert_data(Msg_parser& parser, int client_socket){
 	Insert_query query;
-	query.set_title( parser.next() );
-	query.set_desc( parser.next() );
-	query.set_tags( Msg_parser::extract_tags( parser.next() ) );
+	if(parser.has_next())
+		query.set_title( parser.next() );
+	if (parser.has_next())
+		query.set_desc( parser.next() );
+	if (parser.has_next())
+		query.set_tags( Msg_parser::extract_tags( parser.next() ) );
+	if (parser.has_next())
+		query.set_author( parser.next() );
 
 	std::lock_guard<std::mutex> lock(mtx_);
 
@@ -124,24 +129,6 @@ void Consumer::select_data(Msg_parser& parser, int client_socket){
 	auto max_date_str = parser.next();
 	auto tags_str = parser.next();
 
-	std::vector<std::string> tags_vector;
-
-	if (!tags_str.empty()) {
-		auto extracted_tags = Msg_parser::extract_tags(tags_str);
-		Expand_tree_query exp_query(extracted_tags);
-		auto stmt = exp_query.create_statement();
-
-		Result_set res;
-		{
-			std::lock_guard<std::mutex> lock(mtx_);
-			Database db("../resources/database.db");
-			db.open();
-			res = db.execute(stmt);
-		}
-		
-		tags_vector = res.get_column(0);
-	}
-
 	Select_query query;
 	if(!min_date_str.empty()){
 		query.set_min_date(min_date_str);
@@ -149,8 +136,10 @@ void Consumer::select_data(Msg_parser& parser, int client_socket){
 	if(!max_date_str.empty()){
 		query.set_max_date(max_date_str);
 	}
-	if(!tags_vector.empty()){
-		query.set_tags( std::move(tags_vector) );
+
+	auto extracted_tags = Msg_parser::extract_tags(tags_str);
+	if (!extracted_tags.empty()) {
+		query.set_tags(std::move(extracted_tags));
 	}
 
 	Result_set res;
