@@ -18,7 +18,7 @@ std::string Socket::recv_string() {
 	safe_recv(&length, sizeof(length), 0);
 
 	int total_bytes_read = 0;
-	int buffer_size = Tcp_server::get_instance().get_message_length();
+	int buffer_size = Tcp_server::get_message_length();
 
 	while (total_bytes_read < length) {
 		char recv_buffer[buffer_size + 1];
@@ -36,7 +36,7 @@ void Socket::send_string(const std::string & msg) {
 	int length = msg.size();
 	int total_bytes_sent = 0;
 	const char* buffer = msg.c_str();
-	int max_buffer_size = Tcp_server::get_instance().get_message_length();
+	int max_buffer_size = Tcp_server::get_message_length();
 
 	while (total_bytes_sent < length) {
 		int remaining_bytes = length - total_bytes_sent;

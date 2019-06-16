@@ -20,15 +20,15 @@ public:
 	static Tcp_server& get_instance();
 
 	// setters
-	void set_ip_address(std::string ip_address);
-	void set_port(int port);
-	void set_message_length(int length);
-	void set_max_connections(int max_connsctions);
-	void set_timeout_seconds(int seconds);
-	void set_number_of_consumers(int n_consumers);
+	static void set_ip_address(std::string ip_address);
+	static void set_port(int port);
+	static void set_message_length(int length);
+	static void set_max_connections(int max_connsctions);
+	static void set_timeout_seconds(int seconds);
+	static void set_number_of_consumers(int n_consumers);
 
 	// getters
-	int get_message_length() const;
+	static int get_message_length();
 
 	// public methods
 	void initialize();
@@ -51,14 +51,14 @@ private:
 	};
 
 	// configuration
-	std::string ip_address_{ "0.0.0.0" };
-	int port_ = { 9100 };
-	int message_length_{ 1024 };
-	int max_connections_{ 50 };
-	int timeout_seconds_{ 5 };
-	int number_of_consumers_{ 3 };
+	static std::string ip_address_;
+	static int port_;
+	static int message_length_;
+	static int max_connections_;
+	static int timeout_seconds_;
+	static int number_of_consumers_;
 
-	// private members
+	// other private members
 	int server_socket_{ 0 };
 	Socket_queue queue_;
 	Thread_pool threads_manager_;

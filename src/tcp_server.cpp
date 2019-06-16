@@ -16,6 +16,12 @@
 #include "tcp_server.h"
 
 std::atomic<bool> Tcp_server::server_is_running_{ false };
+std::string Tcp_server::ip_address_{ "0.0.0.0" };
+int Tcp_server::port_ = { 9100 };
+int Tcp_server::message_length_{ 1024 };
+int Tcp_server::max_connections_{ 50 };
+int Tcp_server::timeout_seconds_{ 5 };
+int Tcp_server::number_of_consumers_{ 3 };
 
 Tcp_server::Tcp_server() {
 	signal(SIGINT, &Tcp_server::set_stop_variable);
@@ -60,7 +66,7 @@ void Tcp_server::set_number_of_consumers(int n_consumers){
 	number_of_consumers_ = n_consumers;
 }
 
-int Tcp_server::get_message_length() const {
+int Tcp_server::get_message_length() {
 	return message_length_;
 }
 

@@ -6,14 +6,13 @@
 #include "database.h"
 
 int main(){
+	Tcp_server::set_ip_address( "0.0.0.0" );
+	Tcp_server::set_port( 9100 );
+	Tcp_server::set_max_connections( 50 );
+	Tcp_server::set_message_length( 10 );
+	Tcp_server::set_number_of_consumers( 3 );
 
 	auto& server = Tcp_server::get_instance();
-	server.set_ip_address( "0.0.0.0" );
-	server.set_port( 9100 );
-	server.set_max_connections( 50 );
-	server.set_message_length( 10 );
-	server.set_number_of_consumers( 3 );
-
 	try{
 		server.initialize();
 	}

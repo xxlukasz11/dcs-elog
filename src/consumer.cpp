@@ -39,8 +39,7 @@ void configure_socket_timeout(int client_socket, int seconds, int u_seconds){
 }
 
 void Consumer::consume(Socket_queue& queue) {
-	auto& server = Tcp_server::get_instance();
-	while(server.server_is_running_){
+	while(Tcp_server::server_is_running_){
 		Socket client_socket = queue.pop();
 		
 		if(client_socket == Tcp_server::DUMMY_SOCKET_)
@@ -53,7 +52,7 @@ void Consumer::consume(Socket_queue& queue) {
 		utils::out_log(client_socket, "Connection accepted");
 
 		try{
-			configure_socket_timeout(client_socket, server.timeout_seconds_, 0);
+			configure_socket_timeout(client_socket, Tcp_server::timeout_seconds_, 0);
 			
 			auto recv_msg = client_socket.recv_string();
 			utils::out_log(client_socket, "Message from client: " + recv_msg);
