@@ -108,7 +108,7 @@ std::vector<Prepared_statement> Insert_query::create_tags_statements(const std::
 	std::vector<Prepared_statement> statements;
 
 	for(const auto& tag : tags_){
-		Prepared_statement p_stmt{ "INSERT INTO Tags_of_events VALUES(?, ?);" };
+		Prepared_statement p_stmt{ "INSERT INTO Tags_of_events(Event_id, Tag_id) SELECT ?, Tags_list.id FROM Tags_list WHERE Tags_list.tag = ?;" };
 		p_stmt.add_param(event_id);
 		p_stmt.add_param(tag);
 
