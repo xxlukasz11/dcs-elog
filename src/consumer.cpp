@@ -4,6 +4,7 @@
 #include <sys/types.h>
 
 #include "tcp_server.h"
+#include "socket.h"
 #include "custom_exceptions.h"
 #include "raii_thread.h"
 #include "utils.h"
@@ -40,7 +41,7 @@ void configure_socket_timeout(int client_socket, int seconds, int u_seconds){
 void Consumer::consume(Socket_queue& queue) {
 	auto& server = Tcp_server::get_instance();
 	while(server.server_is_running_){
-		int client_socket = queue.pop();
+		Socket client_socket = queue.pop();
 		
 		if(client_socket == Tcp_server::DUMMY_SOCKET_)
 			break;
@@ -54,8 +55,7 @@ void Consumer::consume(Socket_queue& queue) {
 		try{
 			configure_socket_timeout(client_socket, server.timeout_seconds_, 0);
 			
-			
-			auto recv_msg = utils::recv_string_from_client(client_socket);
+			auto recv_msg = client_socket.recv_string();
 			utils::out_log(client_socket, "Message from client: " + recv_msg);
 
 			process_message(recv_msg, client_socket);
@@ -79,7 +79,7 @@ void Consumer::consume(Socket_queue& queue) {
 	}
 }
 
-void Consumer::process_message(const std::string& message, int client_socket){
+void Consumer::process_message(const std::string& message, Socket client_socket){
 	Msg_parser parser(message);
 	auto mode = parser.get_mode();
 
@@ -103,7 +103,7 @@ void Consumer::process_message(const std::string& message, int client_socket){
 	}
 }
 
-void Consumer::insert_data(Msg_parser& parser, int client_socket){
+void Consumer::insert_data(Msg_parser& parser, Socket client_socket){
 	Insert_query query;
 	query.set_title(parser.next());
 	query.set_desc(parser.next());
@@ -119,10 +119,10 @@ void Consumer::insert_data(Msg_parser& parser, int client_socket){
 	std::string last_id = res.get_last_row_id();
 	db.execute( query.create_tags_statements(last_id) );
 
-	utils::send_string_to_client(client_socket, "Data has been recievied");
+	client_socket.send_string("Event has been successfully saved");
 }
 
-void Consumer::select_data(Msg_parser& parser, int client_socket){
+void Consumer::select_data(Msg_parser& parser, Socket client_socket){
 	auto min_date_str = parser.next();
 	auto max_date_str = parser.next();
 	auto tags_str = parser.next();
@@ -149,10 +149,10 @@ void Consumer::select_data(Msg_parser& parser, int client_socket){
 		res = db.execute(stmt);
 	}
 	
-	utils::send_string_to_client(client_socket, Json::stringify(std::move(res)));
+	client_socket.send_string(Json::stringify(std::move(res)));
 }
 
-void Consumer::return_tags_table(int client_socket) {
+void Consumer::return_tags_table(Socket client_socket) {
 	Result_set res;
 	{
 		Select_tags_query query;
@@ -164,5 +164,5 @@ void Consumer::return_tags_table(int client_socket) {
 		res = db.execute(stmt);
 	}
 
-	utils::send_string_to_client(client_socket, Json::stringify(std::move(res)));
+	client_socket.send_string(Json::stringify(std::move(res)));
 }

@@ -7,7 +7,7 @@
 Socket::Socket(int descriptor) : socket_descriptor_(descriptor) {
 }
 
-int Socket::get_descriptor() const {
+int Socket::dsc() const {
 	return socket_descriptor_;
 }
 
@@ -49,6 +49,18 @@ void Socket::send_string(const std::string & msg) {
 
 		total_bytes_sent += bytes_sent;
 	}
+}
+
+bool Socket::operator<(int number) const {
+	return socket_descriptor_ < number;
+}
+
+bool Socket::operator==(int number) const {
+	return socket_descriptor_ == number;
+}
+
+Socket::operator int() {
+	return socket_descriptor_;
 }
 
 int Socket::safe_recv(void * buffer, size_t size, int flags) {

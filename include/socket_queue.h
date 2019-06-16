@@ -4,11 +4,12 @@
 #include <mutex>
 #include <deque>
 #include <condition_variable>
+#include "socket.h"
 
 class Socket_queue {
 	std::mutex mtx_;
 	std::condition_variable cond_var_;
-	std::deque<int> sockets_;
+	std::deque<Socket> sockets_;
 
 public:
 	Socket_queue() = default;
@@ -18,8 +19,8 @@ public:
 	Socket_queue& operator=(const Socket_queue&) = delete;
 	Socket_queue& operator=(Socket_queue&&) = delete;
 
-	void push(int sockfd);
-	int pop();
+	void push(Socket socket);
+	Socket pop();
 };
 
 #endif

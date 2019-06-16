@@ -2,14 +2,14 @@
 
 #include "socket_queue.h"
 
-void Socket_queue::push(int sockfd) {
+void Socket_queue::push(Socket socket) {
 	std::unique_lock<std::mutex> lock(mtx_);
-	sockets_.push_back(sockfd);
+	sockets_.push_back(socket);
 	lock.unlock();
 	cond_var_.notify_one();
 }
 
-int Socket_queue::pop() {
+Socket Socket_queue::pop() {
 	std::unique_lock<std::mutex> lock(mtx_);
 	
 	cond_var_.wait(lock, [this](){
