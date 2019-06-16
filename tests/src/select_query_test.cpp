@@ -3,7 +3,7 @@
 #include "select_query.h"
 #include "prepared_statement.h"
 
-TEST(select_query, sql_string) {
+TEST(select_query, print_sql_string) {
 	Select_query query;
 	query.add_tag("a");
 	query.add_tag("b");

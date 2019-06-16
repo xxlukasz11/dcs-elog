@@ -94,6 +94,8 @@ void Consumer::process_message(const std::string& message, int client_socket){
 
 	} catch(Unknown_message_format& e){
 		utils::err_log(e.what());
+	} catch (Mag_parser_exception& e) {
+		utils::err_log(e.what());
 	} catch(Database_error& e){
 		utils::err_log(e.what());
 	} catch(Query_error& e){
@@ -103,14 +105,10 @@ void Consumer::process_message(const std::string& message, int client_socket){
 
 void Consumer::insert_data(Msg_parser& parser, int client_socket){
 	Insert_query query;
-	if(parser.has_next())
-		query.set_title( parser.next() );
-	if (parser.has_next())
-		query.set_desc( parser.next() );
-	if (parser.has_next())
-		query.set_tags( Msg_parser::extract_tags( parser.next() ) );
-	if (parser.has_next())
-		query.set_author( parser.next() );
+	query.set_title(parser.next());
+	query.set_desc(parser.next());
+	query.set_tags(Msg_parser::extract_tags(parser.next()));
+	query.set_author(parser.next());
 
 	std::lock_guard<std::mutex> lock(mtx_);
 

@@ -28,6 +28,9 @@ Msg_parser::mode Msg_parser::get_mode() const {
 }
 
 std::string Msg_parser::next() {
+	if (!has_next())
+		throw Mag_parser_exception("Cant obtain next chunk with index ", current_chunk_);
+
 	auto x1 = msg_.find("[", position_);
 	auto x2 = msg_.find("]", x1 + chunks_sizes_[current_chunk_]);
 	position_ = x2;
