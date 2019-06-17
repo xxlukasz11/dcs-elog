@@ -18,6 +18,7 @@
 #include "json.h"
 #include "utils.h"
 #include "expand_tree_query.h"
+#include "connection_handler.h"
 
 #include "consumer.h"
 
@@ -80,16 +81,9 @@ void Consumer::consume(Socket_queue& queue) {
 
 void Consumer::process_message(const std::string& message, Socket client_socket){
 	Msg_parser parser(message);
-	auto mode = parser.get_mode();
-
 	try{
-		switch(mode){
-			case Msg_parser::mode::insert : insert_data(parser, client_socket); break;
-			case Msg_parser::mode::select : select_data(parser, client_socket); break;
-			case Msg_parser::mode::return_tags_tree : return_tags_table(client_socket); break;
-
-			default: throw Unknown_message_format();
-		}
+		Connection_handler handler(parser, client_socket);
+		handler.handle();
 
 	} catch(Unknown_message_format& e){
 		utils::err_log(e.what());
