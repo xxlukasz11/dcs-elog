@@ -84,12 +84,11 @@ void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
 
 void Connection_handler::handle() {
 	auto mode = parser_.get_mode();
-	handle<Msg_parser::mode::return_tags_tree>();
 
 	switch (mode) {
-		case Msg_parser::mode::insert:			 handle<Msg_parser::mode::insert>();			break;
-		case Msg_parser::mode::select:			 handle<Msg_parser::mode::select>();			break;
-		case Msg_parser::mode::return_tags_tree: handle<Msg_parser::mode::return_tags_tree>();	break;
+		case Msg_parser::mode::insert :				handle<Msg_parser::mode::insert>();				break;
+		case Msg_parser::mode::select :				handle<Msg_parser::mode::select>();				break;
+		case Msg_parser::mode::return_tags_tree :	handle<Msg_parser::mode::return_tags_tree>();	break;
 
 		default: throw Unknown_message_format();
 	}
