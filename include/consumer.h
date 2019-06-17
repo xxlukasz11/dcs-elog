@@ -19,10 +19,6 @@ private:
 	static void consume(Socket_queue& queue);
 	static void process_message(const std::string& message, Socket client_socket);
 
-	static void insert_data(Msg_parser& query, Socket client_socket);
-	static void select_data(Msg_parser& query, Socket client_socket);
-	static void return_tags_table(Socket client_socket);
-
 	// private members
 	static std::mutex mtx_;
 	Raii_thread thread_;
