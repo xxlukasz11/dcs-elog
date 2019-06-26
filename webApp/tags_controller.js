@@ -21,10 +21,9 @@ app.controller('edit_tags', function ($scope, $http, $rootScope) {
 			let container = document.getElementById('tags_tree_container');
 			$scope.tree.set_container(container);
 			$scope.tree.display();
-			
-			$scope.error_info = "";
+
 		}, function (response) {
-			$scope.error_info = read_error_msg(response);
+			$rootScope.event_log.error( read_error_msg(response) );
 		});
 	}
 

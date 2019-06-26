@@ -10,7 +10,7 @@ function getParams() {
     };
 }
 
-app.controller('select_data', function ($scope, $http) {
+app.controller('select_data', function ($scope, $http, $rootScope) {
     $scope.send_request = function () {
 
         $http({
@@ -26,10 +26,10 @@ app.controller('select_data', function ($scope, $http) {
                 content: JSON.stringify(getParams())
             }
         }).then(function (response) {
-            $scope.table_data = response.data;
-            $scope.error_info = "";
+        	$scope.table_data = response.data;
+        	$rootScope.event_log.success("Events loaded");
         }, function (response) {
-			$scope.error_info = read_error_msg(response);
+        	$rootScope.event_log.error( read_error_msg(response) );
         });
     }
 

@@ -42,8 +42,6 @@
 					</div>
 				</div>
 
-				<p class="error_info">{{ error_info }}</p>
-
 				<table>
 					<tr>
 						<th ng-click="order_by_th('Id')">Id</th>
@@ -87,8 +85,6 @@
 						<button ng-click="send_insert_request()">Add</button>
 					</div>
 				</div>
-				<p class="success_info">{{ success_info }}</p>
-				<p class="error_info">{{ error_info }}</p>
 			</div>
 
 			<div id="tags_tab" class="tab" ng-controller="edit_tags">
@@ -114,8 +110,6 @@
 						</p>
 					</div>
 				</div>
-				<p class="success_info">{{ success_info }}</p>
-				<p class="error_info">{{ error_info }}</p>
 			</div>
 
 			<div id="log_container">
@@ -123,6 +117,8 @@
 			</div>
 		</div>
 
+
+		<!-- scripts -->
 		<script src="event_log.js"></script>
 		<script src="app.js"></script>
 		<script src="select_controller.js"></script>
