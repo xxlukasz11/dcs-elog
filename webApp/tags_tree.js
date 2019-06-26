@@ -21,6 +21,13 @@ class Tree {
 		this.container = html_node;
 	}
 
+	has_tag(tag_name) {
+		const found = this.elements.find(el => el.name == tag_name);
+		if(found)
+			return true;
+		return false;
+	}
+
 	add(name, parent_name) {
 		const new_element = new Tree_element(name, parent_name);
 		this.elements.push(new_element);

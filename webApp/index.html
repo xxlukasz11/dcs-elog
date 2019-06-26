@@ -96,7 +96,7 @@
 					<button ng-click="load_tags()">Load</button>
 				</div>
 				<div id="tags_tree_container">
-					
+
 				</div>
 				<div class="control_container">
 					<div class="control_block">
@@ -109,11 +109,12 @@
 								<span>Parent name</span> <input type="text" id="add_tag_parent_input" />
 							</span>
 							<span class="block_span">
-								<button id="add_tag_button">Add</button>
+								<button ng-click="add_tag()">Add</button>
 							</span>
 						</p>
 					</div>
 				</div>
+				<p class="success_info">{{ success_info }}</p>
 				<p class="error_info">{{ error_info }}</p>
 			</div>
 
