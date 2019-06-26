@@ -8,6 +8,7 @@
 #include "insert_query.h"
 #include "select_query.h"
 #include "select_tags_query.h"
+#include "add_tag_query.h"
 
 std::mutex Connection_handler::mtx_;
 
@@ -82,6 +83,33 @@ void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
 	socket_.send_string(Json::stringify(std::move(res)));
 }
 
+template<>
+void Connection_handler::handle<Msg_parser::mode::add_tag>() {
+	Add_tag_query query;
+	query.set_tag_name(parser_.next());
+
+	try {
+		int parent_id = stoi(parser_.next());
+		query.set_parent_id(parent_id);
+	}
+	catch (const std::invalid_argument& e) {
+		throw Query_error("Cannot convert parent_id to integer value");
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+
+		Database db("../resources/database.db");
+		db.open();
+
+		Result_set res = db.execute(query.create_tag_statement());
+		std::string last_id = res.get_last_row_id();
+		db.execute(query.create_tree_statement(last_id));
+	}
+
+	socket_.send_string("Tag '" + query.get_tag_name() + "' has been added");
+}
+
 void Connection_handler::handle() {
 	auto mode = parser_.get_mode();
 
@@ -89,6 +117,7 @@ void Connection_handler::handle() {
 		case Msg_parser::mode::insert :				handle<Msg_parser::mode::insert>();				break;
 		case Msg_parser::mode::select :				handle<Msg_parser::mode::select>();				break;
 		case Msg_parser::mode::return_tags_tree :	handle<Msg_parser::mode::return_tags_tree>();	break;
+		case Msg_parser::mode::add_tag:				handle<Msg_parser::mode::add_tag>();			break;
 
 		default: throw Unknown_message_format();
 	}

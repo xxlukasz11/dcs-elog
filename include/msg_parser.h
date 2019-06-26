@@ -20,7 +20,8 @@ public:
 	enum class mode{
 		insert,
 		select,
-		return_tags_tree
+		return_tags_tree,
+		add_tag
 	};
 
 	bool has_next() const;

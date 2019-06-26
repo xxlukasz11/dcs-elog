@@ -39,10 +39,9 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			}
 		}).then(function (response) {
 			$rootScope.event_log.success(response.data.message);
-			return true;
+			$scope.load_tags();
 		}, function (response) {
-			$rootScope.event_log.error(read_error_msg(response));
-			return false;
+			$rootScope.event_log.error("Cannot add '" + tag_name + "' tag");
 		});
 	}
 
@@ -72,14 +71,7 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		
 		let parent_id = $scope.tree.get_tag_id(parent_name);
 
-		if ($scope.send_new_tag(tag_name, parent_id)) {
-			$scope.load_tags();
-			$rootScope.event_log.success("Tag added");
-		}
-		else {
-			$rootScope.event_log.error("Cannot add '" + tag_name + "' tag");
-		}
-		
+		$scope.send_new_tag(tag_name, parent_id);
 	}
 	
 });
