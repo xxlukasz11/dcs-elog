@@ -14,8 +14,12 @@ class Tree{
 	constructor(){
 		this.elements = [];
 		this.roots = [];
-		this.internal_class_name = "generated_tree_container";
+		this.container = null;
 	}
+
+    set_container(html_node) {
+        this.container = html_node;
+    }
 	
 	add(name, parent_name){
 		const new_element = new Tree_element(name, parent_name);
@@ -37,22 +41,16 @@ class Tree{
 		}
 	}
 	
-	display_in(html_node) {
-	    let children = html_node.getElementsByClassName(this.internal_class_name);
-	    if (children.length != 0) {
-	        html_node.removeChild(children[0]);
+	display() {
+	    while (this.container.firstChild) {
+	        this.container.removeChild(this.container.firstChild);
 	    }
-
-	    let tree_container = document.createElement("div");
-	    tree_container.className = this.internal_class_name;
 
 		for(let root of this.roots){
 			let root_ul = document.createElement("ul");
 			this.display_element(root_ul, root);
-			tree_container.appendChild(root_ul);
+			this.container.appendChild(root_ul);
 		}
-
-		html_node.appendChild(tree_container);
 	}
 	
 	display_element(html_node, element){
@@ -106,7 +104,9 @@ function test(){
 	x.add("X", null);
 	x.add("Y", "X");
 	x.add("Z", "X");
-	x.display_in(document.getElementById('tags_tree_container'));
+    
+	x.set_container(document.getElementById('tags_tree_container'));
+	x.display();
 }
 
 app.controller('edit_tags', function ($scope, $http) {
@@ -127,7 +127,8 @@ app.controller('edit_tags', function ($scope, $http) {
         }).then(function (response) {
 			let tree = from_table_to_tree(response.data);
 			let container = document.getElementById('tags_tree_container');
-			tree.display_in(container);
+			tree.set_container(container);
+			tree.display();
 			
             $scope.error_info = "";
         }, function (response) {
