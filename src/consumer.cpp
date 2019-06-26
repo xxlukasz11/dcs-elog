@@ -8,21 +8,10 @@
 #include "custom_exceptions.h"
 #include "raii_thread.h"
 #include "utils.h"
-#include "result_set.h"
-#include "database.h"
-#include "insert_query.h"
-#include "select_query.h"
-#include "select_tags_query.h"
 #include "msg_parser.h"
-#include "prepared_statement.h"
-#include "json.h"
-#include "utils.h"
-#include "expand_tree_query.h"
 #include "connection_handler.h"
 
 #include "consumer.h"
-
-std::mutex Consumer::mtx_;
 
 Consumer::Consumer(Socket_queue& queue) {
 	thread_ = Raii_thread(&Consumer::consume, std::ref(queue));

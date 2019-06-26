@@ -20,7 +20,6 @@ private:
 	static void process_message(const std::string& message, Socket client_socket);
 
 	// private members
-	static std::mutex mtx_;
 	Raii_thread thread_;
 };
 
