@@ -136,40 +136,4 @@ app.controller('edit_tags', function ($scope, $http) {
         });
     }
 	
-	$scope.element_clicked = function(element){
-		
-		let input = document.createElement('input');
-		input.setAttribute('type', 'text');
-		input.setAttribute('value', element.textContent);
-		
-		input.addEventListener('focusout', function(){
-			let node = document.createTextNode(input.value);
-			let span = document.createElement("span");
-			span.appendChild(node);
-			
-			let parent = input.parentNode;
-			parent.insertBefore(span, input);
-			parent.removeChild(input);
-		}, false);
-		
-		let parent = element.parentNode;
-		parent.insertBefore(input, element);
-		parent.removeChild(element);
-		input.focus();
-		input.select();
-	}
-	
-	$scope.bind_events = function(){
-		let t = document.getElementById('tags_tab');
-		t.addEventListener("click", function(e){
-			if(e.target){
-				if(e.target.nodeName == "SPAN")
-					$scope.element_clicked(e.target);
-				else if(e.target.nodeName == "LI")
-					$scope.element_clicked(e.target.childNodes[0]);
-			}
-		}, false);
-	}
-	$scope.bind_events();
-	
 });
