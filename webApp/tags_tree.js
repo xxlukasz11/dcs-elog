@@ -1,5 +1,6 @@
 class Tree_element {
-	constructor(name, parent) {
+	constructor(id, name, parent) {
+		this.id = id;
 		this.name = name;
 		this.parent = parent;
 		this.children = [];
@@ -28,8 +29,15 @@ class Tree {
 		return false;
 	}
 
-	add(name, parent_name) {
-		const new_element = new Tree_element(name, parent_name);
+	get_tag_id(tag_name) {
+		const found = this.elements.find(el => el.name == tag_name);
+		if (found)
+			return found.id;
+		return null;
+	}
+
+	add(id, name, parent_name) {
+		const new_element = new Tree_element(id, name, parent_name);
 		this.elements.push(new_element);
 
 		// find parent
@@ -81,7 +89,7 @@ class Tree {
 function from_table_to_tree(table) {
 	let tree = new Tree();
 	for(let entry of table) {
-		tree.add(entry.tag, entry.parent);
+		tree.add(entry.id, entry.tag, entry.parent);
 	}
 	return tree;
 }
@@ -90,6 +98,7 @@ function from_tree_to_table(tree) {
 	let table = [];
 	for(let element of tree.elements) {
 		let entry = {
+			id: element.id,
 			tag: element.name,
 			parent: element.parent
 		};

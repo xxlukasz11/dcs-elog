@@ -23,9 +23,32 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		});
 	}
 
+	$scope.send_new_tag = function (tag_name_, parent_id_) {
+		const params_object = {
+			tag_name: tag_name_,
+			parent_id: parent_id_
+		};
+
+		$http({
+			url: host + "add_tag.php",
+
+			method: "GET",
+			params: {
+				date: new Date().getTime(),
+				content: JSON.stringify(params_object)
+			}
+		}).then(function (response) {
+			$rootScope.event_log.success(response.data.message);
+			return true;
+		}, function (response) {
+			$rootScope.event_log.error(read_error_msg(response));
+			return false;
+		});
+	}
+
 	$scope.add_tag = function () {
 		if ($scope.tree == null) {
-			$rootScope.event_log.error("There is no tree loaded");
+			$rootScope.event_log.error("Tree is not loaded");
 			return;
 		}
 
@@ -47,9 +70,16 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 		
-		$scope.tree.add(tag_name, parent_name);
-		$scope.tree.display();
-		$rootScope.event_log.success("Tag added");
+		let parent_id = $scope.tree.get_tag_id(parent_name);
+
+		if ($scope.send_new_tag(tag_name, parent_id)) {
+			$scope.load_tags();
+			$rootScope.event_log.success("Tag added");
+		}
+		else {
+			$rootScope.event_log.error("Cannot add '" + tag_name + "' tag");
+		}
+		
 	}
 	
 });
