@@ -118,9 +118,12 @@
 				<p class="error_info">{{ error_info }}</p>
 			</div>
 
-			
+			<div id="log_container">
+				<p ng-repeat="event in event_log.events" class="{{ event.type }}_info">{{ event.message }}</p>
+			</div>
 		</div>
 
+		<script src="event_log.js"></script>
 		<script src="app.js"></script>
 		<script src="select_controller.js"></script>
 		<script src="insert_controller.js"></script>
