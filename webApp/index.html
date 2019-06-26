@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="menu_styles.css" type="text/css" />
 	<link rel="stylesheet" href="select_styles.css" type="text/css" />
 	<link rel="stylesheet" href="insert_styles.css" type="text/css" />
+	<link rel="stylesheet" href="tags_styles.css" type="text/css" />
 
 	<!-- AngularJS -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -96,6 +97,22 @@
 				</div>
 				<div id="tags_tree_container">
 					
+				</div>
+				<div class="control_container">
+					<div class="control_block">
+						<p class="block_title">Add tag</p>
+						<p>
+							<span class="block_span">
+								<span>Tag name</span> <input type="text" id="add_tag_name_input" />
+							</span>
+							<span class="block_span">
+								<span>Parent name</span> <input type="text" id="add_tag_parent_input" />
+							</span>
+							<span class="block_span">
+								<button id="add_tag_button">Add</button>
+							</span>
+						</p>
+					</div>
 				</div>
 				<p class="error_info">{{ error_info }}</p>
 			</div>

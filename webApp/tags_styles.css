@@ -1,0 +1,22 @@
+.control_container{
+	margin-top: 10px;
+}
+
+.control_block{
+	border: 1px solid black;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.control_block p{
+	margin: 1px;
+}
+
+.block_title{
+	font-weight: bold;
+}
+
+.block_span{
+	display: inline-block;
+	margin-right: 10px;
+}

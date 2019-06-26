@@ -14,6 +14,7 @@ class Tree{
 	constructor(){
 		this.elements = [];
 		this.roots = [];
+		this.internal_class_name = "generated_tree_container";
 	}
 	
 	add(name, parent_name){
@@ -36,12 +37,22 @@ class Tree{
 		}
 	}
 	
-	display(html_node){
+	display_in(html_node) {
+	    let children = html_node.getElementsByClassName(this.internal_class_name);
+	    if (children.length != 0) {
+	        html_node.removeChild(children[0]);
+	    }
+
+	    let tree_container = document.createElement("div");
+	    tree_container.className = this.internal_class_name;
+
 		for(let root of this.roots){
 			let root_ul = document.createElement("ul");
 			this.display_element(root_ul, root);
-			html_node.appendChild(root_ul);
+			tree_container.appendChild(root_ul);
 		}
+
+		html_node.appendChild(tree_container);
 	}
 	
 	display_element(html_node, element){
@@ -95,7 +106,7 @@ function test(){
 	x.add("X", null);
 	x.add("Y", "X");
 	x.add("Z", "X");
-	x.display(document.getElementById('tags_tab'));
+	x.display_in(document.getElementById('tags_tree_container'));
 }
 
 app.controller('edit_tags', function ($scope, $http) {
@@ -116,8 +127,7 @@ app.controller('edit_tags', function ($scope, $http) {
         }).then(function (response) {
 			let tree = from_table_to_tree(response.data);
 			let container = document.getElementById('tags_tree_container');
-			container.innerHTML = "";
-			tree.display(container);
+			tree.display_in(container);
 			
             $scope.error_info = "";
         }, function (response) {

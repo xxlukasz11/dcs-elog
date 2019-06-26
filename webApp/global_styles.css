@@ -47,6 +47,7 @@ button {
 	transition: 0.2s;
 	border: none;
 	box-shadow: 0 3px #999;
+	margin: 5px;
 }
 
 button:hover {
