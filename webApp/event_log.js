@@ -2,6 +2,7 @@ class Event {
 	constructor(type, message) {
 		this.type = type;
 		this.message = message;
+		this.time = new Date().toISOString().slice(11, 19);
 	}
 }
 
