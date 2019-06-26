@@ -13,15 +13,11 @@ function get_input_data() {
 }
 
 
-app.controller('insert_data', function ($scope, $http, $rootScope) {
+app.controller('insert_data', function ($scope, $http, $rootScope, host) {
 	$scope.send_insert_request = function () {
 
 		$http({
-			// remote
-			//url: "http://lukboz.000webhostapp.com/insert.php",
-
-			// localhost
-			url: "insert.php",
+			url: host + "insert.php",
 
 			method: "GET",
 			params: {

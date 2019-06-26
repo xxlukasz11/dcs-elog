@@ -10,15 +10,11 @@ function getParams() {
     };
 }
 
-app.controller('select_data', function ($scope, $http, $rootScope) {
+app.controller('select_data', function ($scope, $http, $rootScope, host) {
     $scope.send_request = function () {
 
         $http({
-            // remote
-            //url: "http://lukboz.000webhostapp.com/select.php",
-
-            // localhost
-            url: "select.php",
+            url: host + "select.php",
 
             method: "GET",
             params: {

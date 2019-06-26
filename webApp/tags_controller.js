@@ -1,15 +1,11 @@
 
-app.controller('edit_tags', function ($scope, $http, $rootScope) {
+app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 	$scope.tree = null;
 
 	$scope.load_tags = function () {
 		
 		$http({
-			// remote
-			//url: "http://lukboz.000webhostapp.com/insert.php",
-
-			// localhost
-			url: "edit_tags.php",
+			url: host + "edit_tags.php",
 
 			method: "GET",
 			params: {
