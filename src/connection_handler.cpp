@@ -135,7 +135,7 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 		socket_.send_string("Tag '" + tag_name + "' has been deleted");
 	}
 	else {
-		socket_.send_string("Tag of id: " + query.get_tag_id() + " has been already deleted");
+		socket_.send_string("Tag with id: " + query.get_tag_id() + " has already been deleted");
 	}
 }
 
