@@ -21,7 +21,8 @@ public:
 		insert,
 		select,
 		return_tags_tree,
-		add_tag
+		add_tag,
+		delete_tag
 	};
 
 	bool has_next() const;

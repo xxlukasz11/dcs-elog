@@ -9,6 +9,7 @@
 #include "select_query.h"
 #include "select_tags_query.h"
 #include "add_tag_query.h"
+#include "delete_tag_query.h"
 
 std::mutex Connection_handler::mtx_;
 
@@ -110,14 +111,54 @@ void Connection_handler::handle<Msg_parser::mode::add_tag>() {
 	socket_.send_string("Tag '" + query.get_tag_name() + "' has been added");
 }
 
+template<>
+void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
+	Delete_tag_query query;
+
+	try {
+		int tag_id = stoi(parser_.next());
+		query.set_tag_id(tag_id);
+	}
+	catch (const std::invalid_argument& e) {
+		throw Query_error("Cannot convert tag_id to integer value");
+	}
+
+	Prepared_statement select_stmt = query.create_select_statement();
+	Prepared_statement tree_stmt = query.create_tree_statement();
+	Prepared_statement list_stmt = query.create_list_statement();
+	bool deleted = false;
+	std::string tag_name;
+
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+
+		Database db("../resources/database.db");
+		db.open();
+
+		Result_set res = db.execute(select_stmt);
+		if (res.get_data().size() > 0) {
+			deleted = true;
+			tag_name = res.get_data()[0][0];
+			db.execute(tree_stmt);
+			db.execute(list_stmt);
+		}
+
+	}
+
+	if(deleted)
+		socket_.send_string("Tag '" + tag_name + "' has been deleted");
+}
+
 void Connection_handler::handle() {
+	using M = Msg_parser::mode;
 	auto mode = parser_.get_mode();
 
 	switch (mode) {
-		case Msg_parser::mode::insert :				handle<Msg_parser::mode::insert>();				break;
-		case Msg_parser::mode::select :				handle<Msg_parser::mode::select>();				break;
-		case Msg_parser::mode::return_tags_tree :	handle<Msg_parser::mode::return_tags_tree>();	break;
-		case Msg_parser::mode::add_tag:				handle<Msg_parser::mode::add_tag>();			break;
+		case M::insert :			handle<M::insert>();			break;
+		case M::select :			handle<M::select>();			break;
+		case M::return_tags_tree :	handle<M::return_tags_tree>();	break;
+		case M::add_tag:			handle<M::add_tag>();			break;
+		case M::delete_tag:			handle<M::delete_tag>();		break;
 
 		default: throw Unknown_message_format();
 	}
