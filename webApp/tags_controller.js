@@ -23,7 +23,7 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		});
 	}
 
-	$scope.send_new_tag = function (tag_name_, parent_id_) {
+	$scope.send_add_request = function (tag_name_, parent_id_) {
 		const params_object = {
 			tag_name: tag_name_,
 			parent_id: parent_id_
@@ -42,6 +42,26 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			$scope.load_tags();
 		}, function (response) {
 			$rootScope.event_log.error("Cannot add '" + tag_name + "' tag");
+		});
+	}
+
+	$scope.send_delete_request = function (tag_id_, tag_name_) {
+		const params_object = {
+			tag_id: tag_id_,
+		};
+
+		$http({
+			url: host + "delete_tag.php",
+			method: "GET",
+			params: {
+				date: new Date().getTime(),
+				content: JSON.stringify(params_object)
+			}
+		}).then(function (response) {
+			$rootScope.event_log.success(response.data.message);
+			$scope.load_tags();
+		}, function (response) {
+			$rootScope.event_log.error("Cannot delete '" + tag_name_ + "' tag");
 		});
 	}
 
@@ -71,7 +91,24 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		
 		let parent_id = $scope.tree.get_tag_id(parent_name);
 
-		$scope.send_new_tag(tag_name, parent_id);
+		$scope.send_add_request(tag_name, parent_id);
+	}
+
+	$scope.delete_tag = function () {
+		if ($scope.tree == null) {
+			$rootScope.event_log.error("Tree is not loaded");
+			return;
+		}
+
+		let tag_name = document.getElementById("delete_tag_name_input").value.toLowerCase();
+
+		if (!$scope.tree.has_tag(tag_name)) {
+			$rootScope.event_log.error("Tag '" + tag_name + "' do not exist");
+			return;
+		}
+
+		let tag_id = $scope.tree.get_tag_id(tag_name);
+		$scope.send_delete_request(tag_id, tag_name);
 	}
 	
 });
