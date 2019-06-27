@@ -30,6 +30,9 @@ class Tree {
 	}
 
 	get_tag_id(tag_name) {
+		if (tag_name == "")
+			return "null";
+
 		const found = this.elements.find(el => el.name == tag_name);
 		if (found)
 			return found.id;

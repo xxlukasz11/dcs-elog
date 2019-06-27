@@ -102,8 +102,13 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 
 		let tag_name = document.getElementById("delete_tag_name_input").value.toLowerCase();
 
+		if (tag_name == "") {
+			$rootScope.event_log.error("Empty tag field");
+			return;
+		}
+
 		if (!$scope.tree.has_tag(tag_name)) {
-			$rootScope.event_log.error("Tag '" + tag_name + "' do not exist");
+			$rootScope.event_log.error("Tag '" + tag_name + "' does not exist");
 			return;
 		}
 

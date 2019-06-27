@@ -6,8 +6,12 @@ namespace sql_string {
 	std::string select_tag_name = "SELECT tag FROM Tags_list WHERE id = ?";
 }
 
-void Delete_tag_query::set_tag_id(int tag_id) {
-	tag_id_ = std::to_string(tag_id);
+void Delete_tag_query::set_tag_id(const std::string& tag_id) {
+	tag_id_ = tag_id;
+}
+
+const std::string& Delete_tag_query::get_tag_id() const {
+	return tag_id_;
 }
 
 Prepared_statement Delete_tag_query::create_select_statement() const {

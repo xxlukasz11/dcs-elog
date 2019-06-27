@@ -7,7 +7,7 @@
 class Add_tag_query {
 public:
 	void set_tag_name(const std::string& tag_name);
-	void set_parent_id(int parent_id);
+	void set_parent_id(const std::string& parent_id);
 
 	const std::string& get_tag_name() const;
 
@@ -15,7 +15,7 @@ public:
 	Prepared_statement create_tree_statement(const std::string& last_id) const;
 private:
 	std::string tag_name_;
-	int parent_id_;
+	std::string parent_id_;
 };
 
 #endif

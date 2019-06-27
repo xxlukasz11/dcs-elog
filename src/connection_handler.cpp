@@ -15,6 +15,21 @@ std::mutex Connection_handler::mtx_;
 
 Connection_handler::Connection_handler(Msg_parser& parser, Socket socket) : parser_(parser), socket_(socket) {}
 
+void Connection_handler::handle() {
+	using M = Msg_parser::mode;
+	auto mode = parser_.get_mode();
+
+	switch (mode) {
+		case M::insert:				handle<M::insert>();			break;
+		case M::select:				handle<M::select>();			break;
+		case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
+		case M::add_tag:			handle<M::add_tag>();			break;
+		case M::delete_tag:			handle<M::delete_tag>();		break;
+
+		default: throw Unknown_message_format();
+	}
+}
+
 template<>
 void Connection_handler::handle<Msg_parser::mode::select>() {
 	auto min_date_str = parser_.next();
@@ -88,14 +103,7 @@ template<>
 void Connection_handler::handle<Msg_parser::mode::add_tag>() {
 	Add_tag_query query;
 	query.set_tag_name(parser_.next());
-
-	try {
-		int parent_id = stoi(parser_.next());
-		query.set_parent_id(parent_id);
-	}
-	catch (const std::invalid_argument& e) {
-		throw Query_error("Cannot convert parent_id to integer value");
-	}
+	query.set_parent_id(parser_.next());
 
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
@@ -114,14 +122,7 @@ void Connection_handler::handle<Msg_parser::mode::add_tag>() {
 template<>
 void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	Delete_tag_query query;
-
-	try {
-		int tag_id = stoi(parser_.next());
-		query.set_tag_id(tag_id);
-	}
-	catch (const std::invalid_argument& e) {
-		throw Query_error("Cannot convert tag_id to integer value");
-	}
+	query.set_tag_id(parser_.next());
 
 	Prepared_statement select_stmt = query.create_select_statement();
 	Prepared_statement tree_stmt = query.create_tree_statement();
@@ -145,21 +146,10 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 
 	}
 
-	if(deleted)
+	if (deleted) {
 		socket_.send_string("Tag '" + tag_name + "' has been deleted");
-}
-
-void Connection_handler::handle() {
-	using M = Msg_parser::mode;
-	auto mode = parser_.get_mode();
-
-	switch (mode) {
-		case M::insert :			handle<M::insert>();			break;
-		case M::select :			handle<M::select>();			break;
-		case M::return_tags_tree :	handle<M::return_tags_tree>();	break;
-		case M::add_tag:			handle<M::add_tag>();			break;
-		case M::delete_tag:			handle<M::delete_tag>();		break;
-
-		default: throw Unknown_message_format();
+	}
+	else {
+		socket_.send_string("Tag of id: " + query.get_tag_id() + " has been already deleted");
 	}
 }
