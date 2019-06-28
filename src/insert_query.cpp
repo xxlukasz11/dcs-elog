@@ -29,6 +29,9 @@ void Insert_query::add_tag(std::string tag) {
 
 void Insert_query::set_tags(std::vector<std::string>&& tags){
 	tags_ = std::move(tags);
+	if (tags_.empty()) {
+		tags_.push_back("-");
+	}
 }
 
 void Insert_query::set_author(const std::string& author) {
