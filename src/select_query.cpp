@@ -5,13 +5,15 @@
 #include "prepared_statement.h"
 #include "select_query.h"
 
-namespace sql_string {
-	static const std::string before_tags_where = "SELECT Events.Id, datetime(Events.Date, 'unixepoch') AS Date, Events.Title AS Title, Events.Description AS Description, group_concat(Tags_list.Tag) AS Tags, Events.author AS Author FROM ( SELECT DISTINCT events.id FROM Events JOIN Tags_of_events ON Events.id = Tags_of_events.Event_id JOIN ( WITH RECURSIVE nodes(tag_id) AS ( SELECT Tags_tree.id FROM Tags_tree WHERE Tags_tree.id IN (SELECT id FROM Tags_list";
-	static const std::string after_tags_where = ") UNION ALL SELECT Tags_tree.id FROM Tags_tree JOIN nodes ON Tags_tree.parent_id = nodes.tag_id) SELECT Tags_list.id AS id FROM Tags_list JOIN (SELECT DISTINCT tag_id FROM nodes) tmp_table ON tmp_table.tag_id = Tags_list.id) tags_ids ON Tags_of_events.Tag_id = tags_ids.id) sub JOIN Tags_of_events ON sub.Id = Tags_of_events.Event_id JOIN Tags_list ON Tags_of_events.Tag_id = Tags_list.id JOIN Events ON sub.Id = Events.Id";
-	static const std::string after_date_where = " GROUP BY sub.Id ORDER BY Events.Date DESC;";
-	static const std::string tag_sql = "Tags_list.tag = ?";
-	static const std::string min_date_sql = "Events.Date >= strftime('%s', ?)";
-	static const std::string max_date_sql = "Events.Date <= strftime('%s', ?)";
+namespace {
+	namespace sql {
+		static const std::string before_tags_where = "SELECT Events.Id, datetime(Events.Date, 'unixepoch') AS Date, Events.Title AS Title, Events.Description AS Description, group_concat(Tags_list.Tag) AS Tags, Events.author AS Author FROM ( SELECT DISTINCT events.id FROM Events JOIN Tags_of_events ON Events.id = Tags_of_events.Event_id JOIN ( WITH RECURSIVE nodes(tag_id) AS ( SELECT Tags_tree.id FROM Tags_tree WHERE Tags_tree.id IN (SELECT id FROM Tags_list";
+		static const std::string after_tags_where = ") UNION ALL SELECT Tags_tree.id FROM Tags_tree JOIN nodes ON Tags_tree.parent_id = nodes.tag_id) SELECT Tags_list.id AS id FROM Tags_list JOIN (SELECT DISTINCT tag_id FROM nodes) tmp_table ON tmp_table.tag_id = Tags_list.id) tags_ids ON Tags_of_events.Tag_id = tags_ids.id) sub JOIN Tags_of_events ON sub.Id = Tags_of_events.Event_id JOIN Tags_list ON Tags_of_events.Tag_id = Tags_list.id JOIN Events ON sub.Id = Events.Id";
+		static const std::string after_date_where = " GROUP BY sub.Id ORDER BY Events.Date DESC;";
+		static const std::string tag_sql = "Tags_list.tag = ?";
+		static const std::string min_date_sql = "Events.Date >= strftime('%s', ?)";
+		static const std::string max_date_sql = "Events.Date <= strftime('%s', ?)";
+	}
 }
 
 void Select_query::set_min_date(std::string date){
@@ -38,21 +40,21 @@ Prepared_statement Select_query::create_statement() const {
 	Prepared_statement p_stmt;
 
 	for (const auto& tag : tags_) {
-		or_conds.push_back(sql_string::tag_sql);
+		or_conds.push_back(sql::tag_sql);
 		p_stmt.add_param(tag);
 	}
 
 	if (min_date_is_set_) {
-		and_conds.push_back(sql_string::min_date_sql);
+		and_conds.push_back(sql::min_date_sql);
 		p_stmt.add_param(min_date_);
 	}
 
 	if (max_date_is_set_) {
-		and_conds.push_back(sql_string::max_date_sql);
+		and_conds.push_back(sql::max_date_sql);
 		p_stmt.add_param(max_date_);
 	}
 
-	p_stmt.set_query(sql_string::before_tags_where);
+	p_stmt.set_query(sql::before_tags_where);
 
 	if(!or_conds.empty()) {
 		p_stmt += " WHERE ";
@@ -69,7 +71,7 @@ Prepared_statement Select_query::create_statement() const {
 			p_stmt += ")";
 	}
 
-	p_stmt += sql_string::after_tags_where;
+	p_stmt += sql::after_tags_where;
 
 	if(!and_conds.empty()){
 		p_stmt += " WHERE ";
@@ -85,7 +87,7 @@ Prepared_statement Select_query::create_statement() const {
 			p_stmt += ")";
 	}
 	
-	p_stmt += sql_string::after_date_where;
+	p_stmt += sql::after_date_where;
 
 	return p_stmt;
 }
