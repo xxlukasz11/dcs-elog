@@ -147,7 +147,6 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 		tag_exists = res.get_data().size() > 0;
 
 		if (tag_exists) {
-			tag_exists = true;
 			tag_name = res.get_data()[0][0];
 
 			Result_set res = db.execute(parent_id_null_stmt);

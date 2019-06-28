@@ -31,7 +31,7 @@ public:
 private:
 	std::string get_last_row_id();
 
-	void bind_params(sqlite3_stmt* stmt, Prepared_statement::params_type params);
+	void bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_type& params);
 	void insert_data(sqlite3_stmt* stmt, Result_set& result_set);
 	void set_header(sqlite3_stmt* stmt, Result_set& result_set);
 

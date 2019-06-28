@@ -83,9 +83,13 @@ Result_set Database::execute(const Prepared_statement& statement){
 	return data;
 }
 
-void Database::bind_params(sqlite3_stmt* stmt, Prepared_statement::params_type params){
+void Database::bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_type& params){
 	for(size_t i = 0; i < params.size(); ++i){
-		int err = sqlite3_bind_text(stmt, i+1, params[i].c_str(), -1, SQLITE_TRANSIENT);
+		int err;
+		if (params[i].size() == 0)
+			err = sqlite3_bind_null(stmt, i+1);
+		else
+			err = sqlite3_bind_text(stmt, i+1, params[i].c_str(), -1, SQLITE_TRANSIENT);
 		if(err != SQLITE_OK)
 			throw Database_error("Error executing statement: Cannot bind parameters");
 	}
