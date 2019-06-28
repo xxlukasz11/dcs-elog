@@ -11,7 +11,7 @@
 }
 
 .success_info {
-	color: green;
+	color: black;
 }
 
 .log_time {
@@ -20,8 +20,22 @@
 }
 
 #log_container {
-	margin-top: 5px;
-	padding: 5px;
+	height: 200px;
+	overflow-y: scroll;
+	margin-top: 10px;
+	padding: 0px 5px 5px 5px;
+}
+
+#log_container p{
+	margin: 5px;
+}
+
+.scrollbar_outer{
+	direction: rtl;
+}
+
+.scrollbar_inner{
+	direction: ltr;
 }
 
 .tab {
