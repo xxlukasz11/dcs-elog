@@ -16,9 +16,7 @@ public:
 	void set_tags(std::vector<std::string>&& tags);
 	void set_author(const std::string& author);
 
-	std::string create_events_sql() const;
-	std::string create_tags_sql(const std::string& event_id) const;
-
+	Prepared_statement create_tags_exist_statement() const;
 	Prepared_statement create_events_statement() const;
 	std::vector<Prepared_statement> create_tags_statements(const std::string& event_id) const;
 private:

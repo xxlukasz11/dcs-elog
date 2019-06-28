@@ -55,12 +55,13 @@ void Connection_handler::handle<Msg_parser::mode::insert>() {
 	query.set_author(parser_.next());
 
 	{
+		Prepared_statement events_stmt = query.create_events_statement();
 		std::lock_guard<std::mutex> lock(mtx_);
 
 		Database db("../resources/database.db");
 		db.open();
 
-		Result_set res = db.execute(query.create_events_statement());
+		Result_set res = db.execute(events_stmt);
 		std::string last_id = res.get_last_row_id();
 		db.execute(query.create_tags_statements(last_id));
 	}

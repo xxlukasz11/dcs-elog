@@ -28,46 +28,8 @@ void Insert_query::set_author(const std::string& author) {
 	author_is_set_ = true;
 }
 
-std::string Insert_query::create_events_sql() const {
-	if(!title_is_set_ && !desc_is_set_){
-		throw Query_error("Insert query for Events table is empty");
-	}
-
-	std::string query{ "INSERT INTO Events VALUES(null, strftime('%s'), " };
-
-	if(title_is_set_){
-		query += "'";
-		query += title_;
-		query += "', ";
-	}
-	else
-		query += "null, ";
-
-	if(desc_is_set_){
-		query += "'";
-		query += desc_;
-		query += "'";
-	}
-	else
-		query += "null";
-
-	query += ");";
-	return query;
-}
-
-std::string Insert_query::create_tags_sql(const std::string& event_id) const {
-
-	std::string multi_query;
-	for(const auto& tag : tags_){
-		std::string query{ "INSERT INTO Tags VALUES(" };
-		query += event_id;
-		query += ", '";
-		query += tag;
-		query += "'); ";
-		multi_query += query;
-	}
-
-	return multi_query;
+Prepared_statement Insert_query::create_tags_exist_statement() const {
+	return Prepared_statement();
 }
 
 Prepared_statement Insert_query::create_events_statement() const {
