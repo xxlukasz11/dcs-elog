@@ -128,13 +128,15 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	Delete_tag_query query;
 	query.set_tag_id(parser_.next());
 
-	Prepared_statement select_stmt = query.create_select_statement();
-	Prepared_statement update_tree_stmt = query.create_update_tree_statement();
-	Prepared_statement delete_tree_stmt = query.create_delete_tree_statement();
-	Prepared_statement list_stmt = query.create_list_statement();
-	bool deleted = false;
-	std::string tag_name;
+	Prepared_statement select_stmt = query.select_statement();
+	Prepared_statement parent_id_null_stmt = query.parent_id_statement(Delete_tag_query::ALLOW_NULL);
+	Prepared_statement parent_id_default_stmt = query.parent_id_statement(Delete_tag_query::RETURN_DEFAULT);
+	Prepared_statement delete_redundant_stmt = query.delete_redundant_statement();
+	Prepared_statement delete_tree_stmt = query.delete_tree_statement();
+	Prepared_statement delete_list_stmt = query.delete_list_statement();
 
+	bool tag_exists = false;
+	std::string tag_name;
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
 
@@ -142,22 +144,39 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 		db.open();
 
 		Result_set res = db.execute(select_stmt);
-		if (res.get_data().size() > 0) {
-			deleted = true;
+		tag_exists = res.get_data().size() > 0;
+
+		if (tag_exists) {
+			tag_exists = true;
 			tag_name = res.get_data()[0][0];
+
+			Result_set res = db.execute(parent_id_null_stmt);
+			std::string parent_id = res.get_data()[0][0];
+
+			Result_set res_events = db.execute(parent_id_default_stmt);
+			std::string parent_id_for_events = res_events.get_data()[0][0];
+
+			Prepared_statement delete_events_tag_stmt = query.delete_events_tag_statement(parent_id_for_events);
+			Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
+			Prepared_statement update_tree_stmt = query.update_tree_statement(parent_id);
+
+			db.execute(delete_events_tag_stmt);
+			db.execute(update_events_tag_stmt);
+			db.execute(delete_redundant_stmt);
 			db.execute(update_tree_stmt);
 			db.execute(delete_tree_stmt);
-			db.execute(list_stmt);
+			db.execute(delete_list_stmt);
 		}
 
 	}
 
-	if (deleted) {
+	if (tag_exists) {
 		socket_.send_string("Tag '" + tag_name + "' has been deleted");
 	}
 	else {
 		socket_.send_string("Tag with id: " + query.get_tag_id() + " has already been deleted");
 	}
+	
 }
 
 void Connection_handler::handle() {
@@ -165,12 +184,12 @@ void Connection_handler::handle() {
 	auto mode = parser_.get_mode();
 
 	switch (mode) {
-	case M::insert:				handle<M::insert>();			break;
-	case M::select:				handle<M::select>();			break;
-	case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
-	case M::add_tag:			handle<M::add_tag>();			break;
-	case M::delete_tag:			handle<M::delete_tag>();		break;
+		case M::insert:				handle<M::insert>();			break;
+		case M::select:				handle<M::select>();			break;
+		case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
+		case M::add_tag:			handle<M::add_tag>();			break;
+		case M::delete_tag:			handle<M::delete_tag>();		break;
 
-	default: throw Unknown_message_format();
+		default: throw Unknown_message_format();
 	}
 }
