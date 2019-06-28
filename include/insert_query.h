@@ -16,6 +16,8 @@ public:
 	void set_tags(std::vector<std::string>&& tags);
 	void set_author(const std::string& author);
 
+	const std::vector<std::string>& get_tags() const;
+
 	Prepared_statement create_tags_exist_statement() const;
 	Prepared_statement create_events_statement() const;
 	std::vector<Prepared_statement> create_tags_statements(const std::string& event_id) const;

@@ -5,6 +5,14 @@
 #include "custom_exceptions.h"
 #include "insert_query.h"
 
+namespace {
+	namespace sql {
+		std::string tags_exist_before = "SELECT input.tag FROM (SELECT ? AS tag";
+		std::string tags_exist_after = ") input WHERE input.tag NOT IN (SELECT tag FROM Tags_list);";
+		std::string tags_exist_union = " UNION SELECT ?";
+	}
+}
+
 void Insert_query::set_title(std::string title) {
 	title_ = title;
 	title_is_set_ = true;
@@ -28,8 +36,25 @@ void Insert_query::set_author(const std::string& author) {
 	author_is_set_ = true;
 }
 
+const std::vector<std::string>& Insert_query::get_tags() const {
+	return tags_;
+}
+
 Prepared_statement Insert_query::create_tags_exist_statement() const {
-	return Prepared_statement();
+	size_t n_of_tags = tags_.size();
+	if (n_of_tags == 0)
+		return Prepared_statement();
+
+	Prepared_statement stmt{ sql::tags_exist_before };
+	stmt.add_param(tags_[0]);
+
+	for (size_t i = 1; i < n_of_tags; ++i) {
+		stmt += sql::tags_exist_union;
+		stmt.add_param(tags_[i]);
+	}
+
+	stmt += sql::tags_exist_after;
+	return stmt;
 }
 
 Prepared_statement Insert_query::create_events_statement() const {

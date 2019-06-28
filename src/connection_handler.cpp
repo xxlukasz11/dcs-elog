@@ -15,6 +15,20 @@ std::mutex Connection_handler::mtx_;
 
 Connection_handler::Connection_handler(Msg_parser& parser, Socket socket) : parser_(parser), socket_(socket) {}
 
+namespace {
+	std::string concatenate_string_array(const std::vector<std::string>& array) {
+		std::string text;
+		size_t array_size = array.size();
+		for (size_t i = 0; i < array_size; ++i) {
+			text += array[i];
+			if(i != array_size-1)
+				text += ", ";
+		}
+		return text;
+	}
+
+}
+
 template<>
 void Connection_handler::handle<Msg_parser::mode::select>() {
 	auto min_date_str = parser_.next();
@@ -54,19 +68,36 @@ void Connection_handler::handle<Msg_parser::mode::insert>() {
 	query.set_tags(Msg_parser::extract_tags(parser_.next()));
 	query.set_author(parser_.next());
 
+	bool tags_exist = true;
+	Result_set not_existing_tags;
 	{
 		Prepared_statement events_stmt = query.create_events_statement();
+		Prepared_statement exists_stmt = query.create_tags_exist_statement();
+
 		std::lock_guard<std::mutex> lock(mtx_);
 
 		Database db("../resources/database.db");
 		db.open();
 
-		Result_set res = db.execute(events_stmt);
-		std::string last_id = res.get_last_row_id();
-		db.execute(query.create_tags_statements(last_id));
+		not_existing_tags = db.execute(exists_stmt);
+		if (not_existing_tags.get_data().size() != 0) {
+			tags_exist = false;
+		}
+		else {
+			Result_set res = db.execute(events_stmt);
+			std::string last_id = res.get_last_row_id();
+			db.execute(query.create_tags_statements(last_id));
+		}
 	}
 
-	socket_.send_string("Event has been successfully saved");
+	if (tags_exist) {
+		socket_.send_string("Event has been successfully saved");
+	}
+	else {
+		std::string message = "Cannot save event. Following tags do not exist: ";
+		message += concatenate_string_array(not_existing_tags.get_column(0));
+		socket_.send_string(message);
+	}
 }
 
 template<>
