@@ -5,6 +5,18 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <vector>
+
+std::string utils::concatenate_string_array(const std::vector<std::string>& array) {
+	std::string text;
+	size_t array_size = array.size();
+	for (size_t i = 0; i < array_size; ++i) {
+		text += array[i];
+		if (i != array_size - 1)
+			text += ", ";
+	}
+	return text;
+}
 
 std::string utils::get_date_time_str(){
 	time_t abs_sec = std::time(nullptr);

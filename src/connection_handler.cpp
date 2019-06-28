@@ -4,6 +4,7 @@
 #include "result_set.h"
 #include "custom_exceptions.h"
 #include "json.h"
+#include "utils.h"
 
 #include "insert_query.h"
 #include "select_query.h"
@@ -14,20 +15,6 @@
 std::mutex Connection_handler::mtx_;
 
 Connection_handler::Connection_handler(Msg_parser& parser, Socket socket) : parser_(parser), socket_(socket) {}
-
-namespace {
-	std::string concatenate_string_array(const std::vector<std::string>& array) {
-		std::string text;
-		size_t array_size = array.size();
-		for (size_t i = 0; i < array_size; ++i) {
-			text += array[i];
-			if(i != array_size-1)
-				text += ", ";
-		}
-		return text;
-	}
-
-}
 
 template<>
 void Connection_handler::handle<Msg_parser::mode::select>() {
@@ -95,7 +82,7 @@ void Connection_handler::handle<Msg_parser::mode::insert>() {
 	}
 	else {
 		std::string message = "Cannot save event. Following tags do not exist: ";
-		message += concatenate_string_array(not_existing_tags.get_column(0));
+		message += utils::concatenate_string_array(not_existing_tags.get_column(0));
 		socket_.send_string(message);
 	}
 }
