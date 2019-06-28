@@ -1,14 +1,14 @@
 function get_input_data() {
-	let title_input = document.getElementById('title_input');
-	let description_input = document.getElementById('description_input');
-	let tags_input = document.getElementById('insert_tags_input');
-	let author_input = document.getElementById('author_input');
+	let title_input_value = read_from_input('title_input');
+	let description_input_value = read_from_input('description_input');
+	let tags_input_value = read_from_input('insert_tags_input');
+	let author_input_value = read_from_input('author_input');
 
 	return {
-		title: title_input.value,
-		description: description_input.value,
-		tags: tags_input.value,
-		author: author_input.value
+		title: title_input_value,
+		description: description_input_value,
+		tags: tags_input_value,
+		author: author_input_value
 	};
 }
 

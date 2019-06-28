@@ -1,12 +1,12 @@
 function getParams() {
     let min_date_input = document.getElementById('min_date_input');
     let max_date_input = document.getElementById('max_date_input');
-    let tags_input = document.getElementById('tags_input');
+    let tags_input_value = read_from_input('tags_input');
 
     return {
         min_date: min_date_input.value,
         max_date: max_date_input.value,
-        tags: tags_input.value
+        tags: tags_input_value
     };
 }
 

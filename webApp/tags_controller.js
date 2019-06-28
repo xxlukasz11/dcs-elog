@@ -71,8 +71,8 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
-		let tag_name = document.getElementById("add_tag_name_input").value.toLowerCase();
-		let parent_name = document.getElementById("add_tag_parent_input").value.toLowerCase();
+		let tag_name = read_from_input("add_tag_name_input");
+		let parent_name = read_from_input("add_tag_parent_input");
 		
 		if (tag_name == "") {
 			$rootScope.event_log.error("Empty tag field");
@@ -100,7 +100,7 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
-		let tag_name = document.getElementById("delete_tag_name_input").value.toLowerCase();
+		let tag_name = read_from_input("delete_tag_name_input");
 
 		if (tag_name == "") {
 			$rootScope.event_log.error("Empty tag field");
