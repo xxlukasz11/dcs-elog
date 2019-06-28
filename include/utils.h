@@ -2,6 +2,7 @@
 #define _UTILS_H_
 
 #include <string>
+#include <vector>
 
 namespace utils{
 	std::string get_date_time_str();

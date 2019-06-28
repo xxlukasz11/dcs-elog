@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
-#include <vector>
 
 std::string utils::concatenate_string_array(const std::vector<std::string>& array) {
 	std::string text;

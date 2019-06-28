@@ -129,7 +129,8 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	query.set_tag_id(parser_.next());
 
 	Prepared_statement select_stmt = query.create_select_statement();
-	Prepared_statement tree_stmt = query.create_tree_statement();
+	Prepared_statement update_tree_stmt = query.create_update_tree_statement();
+	Prepared_statement delete_tree_stmt = query.create_delete_tree_statement();
 	Prepared_statement list_stmt = query.create_list_statement();
 	bool deleted = false;
 	std::string tag_name;
@@ -144,7 +145,8 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 		if (res.get_data().size() > 0) {
 			deleted = true;
 			tag_name = res.get_data()[0][0];
-			db.execute(tree_stmt);
+			db.execute(update_tree_stmt);
+			db.execute(delete_tree_stmt);
 			db.execute(list_stmt);
 		}
 
