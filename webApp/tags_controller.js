@@ -156,6 +156,12 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
+		if ($scope.tree.has_tag(new_tag_name)) {
+			$rootScope.event_log.error("Tag '" + new_tag_name + "' already exists");
+			return;
+		}
+
+
 		let old_tag_id = $scope.tree.get_tag_id(old_tag_name);
 		$scope.send_update_request(old_tag_id, new_tag_name);
 	}
