@@ -5,13 +5,14 @@
 #include "custom_exceptions.h"
 #include "json.h"
 #include "utils.h"
+#include "config.h"
 
 #include "insert_query.h"
 #include "select_query.h"
 #include "select_tags_query.h"
 #include "add_tag_query.h"
 #include "delete_tag_query.h"
-#include "config.h"
+#include "update_tag_query.h"
 
 std::mutex Connection_handler::mtx_;
 
@@ -188,6 +189,24 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	
 }
 
+template<>
+void Connection_handler::handle<Msg_parser::mode::update_tag>() {
+	Update_tag_query query;
+	query.set_tag_id(parser_.next());
+	query.set_tag_name(parser_.next());
+
+	Prepared_statement stmt = query.create_update_statement();
+	{
+		std::lock_guard<std::mutex> lock(mtx_);
+		Database db(config::path::database);
+		db.open();
+
+		db.execute(stmt);
+	}
+
+	socket_.send_string("Tag name has been changed");
+}
+
 void Connection_handler::handle() {
 	using M = Msg_parser::mode;
 	auto mode = parser_.get_mode();
@@ -198,6 +217,7 @@ void Connection_handler::handle() {
 		case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
 		case M::add_tag:			handle<M::add_tag>();			break;
 		case M::delete_tag:			handle<M::delete_tag>();		break;
+		case M::update_tag:			handle<M::update_tag>();		break;
 
 		default: throw Unknown_message_format();
 	}
