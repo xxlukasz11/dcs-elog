@@ -46,7 +46,7 @@ void Connection_handler::handle<Msg_parser::mode::select>() {
 		res = db.execute(stmt);
 	}
 
-	socket_.send_string(Json::stringify(std::move(res)));
+	socket_.send_string(json::stringify(std::move(res)));
 }
 
 template<>
@@ -102,7 +102,7 @@ void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
 		res = db.execute(stmt);
 	}
 
-	socket_.send_string(Json::stringify(std::move(res)));
+	socket_.send_string(json::stringify(std::move(res)));
 }
 
 template<>

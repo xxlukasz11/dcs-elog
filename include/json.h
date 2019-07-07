@@ -6,7 +6,7 @@
 
 #include "result_set.h"
 
-namespace Json{
+namespace json{
 	std::string stringify(const Result_set& result_set);
 	std::string stringify(Result_set&& result_set);
 }

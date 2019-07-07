@@ -59,12 +59,12 @@ std::string get_array(const Result_set::header_type& header, const Result_set::d
 	return json_array(std::move(objs));
 }
 
-std::string Json::stringify(const Result_set& result_set){
+std::string json::stringify(const Result_set& result_set){
 	return get_array(result_set.get_header(), result_set.get_data());
 }
 
 
-std::string Json::stringify(Result_set&& result_set){
+std::string json::stringify(Result_set&& result_set){
 	auto& h = const_cast<Result_set::header_type&>( result_set.get_header() );
 	auto& d = const_cast<Result_set::data_type&>( result_set.get_data() );
 	return get_array(h, d);
