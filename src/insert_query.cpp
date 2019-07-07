@@ -11,6 +11,10 @@ namespace {
 		std::string tags_exist_before = "SELECT input.tag FROM (SELECT ? AS tag";
 		std::string tags_exist_after = ") input WHERE input.tag NOT IN (SELECT tag FROM Tags_list);";
 		std::string tags_exist_union = " UNION SELECT ?";
+
+		std::string insert_event = "INSERT INTO Events VALUES(null, strftime('%s'), ?, ?, ?);";
+		std::string insert_tags_before = "INSERT INTO Tags_of_events(Event_id, Tag_id) SELECT ?, Tags_list.id FROM Tags_list WHERE ";
+		std::string insert_tags_condition = "Tags_list.tag = ?";
 	}
 }
 
@@ -66,44 +70,24 @@ Prepared_statement Insert_query::create_events_statement() const {
 		throw Query_error("Insert query for Events table is empty");
 	}
 
-	Prepared_statement p_stmt{ "INSERT INTO Events VALUES(null, strftime('%s'), " };
-	std::vector<std::string> params;
-
-	if(title_is_set_){
-		p_stmt += "?, ";
-		p_stmt.add_param(title_);
-	}
-	else
-		p_stmt += "null, ";
-
-	if(desc_is_set_){
-		p_stmt += "?, ";
-		p_stmt.add_param(desc_);
-	}
-	else
-		p_stmt += "null, ";
-
-	if (author_is_set_) {
-		p_stmt += "?";
-		p_stmt.add_param(author_);
-	}
-	else
-		p_stmt += "null";
-
-	p_stmt += ");";
+	Prepared_statement p_stmt{ sql::insert_event };
+	p_stmt.add_param(title_);
+	p_stmt.add_param(desc_);
+	p_stmt.add_param(author_);
 	return p_stmt;
 }
 
+Prepared_statement Insert_query::create_tags_statement(const std::string& event_id) const {
+	Prepared_statement stmt{ sql::insert_tags_before };
+	stmt.add_param(event_id);
 
-std::vector<Prepared_statement> Insert_query::create_tags_statements(const std::string& event_id) const {
-	std::vector<Prepared_statement> statements;
-
-	for(const auto& tag : tags_){
-		Prepared_statement p_stmt{ "INSERT INTO Tags_of_events(Event_id, Tag_id) SELECT ?, Tags_list.id FROM Tags_list WHERE Tags_list.tag = ?;" };
-		p_stmt.add_param(event_id);
-		p_stmt.add_param(tag);
-		statements.push_back(p_stmt);
+	size_t n_tags = tags_.size();
+	for (size_t i = 0; i < n_tags; ++i) {
+		if (i != 0)
+			stmt += " OR ";
+		stmt += sql::insert_tags_condition;
+		stmt.add_param(tags_[i]);
 	}
 
-	return statements;
+	return stmt;
 }

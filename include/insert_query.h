@@ -20,7 +20,7 @@ public:
 
 	Prepared_statement create_tags_exist_statement() const;
 	Prepared_statement create_events_statement() const;
-	std::vector<Prepared_statement> create_tags_statements(const std::string& event_id) const;
+	Prepared_statement create_tags_statement(const std::string& event_id) const;
 private:
 
 	bool title_is_set_{ false };

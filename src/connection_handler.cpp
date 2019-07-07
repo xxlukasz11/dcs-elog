@@ -74,7 +74,7 @@ void Connection_handler::handle<Msg_parser::mode::insert>() {
 		else {
 			Result_set res = db.execute(events_stmt);
 			std::string last_id = res.get_last_row_id();
-			db.execute(query.create_tags_statements(last_id));
+			db.execute(query.create_tags_statement(last_id));
 		}
 	}
 
