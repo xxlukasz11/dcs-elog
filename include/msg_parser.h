@@ -1,8 +1,6 @@
 /* 
  * valid message structure
  * [mode][size_1 size_2 ... size_n][var 1][var 2]...[var n]
- * mode 0 - insert
- * mode 1 - select
  */
 
 #ifndef _MSG_PARSER_H_

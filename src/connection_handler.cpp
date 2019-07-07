@@ -11,6 +11,7 @@
 #include "select_tags_query.h"
 #include "add_tag_query.h"
 #include "delete_tag_query.h"
+#include "config.h"
 
 std::mutex Connection_handler::mtx_;
 
@@ -38,7 +39,7 @@ void Connection_handler::handle<Msg_parser::mode::select>() {
 	Result_set res;
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
-		Database db("../resources/database.db");
+		Database db(config::path::database);
 		db.open();
 		auto stmt = query.create_statement();
 		res = db.execute(stmt);
@@ -63,7 +64,7 @@ void Connection_handler::handle<Msg_parser::mode::insert>() {
 
 		std::lock_guard<std::mutex> lock(mtx_);
 
-		Database db("../resources/database.db");
+		Database db(config::path::database);
 		db.open();
 
 		not_existing_tags = db.execute(exists_stmt);
@@ -95,7 +96,7 @@ void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
 		auto stmt = query.create_sql();
 
 		std::lock_guard<std::mutex> lock(mtx_);
-		Database db("../resources/database.db");
+		Database db(config::path::database);
 		db.open();
 		res = db.execute(stmt);
 	}
@@ -112,7 +113,7 @@ void Connection_handler::handle<Msg_parser::mode::add_tag>() {
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
 
-		Database db("../resources/database.db");
+		Database db(config::path::database);
 		db.open();
 
 		Result_set res = db.execute(query.create_tag_statement());
@@ -139,8 +140,7 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	std::string tag_name;
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
-
-		Database db("../resources/database.db");
+		Database db(config::path::database);
 		db.open();
 
 		Result_set res = db.execute(select_stmt);

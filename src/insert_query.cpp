@@ -4,6 +4,7 @@
 
 #include "custom_exceptions.h"
 #include "insert_query.h"
+#include "config.h"
 
 namespace {
 	namespace sql {
@@ -30,7 +31,7 @@ void Insert_query::add_tag(std::string tag) {
 void Insert_query::set_tags(std::vector<std::string>&& tags){
 	tags_ = std::move(tags);
 	if (tags_.empty()) {
-		tags_.push_back("-");
+		tags_.push_back(config::symbols::empty_tag);
 	}
 }
 
@@ -101,7 +102,6 @@ std::vector<Prepared_statement> Insert_query::create_tags_statements(const std::
 		Prepared_statement p_stmt{ "INSERT INTO Tags_of_events(Event_id, Tag_id) SELECT ?, Tags_list.id FROM Tags_list WHERE Tags_list.tag = ?;" };
 		p_stmt.add_param(event_id);
 		p_stmt.add_param(tag);
-
 		statements.push_back(p_stmt);
 	}
 

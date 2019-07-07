@@ -4,6 +4,7 @@
 #include "custom_exceptions.h"
 #include "tcp_server.h"
 #include "database.h"
+#include "config.h"
 
 int main(){
 	Tcp_server::set_ip_address( "0.0.0.0" );
@@ -24,7 +25,7 @@ int main(){
 	server.start_server();
 	server.join_threads();
 
-	Database db("../resources/database.db");
+	Database db(config::path::database);
 
 	try{
 		db.open();
