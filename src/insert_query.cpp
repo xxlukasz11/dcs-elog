@@ -88,6 +88,6 @@ Prepared_statement Insert_query::create_tags_statement(const std::string& event_
 		stmt += sql::insert_tags_condition;
 		stmt.add_param(tags_[i]);
 	}
-
+	stmt += ";";
 	return stmt;
 }

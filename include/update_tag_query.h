@@ -8,6 +8,10 @@ class Update_tag_query {
 public:
 	void set_tag_id(const std::string& tag_id);
 	void set_tag_name(const std::string& tags_name);
+
+	const std::string& get_tag_name() const;
+
+	Prepared_statement create_select_tag_statement() const;
 	Prepared_statement create_update_statement() const;
 private:
 	bool tag_id_is_set_{ false };

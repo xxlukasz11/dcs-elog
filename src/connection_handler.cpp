@@ -195,16 +195,34 @@ void Connection_handler::handle<Msg_parser::mode::update_tag>() {
 	query.set_tag_id(parser_.next());
 	query.set_tag_name(parser_.next());
 
-	Prepared_statement stmt = query.create_update_statement();
-	{
+	Prepared_statement select_stmt = query.create_select_tag_statement();
+	Prepared_statement update_stmt = query.create_update_statement();
+
+	auto execute = [&select_stmt, &update_stmt, &query]() -> std::string {
 		std::lock_guard<std::mutex> lock(mtx_);
 		Database db(config::path::database);
 		db.open();
 
-		db.execute(stmt);
-	}
+		Result_set res = db.execute(select_stmt);
+		bool tag_exists = res.get_data().size() > 0;
 
-	socket_.send_string("Tag name has been changed");
+		if (tag_exists) {
+			std::string old_tag_name = res.get_data()[0][0];
+			if (old_tag_name != config::symbols::empty_tag) {
+				db.execute(update_stmt);
+				return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
+			}
+			else {
+				return "Cannot update reserved tag: '" + config::symbols::empty_tag + "'";
+			}
+		}
+		else {
+			return "Cannot update tag. It does not exist.";
+		}
+	};
+
+	std::string status = execute();
+	socket_.send_string(status);
 }
 
 void Connection_handler::handle() {
