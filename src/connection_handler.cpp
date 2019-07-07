@@ -137,6 +137,7 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	Prepared_statement delete_list_stmt = query.delete_list_statement();
 
 	bool tag_exists = false;
+	bool empty_tag_delete_attempt = false;
 	std::string tag_name;
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
@@ -149,6 +150,12 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 		if (tag_exists) {
 			tag_name = res.get_data()[0][0];
 
+			if (tag_name == config::symbols::empty_tag) {
+				empty_tag_delete_attempt = true;
+			}
+		}
+			
+		if(tag_exists && !empty_tag_delete_attempt) {
 			Result_set res = db.execute(parent_id_null_stmt);
 			std::string parent_id = res.get_data()[0][0];
 
@@ -170,7 +177,10 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	}
 
 	if (tag_exists) {
-		socket_.send_string("Tag '" + tag_name + "' has been deleted");
+		if(empty_tag_delete_attempt)
+			socket_.send_string("Tag '" + config::symbols::empty_tag + "' cannot be deleted");
+		else
+			socket_.send_string("Tag '" + tag_name + "' has been deleted");
 	}
 	else {
 		socket_.send_string("Tag with id: " + query.get_tag_id() + " has already been deleted");

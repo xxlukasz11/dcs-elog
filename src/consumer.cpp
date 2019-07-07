@@ -52,18 +52,11 @@ void Consumer::consume(Socket_queue& queue) {
 		catch(Timeout_error& e){
 			utils::err_log(client_socket, e.what());
 		}
-		catch(Client_disconnected_error& e){
-			utils::err_log(client_socket, e.what());
-		}
-		catch(Send_error& e){
-			utils::err_log(client_socket, e.what());
-		}
 		catch(Sockopt_error& e){
 			utils::err_log(client_socket, e.what());
 		}
 		
 		utils::out_log(client_socket, "Connection closed");
-
 		shutdown(client_socket, SHUT_RDWR);
 	}
 }
@@ -82,5 +75,9 @@ void Consumer::process_message(const std::string& message, Socket client_socket)
 		utils::err_log(e.what());
 	} catch(Query_error& e){
 		utils::err_log(e.what());
+	} catch (Client_disconnected_error& e) {
+		utils::err_log(client_socket, e.what());
+	} catch (Send_error& e) {
+		utils::err_log(client_socket, e.what());
 	}
 }
