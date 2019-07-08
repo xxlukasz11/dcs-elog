@@ -11,6 +11,11 @@ function getParams() {
 }
 
 app.controller('select_data', function ($scope, $http, $rootScope, host) {
+
+	$scope.toggle_description = function (event) {
+		event.target.parentElement.parentElement.nextElementSibling.classList.toggle('hidden');
+	}
+
     $scope.send_request = function () {
 
         $http({

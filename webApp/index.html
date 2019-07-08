@@ -58,7 +58,7 @@
 							<td>{{ x.Title }}</td>
 							<td>{{ x.Tags }}</td>
 							<td>{{ x.Author }}</td>
-							<td><input type="button" value="deltails" onclick="this.parentElement.parentElement.nextElementSibling.classList.toggle('hidden')" /></td>
+							<td><input type="button" value="deltails" ng-click="toggle_description($event)" /></td>
 						</tr>
 						<tr class="hidden">
 							<td class="description_row" colspan="6">{{ x.Description | replace_line_breaks }}</td>
