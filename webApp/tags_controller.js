@@ -92,8 +92,8 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
-		let tag_name = read_from_input("add_tag_name_input");
-		let parent_name = read_from_input("add_tag_parent_input");
+		let tag_name = read_lower_from_input("add_tag_name_input");
+		let parent_name = read_lower_from_input("add_tag_parent_input");
 		
 		if (tag_name == "") {
 			$rootScope.event_log.error("Empty tag field");
@@ -121,7 +121,7 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
-		let tag_name = read_from_input("delete_tag_name_input");
+		let tag_name = read_lower_from_input("delete_tag_name_input");
 
 		if (tag_name == "") {
 			$rootScope.event_log.error("Empty tag field");
@@ -143,8 +143,8 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			return;
 		}
 
-		const old_tag_name = read_from_input("update_tag_input_old");
-		const new_tag_name = read_from_input("update_tag_input_new");
+		const old_tag_name = read_lower_from_input("update_tag_input_old");
+		const new_tag_name = read_lower_from_input("update_tag_input_new");
 
 		if (old_tag_name == "" || new_tag_name == "") {
 			$rootScope.event_log.error("Empty tag field");

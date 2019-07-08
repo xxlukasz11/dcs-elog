@@ -7,5 +7,9 @@ function read_error_msg(response) {
 }
 
 function read_from_input(input_id) {
+	return document.getElementById(input_id).value;
+}
+
+function read_lower_from_input(input_id) {
 	return document.getElementById(input_id).value.toLowerCase();
 }
