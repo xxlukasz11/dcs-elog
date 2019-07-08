@@ -47,18 +47,23 @@
 						<th ng-click="order_by_th('Id')">Id</th>
 						<th ng-click="order_by_th('Date')">Date</th>
 						<th ng-click="order_by_th('Title')">Title</th>
-						<th ng-click="order_by_th('Description')">Description</th>
 						<th ng-click="order_by_th('Tags')">Tags</th>
-						<th>Author</th>
+						<th ng-click="order_by_th('Author')">Author</th>
+						<th></th>
 					</tr>
-					<tr ng-repeat="x in table_data | orderBy:active_th:sort_order">
-						<td>{{ x.Id }}</td>
-						<td>{{ x.Date }}</td>
-						<td>{{ x.Title }}</td>
-						<td>{{ x.Description }}</td>
-						<td>{{ x.Tags }}</td>
-						<td>{{ x.Author }}</td>
-					</tr>
+					<tbody ng-repeat="x in table_data | orderBy:active_th:sort_order">
+						<tr class="event_info">
+							<td>{{ x.Id }}</td>
+							<td>{{ x.Date }}</td>
+							<td>{{ x.Title }}</td>
+							<td>{{ x.Tags }}</td>
+							<td>{{ x.Author }}</td>
+							<td><button onclick="this.parentElement.parentElement.nextElementSibling.classList.toggle('hidden')">details</button></td>
+						</tr>
+						<tr class="hidden">
+							<td class="description_row" colspan="6">{{ x.Description | replace_line_breaks }}</td>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 

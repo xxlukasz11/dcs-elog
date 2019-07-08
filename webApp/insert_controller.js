@@ -1,6 +1,6 @@
 function get_input_data() {
 	let title_input_value = read_from_input('title_input');
-	let description_input_value = read_from_input('description_input');
+	let description_input_value = read_from_input('description_input').replace(/\r?\n/g, '<br/>');
 	let tags_input_value = read_from_input('insert_tags_input');
 	let author_input_value = read_from_input('author_input');
 

@@ -12,21 +12,35 @@
 }
 
 #select_tab td, th {
+	min-width: 100px;
+	border: 1px solid black;
+}
+
+.event_info {
 	padding: 5px;
 	margin: 0px;
 	text-align: center;
-	min-width: 100px;
-	border: 1px solid black;
+}
+
+.hidden {
+	display: none;
+}
+
+.description_row {
+	padding: 5px;
+	margin: 0px 5px 0px 10px;
+	text-align: left;
+	white-space: pre-wrap;
 }
 
 #select_tab th {
 	cursor: pointer;
 }
 
-#select_tab table tr:nth-child(odd) {
+#select_tab table tbody:nth-child(odd) {
 	background-color: #9cb6e2;
 }
 
-#select_tab table tr:nth-child(even) {
+#select_tab table tbody:nth-child(even) {
 	background-color: #9bd0ef;
 }
