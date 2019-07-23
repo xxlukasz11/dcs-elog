@@ -60,8 +60,19 @@
 							<td>{{ x.Author }}</td>
 							<td><input type="button" value="deltails" ng-click="toggle_description($event)" /></td>
 						</tr>
-						<tr class="hidden">
-							<td class="description_row" colspan="6">{{ x.Description | replace_line_breaks }}</td>
+						<tr class="description_row hidden">
+							<td class="description_cell" colspan="6">
+								<div class="description_field">{{ x.Description | replace_line_breaks }}</div>
+								<div class="description_control">
+									<div>
+										<button>OK</button>
+										<button>Cancel</button>
+									</div>
+									<div>
+										<button>Edit</button>
+									</div>
+								</div>
+							</td>
 						</tr>
 					</tbody>
 				</table>

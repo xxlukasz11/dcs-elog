@@ -27,20 +27,31 @@
 }
 
 .description_row {
+	background-color: white !important;
+}
+
+.description_cell {
 	padding: 5px;
 	margin: 0px 5px 0px 10px;
+}
+
+.description_field {
 	text-align: left;
 	white-space: pre-wrap;
+}
+
+.description_control button{
+	float: right;
 }
 
 #select_tab th {
 	cursor: pointer;
 }
 
-#select_tab table tbody:nth-child(odd) {
+#select_tab tbody:nth-child(odd) {
 	background-color: #9cb6e2;
 }
 
-#select_tab table tbody:nth-child(even) {
+#select_tab tbody:nth-child(even) {
 	background-color: #9bd0ef;
 }
