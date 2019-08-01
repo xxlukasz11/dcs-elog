@@ -3,6 +3,7 @@
 add_executable(msg_parser_test
 	src/msg_parser_test.cpp
 	../src/msg_parser.cpp
+	../src/variadic_exception.cpp
 )
 target_link_libraries(msg_parser_test gtest pthread)
 
