@@ -8,7 +8,7 @@ enable_testing()
 project (e_log_project)
 include(CTest)
 
-include_directories(include tests/include)
+include_directories(include)
 link_directories(lib)
 
 add_subdirectory(src)
