@@ -6,8 +6,8 @@ dcs-elog/
 tmp/
 
 #SQLite files
-lib/
-include/sqlite3.h
+sqlite/*
+!sqlite/CMakeLists.txt
 
 #Visual Studio files
 Debug/
@@ -17,4 +17,4 @@ Release/
 *.vcxproj.filters
 *.vcxproj.user
 *.sln
-/tests/include/gtest
+/tests/include

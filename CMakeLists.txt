@@ -9,7 +9,19 @@ project (e_log_project)
 include(CTest)
 
 include_directories(include)
-link_directories(lib)
+
+set(SQLITE_LIBRARY sqlite3)
+if(NOT DEFINED NOSQLITE)
+	set(SQLITE_LIBRARY sqlite3-shared)
+	add_subdirectory(sqlite)
+	include_directories(sqlite)
+	link_directories(sqlite/lib)
+endif()
+unset(NOSQLITE CACHE)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+
+if(NOT DEFINED NOTESTS)
+	add_subdirectory(tests)
+endif()
+unset(NOTESTS CACHE)

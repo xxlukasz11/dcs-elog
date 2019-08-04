@@ -7,7 +7,7 @@ add_custom_target(all_tests ALL DEPENDS select_query_test msg_parser_test)
 add_custom_command(TARGET all_tests POST_BUILD COMMAND GTEST_COLOR=1 ${CMAKE_CTEST_COMMAND} --output-on-failure)
 
 # libraries to link for tests
-set(TEST_LINK_LIBRARIES gtest_main e_log_lib sqlite3-shared pthread dl)
+set(TEST_LINK_LIBRARIES gtest_main e_log_lib ${SQLITE_LIBRARY} pthread dl)
 
 # tests:
 
