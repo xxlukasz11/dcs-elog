@@ -51,25 +51,36 @@
 						<th ng-click="order_by_th('Author')">Author</th>
 						<th></th>
 					</tr>
-					<tbody ng-repeat="x in table_data | orderBy:active_th:sort_order">
+					<tbody class="table_body" ng-repeat="x in table_data | orderBy:active_th:sort_order">
 						<tr class="event_info">
-							<td>{{ x.Id }}</td>
-							<td>{{ x.Date }}</td>
-							<td>{{ x.Title }}</td>
-							<td>{{ x.Tags }}</td>
-							<td>{{ x.Author }}</td>
-							<td><input type="button" value="deltails" ng-click="toggle_description($event)" /></td>
+							<td class="event_id">{{ x.Id }}</td>
+							<td class="event_date">{{ x.Date }}</td>
+							<td class="event_title">
+								<span class="display_view">{{ x.Title }}</span>
+								<input type="text" class="edit_view hidden" value="{{ x.Title }}" />
+							</td>
+							<td class="event_tags">
+								<span class="display_view">{{ x.Tags }}</span>
+								<input type="text" class="edit_view hidden" value="{{ x.Tags }}" />
+							</td>
+							<td class="event_author">{{ x.Author }}</td>
+							<td>
+								<input class="details_button" type="button" value="deltails" ng-click="toggle_description($event)" />
+							</td>
 						</tr>
 						<tr class="description_row hidden">
 							<td class="description_cell" colspan="6">
-								<div class="description_field">{{ x.Description | replace_line_breaks }}</div>
-								<div class="description_control">
-									<div>
-										<button>OK</button>
-										<button>Cancel</button>
+								<div class="edit_view hidden">
+									<textarea class="description_input">{{ x.Description | replace_line_breaks }}</textarea>
+									<div class="event_control">
+										<button ng-click="close_edit_view($event, x)">Cancel</button>
+										<button ng-click="update_event($event, x.Id)">OK</button>
 									</div>
-									<div>
-										<button>Edit</button>
+								</div>
+								<div class="display_view">
+									<div class="description_field">{{ x.Description | replace_line_breaks }}</div>
+									<div class="event_control">
+										<button ng-click="show_edit_view($event)">Edit</button>
 									</div>
 								</div>
 							</td>

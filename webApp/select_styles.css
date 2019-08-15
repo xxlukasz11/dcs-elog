@@ -40,7 +40,7 @@
 	white-space: pre-wrap;
 }
 
-.description_control button{
+.event_control button{
 	float: right;
 }
 
@@ -54,4 +54,13 @@
 
 #select_tab tbody:nth-child(even) {
 	background-color: #9bd0ef;
+}
+
+.description_input {
+	width: 100%;
+	height: 100px;
+}
+
+.details_button {
+	width: 90%;
 }
