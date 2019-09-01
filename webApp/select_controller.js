@@ -37,7 +37,7 @@ app.controller('select_data', function ($scope, sender, logger) {
 			id: event_id,
 			title: manager.get_title_from_input(),
 			tags: manager.get_tags_from_input(),
-			description: manager.get_description_from_input()
+			description: manager.get_description_from_input().replace(/\r?\n/g, '<br/>')
 		}
 		logger.get_console().log_message("UPDATE EVENT", parameter_object)
 		manager.display_mode();
@@ -47,7 +47,8 @@ app.controller('select_data', function ($scope, sender, logger) {
 	$scope.send_update_request = function (parameter_object) {
 		sender.send("update_event.php", parameter_object).then(
 		function (response) {
-			logger.get_log().event("Event updated");
+			$scope.send_request();
+			logger.get_log().event(response.data.message);
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
 		});

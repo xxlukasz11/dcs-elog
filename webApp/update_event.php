@@ -13,7 +13,7 @@ if(isset($_GET['content'])){
 	$params = json_decode($_GET['content']);
 	
 	// debug
-	//$params = json_decode('{"id":60,"title":"title","description":"d","tags":"a,b,c"}');
+	//$params = json_decode('{"id":57,"title":"title","description":"d","tags":"a,b,c"}');
 	
 	$str = prepare_message($params);
 	$response = send_data($str);
@@ -35,7 +35,7 @@ function prepare_message($params){
 	$tags = $params->tags;
 	$tags_len = strlen($tags);
 	
-	$str = "[6][$id_len $title_len $description_len $tags_len $author_len][$id][$title][$description][$tags]";
+	$str = "[6][$id_len $title_len $description_len $tags_len][$id][$title][$description][$tags]";
 	return $str;
 }
 

@@ -13,6 +13,7 @@
 #include "add_tag_query.h"
 #include "delete_tag_query.h"
 #include "update_tag_query.h"
+#include "update_event_query.h"
 
 std::mutex Connection_handler::mtx_;
 
@@ -225,6 +226,61 @@ void Connection_handler::handle<Msg_parser::mode::update_tag>() {
 	socket_.send_string(status);
 }
 
+template<>
+void Connection_handler::handle<Msg_parser::mode::update_event>() {
+	auto id = parser_.next();
+	auto title = parser_.next();
+	auto description = parser_.next();
+	auto tags = parser_.next();
+
+	Insert_query insert_query;
+	insert_query.set_tags(Msg_parser::extract_tags(tags));
+
+	Update_event_query update_query;
+	update_query.set_id(id);
+	update_query.set_title(title);
+	update_query.set_tags(Msg_parser::extract_tags(tags));
+	update_query.set_description(description);
+
+	Prepared_statement event_exists_stmt = update_query.create_event_exists_stmt();
+	Prepared_statement tags_exists_stmt = insert_query.create_tags_exist_statement();
+	Prepared_statement update_event_stmt = update_query.create_update_event_stmt();
+	Prepared_statement delete_event_tags_stmt = update_query.create_delete_event_tags_statement();
+	Prepared_statement insert_event_tags_stmt = insert_query.create_tags_statement(id);
+
+	auto execute = [&]() -> std::string {
+		std::lock_guard<std::mutex> lock(mtx_);
+		Database db(config::path::database);
+		db.open();
+
+		auto event_exists_result = db.execute(event_exists_stmt);
+		if (event_exists_result.get_data().size() == 0) {
+			return "Cannot update event with id: " + id + ". It does not exist";
+		}
+
+		auto not_existing_tags = db.execute(tags_exists_stmt);
+		if (not_existing_tags.get_data().size() != 0) {
+			std::string message = "Cannot update event. Following tags do not exist: ";
+			message += utils::concatenate_string_array(not_existing_tags.get_column(0));
+			return message;
+		}
+
+		db.execute(update_event_stmt);
+		db.execute(delete_event_tags_stmt);
+
+		if (update_query.has_any_tags()) {
+			db.execute(insert_event_tags_stmt);
+		}
+
+		std::string event_string = "Event ";
+		return event_string + id + " has been successfully updated";
+	};
+
+	std::string status = execute();
+	utils::out_log(socket_, status);
+	socket_.send_string(status);
+}
+
 void Connection_handler::handle() {
 	using M = Msg_parser::mode;
 	auto mode = parser_.get_mode();
@@ -236,6 +292,7 @@ void Connection_handler::handle() {
 		case M::add_tag:			handle<M::add_tag>();			break;
 		case M::delete_tag:			handle<M::delete_tag>();		break;
 		case M::update_tag:			handle<M::update_tag>();		break;
+		case M::update_event:		handle<M::update_event>();		break;
 
 		default: throw Unknown_message_format();
 	}

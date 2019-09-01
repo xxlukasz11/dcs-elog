@@ -21,7 +21,8 @@ public:
 		return_tags_tree,
 		add_tag,
 		delete_tag,
-		update_tag
+		update_tag,
+		update_event
 	};
 
 	bool has_next() const;
