@@ -25,7 +25,7 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 
 		sender.send("add_tag.php", params_object).then(
 		function (response) {
-			logger.get_log().success(response.data.message);
+			logger.get_log().event(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
 			logger.get_log().error("Cannot add '" + tag_name + "' tag");
@@ -39,7 +39,7 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 
 		sender.send("delete_tag.php", params_object).then(
 		function (response) {
-			logger.get_log().success(response.data.message);
+			logger.get_log().event(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
 			logger.get_log().error("Cannot delete '" + tag_name_ + "' tag");
@@ -54,7 +54,7 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 
 		sender.send("update_tag.php", params_object).then(
 		function (response) {
-			logger.get_log().success(response.data.message);
+			logger.get_log().event(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
 			logger.get_log().error("Cannot update '" + tag_name_ + "' tag");

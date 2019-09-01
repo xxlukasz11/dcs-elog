@@ -1,6 +1,6 @@
 function get_input_data() {
 	let title_input_value = read_from_input('title_input');
-	let description_input_value = read_from_input('description_input').replace(/\r?\n/g, '<br/>');
+	let description_input_value = convert_description_to_send(read_from_input('description_input'))
 	let tags_input_value = read_lower_from_input('insert_tags_input');
 	let author_input_value = read_from_input('author_input');
 
@@ -18,7 +18,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 
 		sender.send("insert.php", get_input_data()).then(
 		function (response) {
-			logger.get_log().success( response.data.message );
+			logger.get_log().event( response.data.message );
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
 		});

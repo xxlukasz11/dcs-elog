@@ -6,6 +6,10 @@ function read_error_msg(response) {
 		return "Connection failed: Server may be unavialiable.";
 }
 
+function convert_description_to_send(description) {
+	return description.replace(/\r?\n/g, '<br/>');
+}
+
 function read_from_input(input_id) {
 	return document.getElementById(input_id).value;
 }
