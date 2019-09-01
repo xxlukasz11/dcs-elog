@@ -10,7 +10,7 @@ function getParams() {
     };
 }
 
-app.controller('select_data', function ($scope, $http, $rootScope, host) {
+app.controller('select_data', function ($scope, sender, logger) {
 
 	$scope.toggle_hidden = function (element) {
 		element.classList.toggle('hidden');
@@ -33,27 +33,33 @@ app.controller('select_data', function ($scope, $http, $rootScope, host) {
 
 	$scope.update_event = function(event, event_id) {
 		const manager = new Update_event_manager(event.target);
-		console.log("=== EVENT UPDATE ===");
-		console.log("Event id: " + event_id);
-		console.log("New title: " + manager.get_title_from_input());
-		console.log("New tags: " + manager.get_tags_from_input());
-		console.log("New description: " + manager.get_description_from_input());
+		const parameter_object = {
+			id: event_id,
+			title: manager.get_title_from_input(),
+			tags: manager.get_tags_from_input(),
+			description: manager.get_description_from_input()
+		}
+		logger.get_console().log_message("UPDATE EVENT", parameter_object)
+		manager.display_mode();
+		//$scope.send_update_request(parameter_object);
+	}
+
+	$scope.send_update_request = function (parameter_object) {
+		sender.send("update_event.php", parameter_object).then(
+		function (response) {
+			logger.get_log().event("Event updated");
+		}, function (response) {
+			logger.get_log().error(read_error_msg(response));
+		});
 	}
 
     $scope.send_request = function () {
-
-        $http({
-            url: host + "select.php",
-            method: "GET",
-            params: {
-                date: new Date().getTime(),
-                content: JSON.stringify(getParams())
-            }
-        }).then(function (response) {
+    	sender.send("select.php", getParams()).then(
+		function (response) {
         	$scope.table_data = response.data;
-        	$rootScope.event_log.success("Events loaded");
+        	logger.get_log().event("Events loaded");
         }, function (response) {
-        	$rootScope.event_log.error( read_error_msg(response) );
+        	logger.get_log().error(read_error_msg(response));
         });
     }
 

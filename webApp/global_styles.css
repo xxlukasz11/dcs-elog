@@ -6,11 +6,15 @@
 	margin-top: 10px;
 }
 
-.error_info {
+.error_log_record {
 	color: red;
 }
 
-.success_info {
+.success_log_record {
+	color: green;
+}
+
+.event_log_record {
 	color: black;
 }
 

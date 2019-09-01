@@ -1,4 +1,4 @@
-class Event {
+class Abstract_event {
 	constructor(type, message) {
 		this.type = type;
 		this.message = message;
@@ -6,15 +6,21 @@ class Event {
 	}
 }
 
-class Error_event extends Event {
+class Error_event extends Abstract_event {
 	constructor(message) {
 		super("error", message);
 	}
 }
 
-class Success_event extends Event {
+class Success_event extends Abstract_event {
 	constructor(message) {
 		super("success", message);
+	}
+}
+
+class Event extends Abstract_event {
+	constructor(message) {
+		super("event", message);
 	}
 }
 
@@ -29,5 +35,21 @@ class Event_log {
 
 	success(message) {
 		this.events.unshift(new Success_event(message));
+	}
+
+	event(message) {
+		this.events.unshift(new Event(message));
+	}
+}
+
+class Console_logger {
+
+	log_message(message_name, parameter_object) {
+		console.log("=== " + message_name + " ===");
+		this.log_object(parameter_object);
+	}
+
+	log_object(object) {
+		console.log(object);
 	}
 }

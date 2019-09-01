@@ -166,7 +166,7 @@
 
 			<div id="log_container" class="scrollbar_outer">
 				<div class="scrollbar_inner">
-					<p ng-repeat="event in event_log.events" class="{{ event.type }}_info">
+					<p ng-repeat="event in event_log.events" class="{{ event.type }}_log_record">
 						<span class="log_time">{{ event.time }}</span>
 						<span>{{ event.message }}</span>
 					</p>

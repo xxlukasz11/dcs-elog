@@ -13,21 +13,14 @@ function get_input_data() {
 }
 
 
-app.controller('insert_data', function ($scope, $http, $rootScope, host) {
+app.controller('insert_data', function ($scope, sender, logger) {
 	$scope.send_insert_request = function () {
 
-		$http({
-			url: host + "insert.php",
-
-			method: "GET",
-			params: {
-				date: new Date().getTime(),
-				content: JSON.stringify(get_input_data())
-			}
-		}).then(function (response) {
-			$rootScope.event_log.success( response.data.message );
+		sender.send("insert.php", get_input_data()).then(
+		function (response) {
+			logger.get_log().success( response.data.message );
 		}, function (response) {
-			$rootScope.event_log.error( read_error_msg(response) );
+			logger.get_log().error(read_error_msg(response));
 		});
 	}
 });

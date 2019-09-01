@@ -1,25 +1,19 @@
 
-app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
+app.controller('edit_tags', function ($scope, sender, logger) {
 	$scope.tree = null;
 
 	$scope.load_tags = function () {
 		
-		$http({
-			url: host + "edit_tags.php",
-
-			method: "GET",
-			params: {
-				date: new Date().getTime(),
-				content: "tags"
-			}
-		}).then(function (response) {
+		sender.send("load_tags.php", {}).then(
+		function (response) {
 			$scope.tree = from_table_to_tree(response.data);
 			let container = document.getElementById('tags_tree_container');
 			$scope.tree.set_container(container);
 			$scope.tree.display();
+			logger.get_log().event("Tags have been loaded");
 
 		}, function (response) {
-			$rootScope.event_log.error( read_error_msg(response) );
+			logger.get_log().error(read_error_msg(response));
 		});
 	}
 
@@ -29,19 +23,12 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			parent_id: parent_id_
 		};
 
-		$http({
-			url: host + "add_tag.php",
-
-			method: "GET",
-			params: {
-				date: new Date().getTime(),
-				content: JSON.stringify(params_object)
-			}
-		}).then(function (response) {
-			$rootScope.event_log.success(response.data.message);
+		sender.send("add_tag.php", params_object).then(
+		function (response) {
+			logger.get_log().success(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
-			$rootScope.event_log.error("Cannot add '" + tag_name + "' tag");
+			logger.get_log().error("Cannot add '" + tag_name + "' tag");
 		});
 	}
 
@@ -50,18 +37,12 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			tag_id: tag_id_,
 		};
 
-		$http({
-			url: host + "delete_tag.php",
-			method: "GET",
-			params: {
-				date: new Date().getTime(),
-				content: JSON.stringify(params_object)
-			}
-		}).then(function (response) {
-			$rootScope.event_log.success(response.data.message);
+		sender.send("delete_tag.php", params_object).then(
+		function (response) {
+			logger.get_log().success(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
-			$rootScope.event_log.error("Cannot delete '" + tag_name_ + "' tag");
+			logger.get_log().error("Cannot delete '" + tag_name_ + "' tag");
 		});
 	}
 
@@ -71,24 +52,18 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 			tag_name: tag_name_
 		};
 
-		$http({
-			url: host + "update_tag.php",
-			method: "GET",
-			params: {
-				date: new Date().getTime(),
-				content: JSON.stringify(params_object)
-			}
-		}).then(function (response) {
-			$rootScope.event_log.success(response.data.message);
+		sender.send("update_tag.php", params_object).then(
+		function (response) {
+			logger.get_log().success(response.data.message);
 			$scope.load_tags();
 		}, function (response) {
-			$rootScope.event_log.error("Cannot update '" + tag_name_ + "' tag");
+			logger.get_log().error("Cannot update '" + tag_name_ + "' tag");
 		});
 	}
 
 	$scope.add_tag = function () {
 		if ($scope.tree == null) {
-			$rootScope.event_log.error("Tree is not loaded");
+			logger.get_log().error("Tree is not loaded");
 			return;
 		}
 
@@ -96,17 +71,17 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		let parent_name = read_lower_from_input("add_tag_parent_input");
 		
 		if (tag_name == "") {
-			$rootScope.event_log.error("Empty tag field");
+			logger.get_log().error("Empty tag field");
 			return;
 		}
 
 		if ($scope.tree.has_tag(tag_name)) {
-			$rootScope.event_log.error("Tag '" + tag_name + "' already exists");
+			logger.get_log().error("Tag '" + tag_name + "' already exists");
 			return;
 		}
 		
 		if (parent_name != "" && !$scope.tree.has_tag(parent_name)) {
-			$rootScope.event_log.error("There is no such tag as '" + parent_name + "'");
+			logger.get_log().error("There is no such tag as '" + parent_name + "'");
 			return;
 		}
 		
@@ -117,19 +92,19 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 
 	$scope.delete_tag = function () {
 		if ($scope.tree == null) {
-			$rootScope.event_log.error("Tree is not loaded");
+			logger.get_log().error("Tree is not loaded");
 			return;
 		}
 
 		let tag_name = read_lower_from_input("delete_tag_name_input");
 
 		if (tag_name == "") {
-			$rootScope.event_log.error("Empty tag field");
+			logger.get_log().error("Empty tag field");
 			return;
 		}
 
 		if (!$scope.tree.has_tag(tag_name)) {
-			$rootScope.event_log.error("Tag '" + tag_name + "' does not exist");
+			logger.get_log().error("Tag '" + tag_name + "' does not exist");
 			return;
 		}
 
@@ -139,7 +114,7 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 
 	$scope.update_tag = function () {
 		if ($scope.tree == null) {
-			$rootScope.event_log.error("Tree is not loaded");
+			logger.get_log().error("Tree is not loaded");
 			return;
 		}
 
@@ -147,20 +122,19 @@ app.controller('edit_tags', function ($scope, $http, $rootScope, host) {
 		const new_tag_name = read_lower_from_input("update_tag_input_new");
 
 		if (old_tag_name == "" || new_tag_name == "") {
-			$rootScope.event_log.error("Empty tag field");
+			logger.get_log().error("Empty tag field");
 			return;
 		}
 
 		if (!$scope.tree.has_tag(old_tag_name)) {
-			$rootScope.event_log.error("Tag '" + old_tag_name + "' does not exist");
+			logger.get_log().error("Tag '" + old_tag_name + "' does not exist");
 			return;
 		}
 
 		if ($scope.tree.has_tag(new_tag_name)) {
-			$rootScope.event_log.error("Tag '" + new_tag_name + "' already exists");
+			logger.get_log().error("Tag '" + new_tag_name + "' already exists");
 			return;
 		}
-
 
 		let old_tag_id = $scope.tree.get_tag_id(old_tag_name);
 		$scope.send_update_request(old_tag_id, new_tag_name);
