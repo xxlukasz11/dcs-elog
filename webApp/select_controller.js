@@ -41,7 +41,7 @@ app.controller('select_data', function ($scope, sender, logger) {
 		}
 		logger.get_console().log_message("UPDATE EVENT", parameter_object)
 		manager.display_mode();
-		//$scope.send_update_request(parameter_object);
+		$scope.send_update_request(parameter_object);
 	}
 
 	$scope.send_update_request = function (parameter_object) {
