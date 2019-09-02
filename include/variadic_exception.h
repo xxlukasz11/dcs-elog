@@ -1,17 +1,16 @@
 #ifndef _VARIADIC_EXCEPTION_H_
 #define _VARIADIC_EXCEPTION_H_
 
-#include <exception>
+#include "base_exception.h"
 #include <string>
 #include <sstream>
 #include <utility>
 
-class Variadic_exception : public std::exception {
+class Variadic_exception : public Base_exception {
 public:
 	template<typename... T>
 	Variadic_exception(T&&... args);
-
-	const char* what() const noexcept override;
+	virtual const std::string& what() const noexcept override;
 
 private:
 	std::string message_;
