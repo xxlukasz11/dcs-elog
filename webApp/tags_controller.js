@@ -86,7 +86,6 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 		}
 		
 		let parent_id = $scope.tree.get_tag_id(parent_name);
-
 		$scope.send_add_request(tag_name, parent_id);
 	}
 

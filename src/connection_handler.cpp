@@ -20,7 +20,7 @@ std::mutex Connection_handler::mtx_;
 Connection_handler::Connection_handler(Msg_parser& parser, Socket socket) : parser_(parser), socket_(socket) {}
 
 template<>
-void Connection_handler::handle<Msg_parser::mode::select>() {
+void Connection_handler::handle<Msg_parser::mode::return_events>() {
 	auto min_date_str = parser_.next();
 	auto max_date_str = parser_.next();
 	auto tags_str = parser_.next();
@@ -51,7 +51,7 @@ void Connection_handler::handle<Msg_parser::mode::select>() {
 }
 
 template<>
-void Connection_handler::handle<Msg_parser::mode::insert>() {
+void Connection_handler::handle<Msg_parser::mode::add_event>() {
 	Insert_query query;
 	query.set_title(parser_.next());
 	query.set_desc(parser_.next());
@@ -286,8 +286,8 @@ void Connection_handler::handle() {
 	auto mode = parser_.get_mode();
 
 	switch (mode) {
-		case M::insert:				handle<M::insert>();			break;
-		case M::select:				handle<M::select>();			break;
+		case M::add_event:				handle<M::add_event>();			break;
+		case M::return_events:		handle<M::return_events>();		break;
 		case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
 		case M::add_tag:			handle<M::add_tag>();			break;
 		case M::delete_tag:			handle<M::delete_tag>();		break;

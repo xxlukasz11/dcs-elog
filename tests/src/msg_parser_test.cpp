@@ -5,13 +5,13 @@ TEST(msg_parser, select_mode)
 {
 	Msg_parser parser("[1]");
 	Msg_parser::mode mode = parser.get_mode();
-	EXPECT_EQ(mode, Msg_parser::mode::select);	
+	EXPECT_EQ(mode, Msg_parser::mode::return_events);	
 }
 
 TEST(msg_parser, insert_mode) {
 	Msg_parser parser("[0]");
 	Msg_parser::mode mode = parser.get_mode();
-	EXPECT_EQ(mode, Msg_parser::mode::insert);
+	EXPECT_EQ(mode, Msg_parser::mode::add_event);
 }
 
 TEST(msg_parser, return_tags_tree_mode) {

@@ -8,6 +8,9 @@ app.filter('replace_line_breaks', function () {
 	};
 });
 
+// remote server
+//app.value("host", "http://lukboz.000webhostapp.com/");
+// localhost
 app.value("host", "");
 
 app.service('sender', function ($http, host) {
@@ -35,8 +38,3 @@ app.service('logger', function () {
 		return this.log;
 	}
 });
-
-// remote server
-//app.value("host", "http://lukboz.000webhostapp.com/");
-// localhost
-

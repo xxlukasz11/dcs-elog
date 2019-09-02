@@ -16,8 +16,8 @@ public:
 	Msg_parser(const std::string& msg);
 
 	enum class mode{
-		insert,
-		select,
+		add_event,
+		return_events,
 		return_tags_tree,
 		add_tag,
 		delete_tag,
