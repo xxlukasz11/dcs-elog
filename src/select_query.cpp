@@ -26,7 +26,7 @@ void Select_query::set_max_date(std::string date){
 	max_date_is_set_ = true;
 }
 
-void Select_query::add_tag(std::string tag){
+void Select_query::create_tag(std::string tag){
 	tags_.push_back(tag);
 }
 

@@ -1,10 +1,14 @@
 #include "utils.h"
 
 #include <string>
+#include <vector>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+#include <utility>
+#include <memory>
 
 std::string utils::concatenate_string_array(const std::vector<std::string>& array) {
 	std::string text;
@@ -15,6 +19,15 @@ std::string utils::concatenate_string_array(const std::vector<std::string>& arra
 			text += ", ";
 	}
 	return text;
+}
+
+std::vector<std::string> utils::string_to_vector(std::string string) {
+	std::replace(string.begin(), string.end(), ',', ' ');
+	std::istringstream ss(std::move(string));
+	std::vector<std::string> vector;
+	for (std::string buffer; ss >> buffer;)
+		vector.push_back(std::move(buffer));
+	return vector;
 }
 
 std::string utils::get_date_time_str(){
@@ -45,4 +58,10 @@ void utils::out_log(int sockfd, std::string message){
 void utils::err_log(int sockfd, std::string message){
 	std::string date = utils::get_date_time_str();
 	std::cerr << date << "\t" << sockfd << ": " << message << std::endl;
+}
+
+void utils::log_recieved_message(const std::shared_ptr<Message>& message) {
+	std::string log_message = "Recieved ";
+	log_message += message->name();
+	utils::out_log(log_message);
 }

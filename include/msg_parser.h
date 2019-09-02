@@ -15,26 +15,14 @@ class Msg_parser {
 public:
 	Msg_parser(const std::string& msg);
 
-	enum class mode{
-		add_event,
-		return_events,
-		return_tags_tree,
-		add_tag,
-		delete_tag,
-		update_tag,
-		update_event
-	};
-
 	bool has_next() const;
 	std::string next();
-	mode get_mode() const;
-
-	static std::vector<std::string> extract_tags(std::string tags_chunk);
+	int get_mode() const;
 
 private:
 	std::string raw_next();
 
-	mode mode_;
+	int mode_;
 	int chunks_;
 	int current_chunk_;
 	std::vector<int> chunks_sizes_;
@@ -43,7 +31,7 @@ private:
 	std::string msg_;
 };
 
-class Mag_parser_exception : public Variadic_exception {
+class Msg_parser_exception : public Variadic_exception {
 	using Variadic_exception::Variadic_exception;
 };
 

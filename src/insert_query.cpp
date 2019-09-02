@@ -28,7 +28,7 @@ void Insert_query::set_desc(std::string desc) {
 	desc_is_set_ = true;
 }
 
-void Insert_query::add_tag(std::string tag) {
+void Insert_query::create_tag(std::string tag) {
 	tags_.push_back(tag);
 }
 

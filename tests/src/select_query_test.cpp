@@ -5,8 +5,8 @@
 
 TEST(select_query, print_sql_string) {
 	Select_query query;
-	query.add_tag("a");
-	query.add_tag("b");
+	query.create_tag("a");
+	query.create_tag("b");
 	query.set_min_date("2019-06-01");
 	query.set_max_date("2019-06-16");
 	

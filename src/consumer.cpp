@@ -8,8 +8,9 @@
 #include "custom_exceptions.h"
 #include "raii_thread.h"
 #include "utils.h"
-#include "msg_parser.h"
 #include "connection_handler.h"
+#include "message_factory.h"
+#include "message.h"
 
 #include "consumer.h"
 
@@ -61,15 +62,18 @@ void Consumer::consume(Socket_queue& queue) {
 	}
 }
 
-void Consumer::process_message(const std::string& message, Socket client_socket){
-	Msg_parser parser(message);
+void Consumer::process_message(const std::string& message_string, Socket client_socket){
 	try{
-		Connection_handler handler(parser, client_socket);
-		handler.handle();
+		Message_factory factory(message_string);
+		auto internal_message = factory.create();
+		Connection_handler handler(client_socket);
+		handler.handle(internal_message);
 
 	} catch(Unknown_message_format& e){
 		utils::err_log(e.what());
-	} catch (Mag_parser_exception& e) {
+	} catch (Unknown_message& e) {
+		utils::err_log(e.what());
+	} catch (Msg_parser_exception& e) {
 		utils::err_log(e.what());
 	} catch(Database_error& e){
 		utils::err_log(e.what());

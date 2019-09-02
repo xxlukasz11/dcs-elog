@@ -12,7 +12,7 @@ public:
 
 	void set_title(std::string title);
 	void set_desc(std::string desc);
-	void add_tag(std::string tag);
+	void create_tag(std::string tag);
 	void set_tags(std::vector<std::string>&& tags);
 	void set_author(const std::string& author);
 

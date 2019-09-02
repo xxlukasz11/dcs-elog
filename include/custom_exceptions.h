@@ -19,6 +19,10 @@ class Query_error : public Variadic_exception {
 	using Variadic_exception::Variadic_exception;
 };
 
+class Unknown_message : public Variadic_exception {
+	using Variadic_exception::Variadic_exception;
+};
+
 class Unknown_message_format : public std::exception {
 public:
 	const char* what() const noexcept override;

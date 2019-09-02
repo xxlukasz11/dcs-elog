@@ -11,7 +11,7 @@ TEST(msg_parser, select_mode)
 TEST(msg_parser, insert_mode) {
 	Msg_parser parser("[0]");
 	Msg_parser::mode mode = parser.get_mode();
-	EXPECT_EQ(mode, Msg_parser::mode::add_event);
+	EXPECT_EQ(mode, Msg_parser::mode::create_event);
 }
 
 TEST(msg_parser, return_tags_tree_mode) {
@@ -23,7 +23,7 @@ TEST(msg_parser, return_tags_tree_mode) {
 TEST(msg_parser, add_tag_mode) {
 	Msg_parser parser("[3]");
 	Msg_parser::mode mode = parser.get_mode();
-	EXPECT_EQ(mode, Msg_parser::mode::add_tag);
+	EXPECT_EQ(mode, Msg_parser::mode::create_tag);
 }
 
 TEST(msg_parser, delete_tag_mode) {

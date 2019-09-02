@@ -9,7 +9,7 @@ class Select_query{
 public:
 	void set_min_date(std::string date);
 	void set_max_date(std::string date);
-	void add_tag(std::string tag);
+	void create_tag(std::string tag);
 	void set_tags(std::vector<std::string>&& tags);
 
 	Prepared_statement create_statement() const;

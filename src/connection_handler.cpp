@@ -1,5 +1,3 @@
-#include "connection_handler.h"
-
 #include "database.h"
 #include "result_set.h"
 #include "custom_exceptions.h"
@@ -15,15 +13,16 @@
 #include "update_tag_query.h"
 #include "update_event_query.h"
 
+#include "connection_handler.h"
+
 std::mutex Connection_handler::mtx_;
 
-Connection_handler::Connection_handler(Msg_parser& parser, Socket socket) : parser_(parser), socket_(socket) {}
+Connection_handler::Connection_handler(Socket socket) : socket_(socket) {}
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::return_events>() {
-	auto min_date_str = parser_.next();
-	auto max_date_str = parser_.next();
-	auto tags_str = parser_.next();
+void Connection_handler::handle_message(const Return_events_request& message) {
+	auto min_date_str = message.get_min_date();
+	auto max_date_str = message.get_max_date();
+	auto tags_str = message.get_tags();
 
 	Select_query query;
 	if (!min_date_str.empty()) {
@@ -33,7 +32,7 @@ void Connection_handler::handle<Msg_parser::mode::return_events>() {
 		query.set_max_date(max_date_str);
 	}
 
-	auto extracted_tags = Msg_parser::extract_tags(tags_str);
+	auto extracted_tags = utils::string_to_vector(tags_str);
 	if (!extracted_tags.empty()) {
 		query.set_tags(std::move(extracted_tags));
 	}
@@ -50,13 +49,12 @@ void Connection_handler::handle<Msg_parser::mode::return_events>() {
 	socket_.send_string(json::stringify(std::move(res)));
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::add_event>() {
+void Connection_handler::handle_message(const Create_event_request& message) {
 	Insert_query query;
-	query.set_title(parser_.next());
-	query.set_desc(parser_.next());
-	query.set_tags(Msg_parser::extract_tags(parser_.next()));
-	query.set_author(parser_.next());
+	query.set_title(message.get_title());
+	query.set_desc(message.get_description());
+	query.set_tags(utils::string_to_vector(message.get_tags()));
+	query.set_author(message.get_author());
 
 	bool tags_exist = true;
 	Result_set not_existing_tags;
@@ -90,8 +88,7 @@ void Connection_handler::handle<Msg_parser::mode::add_event>() {
 	}
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
+void Connection_handler::handle_message(const Return_tags_tree_request& message) {
 	Result_set res;
 	{
 		Select_tags_query query;
@@ -106,11 +103,10 @@ void Connection_handler::handle<Msg_parser::mode::return_tags_tree>() {
 	socket_.send_string(json::stringify(std::move(res)));
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::add_tag>() {
+void Connection_handler::handle_message(const Create_tag_request& message) {
 	Add_tag_query query;
-	query.set_tag_name(parser_.next());
-	query.set_parent_id(parser_.next());
+	query.set_tag_name(message.get_tag_name());
+	query.set_parent_id(message.get_parent_id());
 
 	{
 		std::lock_guard<std::mutex> lock(mtx_);
@@ -123,13 +119,12 @@ void Connection_handler::handle<Msg_parser::mode::add_tag>() {
 		db.execute(query.create_tree_statement(last_id));
 	}
 
-	socket_.send_string("Tag '" + query.get_tag_name() + "' has been added");
+	socket_.send_string("Tag '" + query.get_tag_name() + "' has been created");
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
+void Connection_handler::handle_message(const Delete_tag_request& message) {
 	Delete_tag_query query;
-	query.set_tag_id(parser_.next());
+	query.set_tag_id(message.get_tag_id());
 
 	Prepared_statement select_stmt = query.select_statement();
 	Prepared_statement parent_id_null_stmt = query.parent_id_statement(Delete_tag_query::ALLOW_NULL);
@@ -190,11 +185,10 @@ void Connection_handler::handle<Msg_parser::mode::delete_tag>() {
 	
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::update_tag>() {
+void Connection_handler::handle_message(const Update_tag_request& message) {
 	Update_tag_query query;
-	query.set_tag_id(parser_.next());
-	query.set_tag_name(parser_.next());
+	query.set_tag_id(message.get_tag_id());
+	query.set_tag_name(message.get_new_name());
 
 	Prepared_statement select_stmt = query.create_select_tag_statement();
 	Prepared_statement update_stmt = query.create_update_statement();
@@ -226,20 +220,19 @@ void Connection_handler::handle<Msg_parser::mode::update_tag>() {
 	socket_.send_string(status);
 }
 
-template<>
-void Connection_handler::handle<Msg_parser::mode::update_event>() {
-	auto id = parser_.next();
-	auto title = parser_.next();
-	auto description = parser_.next();
-	auto tags = parser_.next();
+void Connection_handler::handle_message(const Update_event_request& message) {
+	auto id = message.get_event_id();
+	auto title = message.get_title();
+	auto description = message.get_description();
+	auto tags = message.get_tags();
 
 	Insert_query insert_query;
-	insert_query.set_tags(Msg_parser::extract_tags(tags));
+	insert_query.set_tags(utils::string_to_vector(tags));
 
 	Update_event_query update_query;
 	update_query.set_id(id);
 	update_query.set_title(title);
-	update_query.set_tags(Msg_parser::extract_tags(tags));
+	update_query.set_tags(utils::string_to_vector(tags));
 	update_query.set_description(description);
 
 	Prepared_statement event_exists_stmt = update_query.create_event_exists_stmt();
@@ -281,19 +274,19 @@ void Connection_handler::handle<Msg_parser::mode::update_event>() {
 	socket_.send_string(status);
 }
 
-void Connection_handler::handle() {
-	using M = Msg_parser::mode;
-	auto mode = parser_.get_mode();
+void Connection_handler::handle(const std::shared_ptr<Message>& message) {
+	using T = Message::Type;
+	auto message_type = message->get_message_type();
 
-	switch (mode) {
-		case M::add_event:				handle<M::add_event>();			break;
-		case M::return_events:		handle<M::return_events>();		break;
-		case M::return_tags_tree:	handle<M::return_tags_tree>();	break;
-		case M::add_tag:			handle<M::add_tag>();			break;
-		case M::delete_tag:			handle<M::delete_tag>();		break;
-		case M::update_tag:			handle<M::update_tag>();		break;
-		case M::update_event:		handle<M::update_event>();		break;
+	switch (message_type) {
+		case T::create_event:		handle_message(dynamic_cast<Create_event_request&>(*message));	break;
+		case T::return_events:		handle_message(dynamic_cast<Return_events_request&>(*message)); break;
+		case T::return_tags_tree:	handle_message(dynamic_cast<Return_tags_tree_request&>(*message));	break;
+		case T::create_tag:			handle_message(dynamic_cast<Create_tag_request&>(*message));	break;
+		case T::delete_tag:			handle_message(dynamic_cast<Delete_tag_request&>(*message));	break;
+		case T::update_tag:			handle_message(dynamic_cast<Update_tag_request&>(*message));	break;
+		case T::update_event:		handle_message(dynamic_cast<Update_event_request&>(*message));	break;
 
-		default: throw Unknown_message_format();
+		default: throw Unknown_message("Message with id = ", static_cast<int>(message_type), " is unknown");
 	}
 }
