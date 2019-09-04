@@ -6,10 +6,10 @@
 #include "socket_queue.h"
 #include "thread_pool.h"
 
-class Consumer;
+class Connection_handler;
 
 class Tcp_server {
-	friend class Consumer;
+	friend class Connection_handler;
 public:
 	Tcp_server(const Tcp_server&) = delete;
 	Tcp_server(Tcp_server&&) = delete;

@@ -2,7 +2,7 @@
 
 #include "thread_pool.h"
 
-void Thread_pool::add_consumer(Consumer&& consumer){
+void Thread_pool::add_consumer(Connection_handler&& consumer){
 	consumers_.push_back( std::move(consumer) );
 }
 

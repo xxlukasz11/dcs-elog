@@ -10,7 +10,7 @@
 
 #include "utils.h"
 #include "custom_exceptions.h"
-#include "consumer.h"
+#include "connection_handler.h"
 #include "raii_thread.h"
 
 #include "tcp_server.h"
@@ -109,7 +109,7 @@ void Tcp_server::start_server(){
 	Tcp_server::server_is_running_ = true;
 
 	for(int i = 0; i < number_of_consumers_; ++i)
-		threads_manager_.add_consumer( Consumer(queue_) );
+		threads_manager_.add_consumer( Connection_handler(queue_) );
 	
 	threads_manager_.set_server_thread( Raii_thread(&Tcp_server::run_server, this) );
 }

@@ -1,36 +1,27 @@
-#ifndef _CONNECTION_HANDLER_H_
-#define _CONNECTION_HANDLER_H_
+#ifndef _CONSUMER_H_
+#define _CONSUMER_H_
 
+#include <string>
 #include <mutex>
-#include <memory>
-#include "message.h"
-#include "socket.h"
 
-#include "return_events_request.h"
-#include "return_tags_tree_request.h"
-#include "create_event_request.h"
-#include "create_tag_request.h"
-#include "delete_tag_request.h"
-#include "update_event_request.h"
-#include "update_tag_request.h"
+#include "raii_thread.h"
+#include "socket_queue.h"
+#include "msg_parser.h"
 
 class Connection_handler {
-	Socket socket_;
-	static std::mutex mtx_;
-
 public:
-	Connection_handler(Socket socket);
-	void handle(const std::shared_ptr<Message>& message);
+	Connection_handler(Socket_queue& queue);
+	
+	void join();
 
 private:
-	void handle_message(const Create_event_request& message);
-	void handle_message(const Create_tag_request& message);
-	void handle_message(const Delete_tag_request& message);
-	void handle_message(const Return_events_request& message);
-	void handle_message(const Return_tags_tree_request& message);
-	void handle_message(const Update_event_request& message);
-	void handle_message(const Update_tag_request& message);
+	// functions used to handle connection
+	static void consume(Socket_queue& queue);
+	static void process_message(const std::string& message, Socket client_socket);
 
+	// private members
+	Raii_thread thread_;
 };
+
 
 #endif
