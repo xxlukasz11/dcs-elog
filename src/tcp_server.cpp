@@ -1,7 +1,5 @@
 #include <string>
-#include <thread>
 #include <atomic>
-#include <csignal>
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -11,35 +9,20 @@
 #include "utils.h"
 #include "custom_exceptions.h"
 #include "connection_handler.h"
-#include "raii_thread.h"
+#include "socket.h"
 
 #include "tcp_server.h"
 
-std::atomic<bool> Tcp_server::server_is_running_{ false };
-std::string Tcp_server::ip_address_{ "0.0.0.0" };
-int Tcp_server::port_ = { 9100 };
-int Tcp_server::message_length_{ 1024 };
-int Tcp_server::max_connections_{ 50 };
-int Tcp_server::timeout_seconds_{ 5 };
-int Tcp_server::number_of_consumers_{ 3 };
-
-Tcp_server::Tcp_server() {
-	signal(SIGINT, &Tcp_server::set_stop_variable);
+Tcp_server::Tcp_server(Socket_queue& socket_queue) : queue_(socket_queue) {
 }
 
 Tcp_server::~Tcp_server(){
 	if(server_is_running_){
-		set_stop_variable(int{});
-		join_threads();
+		release_consumers();
 	}
 
 	if(server_socket_ > 0)
 		shutdown(server_socket_, SHUT_RDWR);
-}
-
-Tcp_server& Tcp_server::get_instance(){
-	static Tcp_server instance;
-	return instance;
 }
 
 void Tcp_server::set_ip_address(std::string ip_address){
@@ -66,8 +49,36 @@ void Tcp_server::set_number_of_consumers(int n_consumers){
 	number_of_consumers_ = n_consumers;
 }
 
-int Tcp_server::get_message_length() {
+const std::atomic<bool>& Tcp_server::get_running_flag() const {
+	return server_is_running_;
+}
+
+std::string Tcp_server::get_ip_address() const {
+	return ip_address_;
+}
+
+int Tcp_server::get_port() const {
+	return port_;
+}
+
+Socket_queue & Tcp_server::get_socket_queue() {
+	return queue_;
+}
+
+int Tcp_server::get_message_length() const {
 	return message_length_;
+}
+
+int Tcp_server::get_max_connections() const {
+	return max_connections_;
+}
+
+int Tcp_server::get_timeout_seconds() const {
+	return timeout_seconds_;
+}
+
+int Tcp_server::get_number_of_consumers() const {
+	return number_of_consumers_;
 }
 
 void Tcp_server::initialize(){
@@ -105,24 +116,10 @@ void Tcp_server::initialize(){
 
 }
 
-void Tcp_server::start_server(){
-	Tcp_server::server_is_running_ = true;
-
-	for(int i = 0; i < number_of_consumers_; ++i)
-		threads_manager_.add_consumer( Connection_handler(queue_) );
-	
-	threads_manager_.set_server_thread( Raii_thread(&Tcp_server::run_server, this) );
-}
-
-void Tcp_server::join_threads(){
-	threads_manager_.join_server();
-	release_consumers();
-	threads_manager_.join_consumers();
-}
-
-void Tcp_server::run_server(){
+void Tcp_server::run(){
 	struct sockaddr_in client;
     socklen_t len = sizeof(client);
+	server_is_running_ = true;
 	
     while(server_is_running_){
 		int client_socket = accept( server_socket_, (struct sockaddr *) &client, &len );
@@ -136,16 +133,15 @@ void Tcp_server::run_server(){
 			}
 		}
 		else{
-			queue_.push(client_socket);
+			Socket socket_wrapper(client_socket);
+			socket_wrapper.set_message_length(message_length_);
+			queue_.push(socket_wrapper);
 		}
     }
 }
 
 void Tcp_server::release_consumers(){
+	server_is_running_ = false;
 	for(int i = 0; i < number_of_consumers_; ++i)
 		queue_.push(Tcp_server::DUMMY_SOCKET_);
-}
-
-void Tcp_server::set_stop_variable(int){
-	Tcp_server::server_is_running_ = false;
 }

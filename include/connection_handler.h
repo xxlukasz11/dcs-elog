@@ -1,26 +1,26 @@
-#ifndef _CONSUMER_H_
-#define _CONSUMER_H_
+#ifndef _CONNECTION_HANDLER_H_
+#define _CONNECTION_HANDLER_H_
 
 #include <string>
 #include <mutex>
 
-#include "raii_thread.h"
 #include "socket_queue.h"
 #include "msg_parser.h"
+#include "dcs_thread.h"
+#include "socket.h"
 
-class Connection_handler {
+class Tcp_server;
+
+class Connection_handler : public Dcs_thread {
+	std::shared_ptr<Tcp_server> server_;
+	Socket_queue& queue_;
 public:
-	Connection_handler(Socket_queue& queue);
-	
-	void join();
-
+	Connection_handler(Socket_queue& queue, const std::shared_ptr<Tcp_server>& server);
 private:
-	// functions used to handle connection
-	static void consume(Socket_queue& queue);
-	static void process_message(const std::string& message, Socket client_socket);
-
-	// private members
-	Raii_thread thread_;
+	virtual void run();
+	void handle_connection(Socket socket);
+	void recieve_data_from_socket(Socket socket);
+	void process_message(const std::string& message, Socket client_socket);
 };
 
 

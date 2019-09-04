@@ -5,10 +5,12 @@
 
 class Socket {
 	int socket_descriptor_;
+	int message_length_{ 1024 };
 
 public:
 	Socket(int descriptor);
-	int dsc() const;
+	int descriptor() const;
+	void set_message_length(int length);
 
 	std::string recv_string();
 	void send_string(const std::string & msg);
