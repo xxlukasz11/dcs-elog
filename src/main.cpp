@@ -1,62 +1,21 @@
 #include <iostream>
-
 #include "utils.h"
 #include "custom_exceptions.h"
-#include "tcp_server.h"
 #include "database.h"
 #include "config.h"
-
-#include <csignal>
-#include "thread_manager.h"
-#include "connection_handler.h"
-#include "socket_queue.h"
-
-static std::shared_ptr<Tcp_server> server;
-
-static void stop_server(int) {
-	server->release_consumers();
-}
+#include "administrator.h"
 
 int main(){
-	signal(SIGINT, &stop_server);
-	Socket_queue socket_queue;
-	server = std::make_shared<Tcp_server>(socket_queue);
-	server->set_ip_address( "0.0.0.0" );
-	server->set_port( 9100 );
-	server->set_max_connections( 50 );
-	server->set_message_length( 10 );
-	server->set_number_of_consumers( 3 );
-
-	try{
-		server->initialize();
-	}
-	catch(Init_server_error& e){
-		utils::err_log(e.what());
-		exit(1);
-	}
-	
-	Thread_manager thread_manager_;
-	thread_manager_.set_server_thread(server);
-	thread_manager_.start_server();
-
-	for (int i = 0; i < server->get_number_of_consumers(); ++i) {
-		thread_manager_.add_consumer(std::make_shared<Connection_handler>(socket_queue, server));
-	}
-	thread_manager_.start_consumers();
-
-	thread_manager_.join_server();
-	server->release_consumers();
-	thread_manager_.join_consumers();
+	Administrator::instance().initialize();
+	Administrator::instance().start();
 
 	Database db(config::path::database);
-
 	try{
 		db.open();
 	} catch(Database_error& e){
 		utils::err_log(e.what());
 		exit(1);
 	}
-
 	std::cout << std::endl;
 	try{
 		db.execute(
