@@ -60,8 +60,8 @@ void utils::err_log(int sockfd, std::string message){
 	std::cerr << date << "\t" << sockfd << ": " << message << std::endl;
 }
 
-void utils::log_recieved_message(const std::shared_ptr<Message>& message) {
+void utils::log_recieved_message(int sockfd, const std::shared_ptr<Message>& message) {
 	std::string log_message = "Recieved ";
 	log_message += message->name();
-	utils::out_log(log_message);
+	utils::out_log(sockfd, log_message);
 }

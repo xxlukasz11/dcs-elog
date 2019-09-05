@@ -1,7 +1,12 @@
-#include "socket.h"
 #include <sys/socket.h>
-#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/fcntl.h>
 #include "custom_exceptions.h"
+#include "socket.h"
+
+Socket::Socket(Descriptor descriptor) : Socket(static_cast<int>(descriptor)) {
+}
 
 Socket::Socket(int descriptor) : socket_descriptor_(descriptor) {
 }
@@ -12,6 +17,45 @@ int Socket::descriptor() const {
 
 void Socket::set_message_length(int length) {
 	message_length_ = length;
+}
+
+int Socket::set_sock_opt(int opt_name, int opt_value) {
+	int opt = 1;
+	return ::setsockopt(socket_descriptor_, opt_name, opt_value, &opt, sizeof(opt));
+}
+
+int Socket::set_to_nonblock_mode() {
+	return ::fcntl(socket_descriptor_, F_SETFL, O_NONBLOCK);
+}
+
+int Socket::bind(Addr_in_wrapper& config) {
+	auto& addr_in = config.unwrap();
+	return ::bind(socket_descriptor_, (struct sockaddr*) &addr_in, sizeof(addr_in));
+}
+
+int Socket::listen(int max_no_of_connections) {
+	return ::listen(socket_descriptor_, max_no_of_connections);
+}
+
+int Socket::set_recieve_timeout(int seconds, int u_seconds) {
+	timeval time_struct = create_time_val(seconds, u_seconds);
+	return setsockopt(socket_descriptor_, SOL_SOCKET, SO_RCVTIMEO, (struct timeval*) &time_struct, sizeof(struct timeval));
+}
+
+int Socket::set_send_timeout(int seconds, int u_seconds) {
+	timeval time_struct = create_time_val(seconds, u_seconds);
+	return setsockopt(socket_descriptor_, SOL_SOCKET, SO_SNDTIMEO, (struct timeval*) &time_struct, sizeof(struct timeval));
+}
+
+int Socket::shutdown_rdwr() {
+	return shutdown(socket_descriptor_, SHUT_RDWR);
+}
+
+Socket Socket::create(Domain domain, Type type, Protocol protocol) {
+	return socket(
+		static_cast<int>(domain),
+		static_cast<int>(type),
+		static_cast<int>(protocol));
 }
 
 std::string Socket::recv_string() {
@@ -54,6 +98,18 @@ void Socket::send_string(const std::string & msg) {
 	}
 }
 
+bool Socket::is_invalid() const {
+	return socket_descriptor_ < 0;
+}
+
+bool Socket::is_valid() const {
+	return socket_descriptor_ > 0;
+}
+
+bool Socket::is_zero() const {
+	return socket_descriptor_ == 0;
+}
+
 bool Socket::operator<(int number) const {
 	return socket_descriptor_ < number;
 }
@@ -64,6 +120,10 @@ bool Socket::operator==(int number) const {
 
 Socket::operator int() {
 	return socket_descriptor_;
+}
+
+timeval Socket::create_time_val(int seconds, int u_seconds) {
+	return timeval { seconds, u_seconds };
 }
 
 int Socket::safe_recv(void * buffer, size_t size, int flags) {
@@ -77,4 +137,17 @@ int Socket::safe_recv(void * buffer, size_t size, int flags) {
 	}
 
 	return bytes_read;
+}
+
+Socket::Addr_in_wrapper::Addr_in_wrapper(int port) {
+	addr_in_.sin_family = AF_INET;
+	addr_in_.sin_port = htons(port);
+}
+
+int Socket::Addr_in_wrapper::set_ip_address(const std::string& ip_address) {
+	return ::inet_pton(addr_in_.sin_family, ip_address.c_str(), &addr_in_.sin_addr);
+}
+
+sockaddr_in& Socket::Addr_in_wrapper::unwrap() {
+	return addr_in_;
 }

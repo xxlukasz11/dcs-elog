@@ -1,7 +1,6 @@
 #include "message_factory.h"
 #include "msg_parser.h"
 #include "custom_exceptions.h"
-#include "utils.h"
 
 #include "return_events_request.h"
 #include "return_tags_tree_request.h"
@@ -19,7 +18,6 @@ std::shared_ptr<Message> Message_factory::create() const {
 	auto message_type = Message::int_to_message_type(parser.get_mode());
 	std::shared_ptr<Message> message = create_message(message_type);
 	message->extract_parameters(parser);
-	utils::log_recieved_message(message);
 	return message;
 }
 

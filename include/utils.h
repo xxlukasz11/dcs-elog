@@ -17,7 +17,7 @@ namespace utils{
 	void out_log(int sockfd, std::string message);
 	void err_log(int sockfd, std::string message);
 
-	void log_recieved_message(const std::shared_ptr<Message>& message);
+	void log_recieved_message(int sockfd, const std::shared_ptr<Message>& message);
 };
 
 #endif

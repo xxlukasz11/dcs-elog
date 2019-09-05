@@ -40,7 +40,7 @@ void Administrator::stop() {
 	if (!started_) {
 		return;
 	}
-	server_->release_consumers();
+	server_->stop_and_release_consumers();
 	thread_manager_.join_consumers();
 	on_exit();
 }
