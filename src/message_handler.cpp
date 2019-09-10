@@ -51,25 +51,23 @@ void Message_handler::handle_message(const Create_event_request& message) {
 	query.set_tags(utils::string_to_vector(message.get_tags()));
 	query.set_author(message.get_author());
 
+	Prepared_statement events_stmt = query.create_events_statement();
+	Prepared_statement exists_stmt = query.create_tags_exist_statement();
+
+	Database::Accessor accessor(database_);
+	accessor.open();
+
 	bool tags_exist = true;
-	Result_set not_existing_tags;
-	{
-		Prepared_statement events_stmt = query.create_events_statement();
-		Prepared_statement exists_stmt = query.create_tags_exist_statement();
-
-		Database::Accessor accessor(database_);
-		accessor.open();
-
-		not_existing_tags = database_.execute(exists_stmt);
-		if (not_existing_tags.get_data().size() != 0) {
-			tags_exist = false;
-		}
-		else {
-			Result_set res = database_.execute(events_stmt);
-			std::string last_id = res.get_last_row_id();
-			database_.execute(query.create_tags_statement(last_id));
-		}
+	Result_set not_existing_tags = database_.execute(exists_stmt);
+	if (not_existing_tags.get_data().size() != 0) {
+		tags_exist = false;
 	}
+	else {
+		Result_set res = database_.execute(events_stmt);
+		std::string last_id = res.get_last_row_id();
+		database_.execute(query.create_tags_statement(last_id));
+	}
+	accessor.close();
 
 	if (tags_exist) {
 		socket_.send_string("Event has been successfully saved");
@@ -82,15 +80,13 @@ void Message_handler::handle_message(const Create_event_request& message) {
 }
 
 void Message_handler::handle_message(const Return_tags_tree_request& message) {
-	Result_set res;
-	{
-		Select_tags_query query;
-		auto stmt = query.create_sql();
+	Select_tags_query query;
+	auto stmt = query.create_sql();
 
-		Database::Accessor accessor(database_);
-		accessor.open();
-		res = database_.execute(stmt);
-	}
+	Database::Accessor accessor(database_);
+	accessor.open();
+	Result_set res = database_.execute(stmt);
+	accessor.close();
 
 	socket_.send_string(json::stringify(std::move(res)));
 }
@@ -100,14 +96,13 @@ void Message_handler::handle_message(const Create_tag_request& message) {
 	query.set_tag_name(message.get_tag_name());
 	query.set_parent_id(message.get_parent_id());
 
-	{
-		Database::Accessor accessor(database_);
-		accessor.open();
+	Database::Accessor accessor(database_);
+	accessor.open();
 
-		Result_set res = database_.execute(query.create_tag_statement());
-		std::string last_id = res.get_last_row_id();
-		database_.execute(query.create_tree_statement(last_id));
-	}
+	Result_set res = database_.execute(query.create_tag_statement());
+	std::string last_id = res.get_last_row_id();
+	database_.execute(query.create_tree_statement(last_id));
+	accessor.close();
 
 	socket_.send_string("Tag '" + query.get_tag_name() + "' has been created");
 }
@@ -122,45 +117,41 @@ void Message_handler::handle_message(const Delete_tag_request& message) {
 	Prepared_statement delete_redundant_stmt = query.delete_redundant_statement();
 	Prepared_statement delete_tree_stmt = query.delete_tree_statement();
 	Prepared_statement delete_list_stmt = query.delete_list_statement();
+	
+	Database::Accessor accessor(database_);
+	accessor.open();
 
-	bool tag_exists = false;
+	Result_set res = database_.execute(select_stmt);
+	bool tag_exists = res.get_data().size() > 0;
 	bool empty_tag_delete_attempt = false;
 	std::string tag_name;
-	{
-		Database::Accessor accessor(database_);
-		accessor.open();
+	if (tag_exists) {
+		tag_name = res.get_data()[0][0];
 
-		Result_set res = database_.execute(select_stmt);
-		tag_exists = res.get_data().size() > 0;
-
-		if (tag_exists) {
-			tag_name = res.get_data()[0][0];
-
-			if (tag_name == config::symbols::empty_tag) {
-				empty_tag_delete_attempt = true;
-			}
+		if (tag_name == config::symbols::empty_tag) {
+			empty_tag_delete_attempt = true;
 		}
-			
-		if(tag_exists && !empty_tag_delete_attempt) {
-			Result_set res = database_.execute(parent_id_null_stmt);
-			std::string parent_id = res.get_data()[0][0];
-
-			Result_set res_events = database_.execute(parent_id_default_stmt);
-			std::string parent_id_for_events = res_events.get_data()[0][0];
-
-			Prepared_statement delete_events_tag_stmt = query.delete_events_tag_statement(parent_id_for_events);
-			Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
-			Prepared_statement update_tree_stmt = query.update_tree_statement(parent_id);
-
-			database_.execute(delete_events_tag_stmt);
-			database_.execute(update_events_tag_stmt);
-			database_.execute(delete_redundant_stmt);
-			database_.execute(update_tree_stmt);
-			database_.execute(delete_tree_stmt);
-			database_.execute(delete_list_stmt);
-		}
-
 	}
+			
+	if(tag_exists && !empty_tag_delete_attempt) {
+		Result_set res = database_.execute(parent_id_null_stmt);
+		std::string parent_id = res.get_data()[0][0];
+
+		Result_set res_events = database_.execute(parent_id_default_stmt);
+		std::string parent_id_for_events = res_events.get_data()[0][0];
+
+		Prepared_statement delete_events_tag_stmt = query.delete_events_tag_statement(parent_id_for_events);
+		Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
+		Prepared_statement update_tree_stmt = query.update_tree_statement(parent_id);
+
+		database_.execute(delete_events_tag_stmt);
+		database_.execute(update_events_tag_stmt);
+		database_.execute(delete_redundant_stmt);
+		database_.execute(update_tree_stmt);
+		database_.execute(delete_tree_stmt);
+		database_.execute(delete_list_stmt);
+	}
+	accessor.close();
 
 	if (tag_exists) {
 		if(empty_tag_delete_attempt)
