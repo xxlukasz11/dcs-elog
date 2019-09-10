@@ -27,7 +27,7 @@ void Connection_handler::run() {
 		if (is_dummy_socket(socket_)) {
 			break;
 		}
-		if (socket_.is_invalid()) {
+		if (socket_.is_not_valid()) {
 			utils::err_log(socket_, "Error while accepting connection");
 			continue;
 		}

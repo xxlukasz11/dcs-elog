@@ -74,7 +74,8 @@ int Tcp_server::get_number_of_consumers() const {
 }
 
 void Tcp_server::initialize(){
-	Socket::Addr_in_wrapper addr_in = Socket::Addr_in_wrapper(port_);
+	Socket::Addr_in_wrapper addr_in;
+	addr_in.set_port(port_);
 	if (addr_in.set_ip_address(ip_address_) <= 0) {
 		throw Init_server_error("Cannot convert server ip address: ", ip_address_);
 	}
@@ -85,7 +86,7 @@ void Tcp_server::initialize(){
 		Socket::Protocol::DEFAULT
 	);
 
-    if( server_socket_.is_invalid() ) {
+    if( server_socket_.is_not_valid() ) {
         throw Init_server_error("Cannot create server socket");
     }
 
@@ -108,25 +109,23 @@ void Tcp_server::initialize(){
 }
 
 void Tcp_server::run(){
-	struct sockaddr_in client;
-    socklen_t len = sizeof(client);
+	Socket::Addr_in_wrapper addr_in;
 	server_is_running_ = true;
 	
     while(server_is_running_){
-		int client_socket = accept( server_socket_, (struct sockaddr *) &client, &len );
+		Socket client_socket = server_socket_.accept(addr_in);
 		
-		if(client_socket < 0){
+		if(client_socket.is_not_valid()){
 			if( errno == EWOULDBLOCK ){
 				std::this_thread::sleep_for( std::chrono::milliseconds(Tcp_server::ACCEPT_DELAY_MS) );
 			}
 			else{
-				utils::err_log(client_socket, ": Error while accepting connection");
+				utils::err_log(client_socket, "Error while accepting connection");
 			}
 		}
 		else{
-			Socket socket_wrapper(client_socket);
-			socket_wrapper.set_message_length(message_length_);
-			queue_.push(socket_wrapper);
+			client_socket.set_message_length(message_length_);
+			queue_.push(client_socket);
 		}
     }
 }

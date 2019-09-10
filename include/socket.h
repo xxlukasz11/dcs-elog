@@ -16,8 +16,9 @@ public:
 
 	class Addr_in_wrapper {
 	public:
-		Addr_in_wrapper(int port);
+		Addr_in_wrapper();
 		int set_ip_address(const std::string& ip_address);
+		void set_port(int port);
 		sockaddr_in& unwrap();
 	private:
 		sockaddr_in addr_in_;
@@ -35,12 +36,13 @@ public:
 	int set_recieve_timeout(int seconds, int u_seconds);
 	int set_send_timeout(int seconds, int u_seconds);
 	int shutdown_rdwr();
+	Socket accept(Addr_in_wrapper& config);
 
 	void set_message_length(int length);
 	std::string recv_string();
 	void send_string(const std::string & msg);
 
-	bool is_invalid() const;
+	bool is_not_valid() const;
 	bool is_valid() const;
 	bool is_zero() const;
 	bool operator<(int number) const;

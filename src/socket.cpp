@@ -29,7 +29,7 @@ int Socket::set_to_nonblock_mode() {
 }
 
 int Socket::bind(Addr_in_wrapper& config) {
-	auto& addr_in = config.unwrap();
+	sockaddr_in& addr_in = config.unwrap();
 	return ::bind(socket_descriptor_, (struct sockaddr*) &addr_in, sizeof(addr_in));
 }
 
@@ -49,6 +49,12 @@ int Socket::set_send_timeout(int seconds, int u_seconds) {
 
 int Socket::shutdown_rdwr() {
 	return shutdown(socket_descriptor_, SHUT_RDWR);
+}
+
+Socket Socket::accept(Addr_in_wrapper & config) {
+	sockaddr_in& addr_in = config.unwrap();
+	socklen_t length = sizeof(addr_in);
+	return ::accept(socket_descriptor_, (struct sockaddr *) &addr_in, &length);
 }
 
 Socket Socket::create(Domain domain, Type type, Protocol protocol) {
@@ -98,7 +104,7 @@ void Socket::send_string(const std::string & msg) {
 	}
 }
 
-bool Socket::is_invalid() const {
+bool Socket::is_not_valid() const {
 	return socket_descriptor_ < 0;
 }
 
@@ -139,13 +145,16 @@ int Socket::safe_recv(void * buffer, size_t size, int flags) {
 	return bytes_read;
 }
 
-Socket::Addr_in_wrapper::Addr_in_wrapper(int port) {
+Socket::Addr_in_wrapper::Addr_in_wrapper() {
 	addr_in_.sin_family = AF_INET;
-	addr_in_.sin_port = htons(port);
 }
 
 int Socket::Addr_in_wrapper::set_ip_address(const std::string& ip_address) {
 	return ::inet_pton(addr_in_.sin_family, ip_address.c_str(), &addr_in_.sin_addr);
+}
+
+void Socket::Addr_in_wrapper::set_port(int port) {
+	addr_in_.sin_port = htons(port);
 }
 
 sockaddr_in& Socket::Addr_in_wrapper::unwrap() {
