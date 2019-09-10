@@ -23,8 +23,28 @@ void Database::open(){
 	});
 }
 
+void Database::close() {
+	if (handler_) {
+		sqlite3* db = handler_.release();
+		sqlite3_close(db);
+	}
+}
+
+void Database::assert_database_opened() {
+	if (!is_database_opened()) {
+		throw Database_error("Error: Database is not opened");
+	}
+}
+
+bool Database::is_database_opened() const {
+	if (handler_) {
+		return true;
+	}
+	return false;
+}
+
 void Database::execute(const std::string& query, Database::callback_type callback){
-	std::lock_guard<std::mutex> lock(mtx_);
+	assert_database_opened();
 	char *err_msg;
 	if( sqlite3_exec(handler_.get(), query.c_str(), callback, 0, &err_msg) != SQLITE_OK ){
 		throw Database_error("Error executing statement: ", err_msg);
@@ -36,7 +56,7 @@ void Database::execute(const std::string& query, Database::user_callback_type ca
 }
 
 Result_set Database::execute(const std::string& query){
-	std::lock_guard<std::mutex> lock(mtx_);
+	assert_database_opened();
 	Result_set data;
 	char *err_msg;
 
@@ -59,8 +79,6 @@ Result_set Database::execute(const std::string& query){
 }
 
 Result_set Database::execute(const Prepared_statement& statement){
-	std::lock_guard<std::mutex> lock(mtx_);
-
 	sqlite3_stmt* stmt = 0;
 	int err;
 
@@ -142,4 +160,23 @@ std::string Database::get_last_row_id(){
 	}, &row_id, 0);
 
 	return row_id;
+}
+
+Database::Accessor::Accessor(Database& database) : database_(database), locker_(database.mtx_, std::defer_lock) {
+}
+
+void Database::Accessor::open() {
+	locker_.lock();
+	database_.open();
+}
+
+void Database::Accessor::close() {
+	if (locker_.owns_lock()) {
+		database_.close();
+		locker_.unlock();
+	}
+}
+
+Database::Accessor::~Accessor() {
+	close();
 }

@@ -67,7 +67,7 @@ void Administrator::prepare_threads() {
 	int number_of_consumers = server_->get_number_of_consumers();
 	for (int i = 0; i < number_of_consumers; ++i) {
 		thread_manager_.add_consumer(
-			std::make_shared<Connection_handler>(socket_queue_, server_));
+			std::make_shared<Connection_handler>(socket_queue_, database_, server_));
 	}
 }
 

@@ -1,11 +1,10 @@
 #ifndef _MESSAGE_HANDLER_H_
 #define _MESSAGE_HANDLER_H_
 
-#include <mutex>
 #include <memory>
 #include "message.h"
 #include "socket.h"
-
+#include "database.h"
 #include "return_events_request.h"
 #include "return_tags_tree_request.h"
 #include "create_event_request.h"
@@ -16,10 +15,10 @@
 
 class Message_handler {
 	Socket socket_;
-	static std::mutex mtx_;
+	Database& database_;
 
 public:
-	Message_handler(Socket socket);
+	Message_handler(Socket socket, Database& database);
 	void handle(const std::shared_ptr<Message>& message);
 
 private:

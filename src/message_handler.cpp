@@ -1,4 +1,3 @@
-#include "database.h"
 #include "result_set.h"
 #include "custom_exceptions.h"
 #include "json.h"
@@ -15,9 +14,7 @@
 
 #include "message_handler.h"
 
-std::mutex Message_handler::mtx_;
-
-Message_handler::Message_handler(Socket socket) : socket_(socket) {}
+Message_handler::Message_handler(Socket socket, Database& database) : socket_(socket), database_(database) {}
 
 void Message_handler::handle_message(const Return_events_request& message) {
 	auto min_date_str = message.get_min_date();
@@ -38,13 +35,11 @@ void Message_handler::handle_message(const Return_events_request& message) {
 	}
 
 	Result_set res;
-	{
-		std::lock_guard<std::mutex> lock(mtx_);
-		Database db(config::path::database);
-		db.open();
-		auto stmt = query.create_statement();
-		res = db.execute(stmt);
-	}
+	Database::Accessor accessor(database_);
+	accessor.open();
+	auto stmt = query.create_statement();
+	res = database_.execute(stmt);
+	accessor.close();
 
 	socket_.send_string(json::stringify(std::move(res)));
 }
@@ -62,19 +57,17 @@ void Message_handler::handle_message(const Create_event_request& message) {
 		Prepared_statement events_stmt = query.create_events_statement();
 		Prepared_statement exists_stmt = query.create_tags_exist_statement();
 
-		std::lock_guard<std::mutex> lock(mtx_);
+		Database::Accessor accessor(database_);
+		accessor.open();
 
-		Database db(config::path::database);
-		db.open();
-
-		not_existing_tags = db.execute(exists_stmt);
+		not_existing_tags = database_.execute(exists_stmt);
 		if (not_existing_tags.get_data().size() != 0) {
 			tags_exist = false;
 		}
 		else {
-			Result_set res = db.execute(events_stmt);
+			Result_set res = database_.execute(events_stmt);
 			std::string last_id = res.get_last_row_id();
-			db.execute(query.create_tags_statement(last_id));
+			database_.execute(query.create_tags_statement(last_id));
 		}
 	}
 
@@ -94,10 +87,9 @@ void Message_handler::handle_message(const Return_tags_tree_request& message) {
 		Select_tags_query query;
 		auto stmt = query.create_sql();
 
-		std::lock_guard<std::mutex> lock(mtx_);
-		Database db(config::path::database);
-		db.open();
-		res = db.execute(stmt);
+		Database::Accessor accessor(database_);
+		accessor.open();
+		res = database_.execute(stmt);
 	}
 
 	socket_.send_string(json::stringify(std::move(res)));
@@ -109,14 +101,12 @@ void Message_handler::handle_message(const Create_tag_request& message) {
 	query.set_parent_id(message.get_parent_id());
 
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
+		Database::Accessor accessor(database_);
+		accessor.open();
 
-		Database db(config::path::database);
-		db.open();
-
-		Result_set res = db.execute(query.create_tag_statement());
+		Result_set res = database_.execute(query.create_tag_statement());
 		std::string last_id = res.get_last_row_id();
-		db.execute(query.create_tree_statement(last_id));
+		database_.execute(query.create_tree_statement(last_id));
 	}
 
 	socket_.send_string("Tag '" + query.get_tag_name() + "' has been created");
@@ -137,11 +127,10 @@ void Message_handler::handle_message(const Delete_tag_request& message) {
 	bool empty_tag_delete_attempt = false;
 	std::string tag_name;
 	{
-		std::lock_guard<std::mutex> lock(mtx_);
-		Database db(config::path::database);
-		db.open();
+		Database::Accessor accessor(database_);
+		accessor.open();
 
-		Result_set res = db.execute(select_stmt);
+		Result_set res = database_.execute(select_stmt);
 		tag_exists = res.get_data().size() > 0;
 
 		if (tag_exists) {
@@ -153,22 +142,22 @@ void Message_handler::handle_message(const Delete_tag_request& message) {
 		}
 			
 		if(tag_exists && !empty_tag_delete_attempt) {
-			Result_set res = db.execute(parent_id_null_stmt);
+			Result_set res = database_.execute(parent_id_null_stmt);
 			std::string parent_id = res.get_data()[0][0];
 
-			Result_set res_events = db.execute(parent_id_default_stmt);
+			Result_set res_events = database_.execute(parent_id_default_stmt);
 			std::string parent_id_for_events = res_events.get_data()[0][0];
 
 			Prepared_statement delete_events_tag_stmt = query.delete_events_tag_statement(parent_id_for_events);
 			Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
 			Prepared_statement update_tree_stmt = query.update_tree_statement(parent_id);
 
-			db.execute(delete_events_tag_stmt);
-			db.execute(update_events_tag_stmt);
-			db.execute(delete_redundant_stmt);
-			db.execute(update_tree_stmt);
-			db.execute(delete_tree_stmt);
-			db.execute(delete_list_stmt);
+			database_.execute(delete_events_tag_stmt);
+			database_.execute(update_events_tag_stmt);
+			database_.execute(delete_redundant_stmt);
+			database_.execute(update_tree_stmt);
+			database_.execute(delete_tree_stmt);
+			database_.execute(delete_list_stmt);
 		}
 
 	}
@@ -193,18 +182,17 @@ void Message_handler::handle_message(const Update_tag_request& message) {
 	Prepared_statement select_stmt = query.create_select_tag_statement();
 	Prepared_statement update_stmt = query.create_update_statement();
 
-	auto execute = [&select_stmt, &update_stmt, &query]() -> std::string {
-		std::lock_guard<std::mutex> lock(mtx_);
-		Database db(config::path::database);
-		db.open();
+	auto execute = [&]() -> std::string {
+		Database::Accessor accessor(database_);
+		accessor.open();
 
-		Result_set res = db.execute(select_stmt);
+		Result_set res = database_.execute(select_stmt);
 		bool tag_exists = res.get_data().size() > 0;
 
 		if (tag_exists) {
 			std::string old_tag_name = res.get_data()[0][0];
 			if (old_tag_name != config::symbols::empty_tag) {
-				db.execute(update_stmt);
+				database_.execute(update_stmt);
 				return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
 			}
 			else {
@@ -242,27 +230,26 @@ void Message_handler::handle_message(const Update_event_request& message) {
 	Prepared_statement insert_event_tags_stmt = insert_query.create_tags_statement(id);
 
 	auto execute = [&]() -> std::string {
-		std::lock_guard<std::mutex> lock(mtx_);
-		Database db(config::path::database);
-		db.open();
+		Database::Accessor accessor(database_);
+		accessor.open();
 
-		auto event_exists_result = db.execute(event_exists_stmt);
+		auto event_exists_result = database_.execute(event_exists_stmt);
 		if (event_exists_result.get_data().size() == 0) {
 			return "Cannot update event with id: " + id + ". It does not exist";
 		}
 
-		auto not_existing_tags = db.execute(tags_exists_stmt);
+		auto not_existing_tags = database_.execute(tags_exists_stmt);
 		if (not_existing_tags.get_data().size() != 0) {
 			std::string message = "Cannot update event. Following tags do not exist: ";
 			message += utils::concatenate_string_array(not_existing_tags.get_column(0));
 			return message;
 		}
 
-		db.execute(update_event_stmt);
-		db.execute(delete_event_tags_stmt);
+		database_.execute(update_event_stmt);
+		database_.execute(delete_event_tags_stmt);
 
 		if (update_query.has_any_tags()) {
-			db.execute(insert_event_tags_stmt);
+			database_.execute(insert_event_tags_stmt);
 		}
 
 		std::string event_string = "Event ";

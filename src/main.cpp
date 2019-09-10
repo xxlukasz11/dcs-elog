@@ -10,12 +10,8 @@ int main(){
 	Administrator::instance().start();
 
 	Database db(config::path::database);
-	try{
-		db.open();
-	} catch(Database_error& e){
-		utils::err_log(e.what());
-		exit(1);
-	}
+	Database::Accessor accesor(db);
+	accesor.open();
 	std::cout << std::endl;
 	try{
 		db.execute(

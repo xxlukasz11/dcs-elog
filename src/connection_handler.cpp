@@ -16,8 +16,8 @@ namespace {
 	}
 }
 
-Connection_handler::Connection_handler(Socket_queue& queue, const std::shared_ptr<Tcp_server>& server)
-	: Dcs_thread(), queue_(queue), server_(server), socket_(Socket::Descriptor::INVALID) {
+Connection_handler::Connection_handler(Socket_queue& queue, Database& database, const std::shared_ptr<Tcp_server>& server)
+	: Dcs_thread(), queue_(queue), database_(database), server_(server), socket_(Socket::Descriptor::INVALID) {
 }
 
 void Connection_handler::run() {
@@ -64,19 +64,19 @@ void Connection_handler::process_message(const std::string& message_string){
 		auto internal_message = factory.create();
 		utils::log_recieved_message(socket_, internal_message);
 
-		Message_handler handler(socket_);
+		Message_handler handler(socket_, database_);
 		handler.handle(internal_message);
 
 	} catch(Unknown_message_format& e){
-		utils::err_log(e.what());
+		utils::err_log(socket_, e.what());
 	} catch (Unknown_message& e) {
-		utils::err_log(e.what());
+		utils::err_log(socket_, e.what());
 	} catch (Msg_parser_exception& e) {
-		utils::err_log(e.what());
+		utils::err_log(socket_, e.what());
 	} catch(Database_error& e){
-		utils::err_log(e.what());
+		utils::err_log(socket_, e.what());
 	} catch(Query_error& e){
-		utils::err_log(e.what());
+		utils::err_log(socket_, e.what());
 	} catch (Client_disconnected_error& e) {
 		utils::err_log(socket_, e.what());
 	} catch (Send_error& e) {
