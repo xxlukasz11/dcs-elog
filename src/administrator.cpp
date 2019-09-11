@@ -8,7 +8,7 @@ void Administrator::handle_sigint(int) {
 	instance().stop();
 }
 
-Administrator::Administrator() : database_(config::path::database) {
+Administrator::Administrator() : database_(config::database::path) {
 	signal(SIGINT, &handle_sigint);
 }
 
@@ -47,11 +47,12 @@ void Administrator::stop() {
 
 void Administrator::setup_server() {
 	server_ = std::make_shared<Tcp_server>(socket_queue_);
-	server_->set_ip_address("0.0.0.0");
-	server_->set_port(9100);
-	server_->set_max_connections(50);
-	server_->set_message_length(10);
-	server_->set_number_of_consumers(3);
+	server_->set_ip_address(config::server::ip_address);
+	server_->set_port(config::server::port);
+	server_->set_max_connections(config::connection::max_no_of_connections);
+	server_->set_message_length(config::connection::tcp_message_length);
+	server_->set_number_of_consumers(config::thread::no_of_connection_handlers);
+	server_->set_accept_delay_ms(config::server::accept_delay_ms);
 	try {
 		server_->initialize();
 	}
@@ -64,7 +65,7 @@ void Administrator::setup_server() {
 void Administrator::prepare_threads() {
 	thread_manager_.add_server(server_);
 
-	int number_of_consumers = server_->get_number_of_consumers();
+	int number_of_consumers = config::thread::no_of_connection_handlers;
 	for (int i = 0; i < number_of_consumers; ++i) {
 		thread_manager_.add_consumer(
 			std::make_shared<Connection_handler>(socket_queue_, database_, server_));

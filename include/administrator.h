@@ -1,8 +1,8 @@
 #ifndef _ADMINISTRATOR_H_
 #define _ADMINISTRATOR_H_
 
-#include "database.h"
 #include <csignal>
+#include "database.h"
 #include "thread_manager.h"
 #include "tcp_server.h"
 #include "socket_queue.h"

@@ -9,7 +9,7 @@ int main(){
 	Administrator::instance().initialize();
 	Administrator::instance().start();
 
-	Database db(config::path::database);
+	Database db(config::database::path);
 	Database::Accessor accesor(db);
 	accesor.open();
 	std::cout << std::endl;

@@ -8,7 +8,7 @@
 class Tcp_server : public Dcs_thread {
 public:
 	Tcp_server(Socket_queue& socket_queue);
-	~Tcp_server();
+	virtual ~Tcp_server();
 	Tcp_server(const Tcp_server&) = delete;
 	Tcp_server(Tcp_server&&) = delete;
 	Tcp_server& operator=(const Tcp_server&) = delete;
@@ -16,12 +16,13 @@ public:
 
 	// setters
 
-	void set_ip_address(std::string ip_address);
+	void set_ip_address(const std::string& ip_address);
 	void set_port(int port);
 	void set_message_length(int length);
 	void set_max_connections(int max_connections);
 	void set_recieve_timeout_seconds(int seconds);
 	void set_number_of_consumers(int number_of_consumers);
+	void set_accept_delay_ms(int accept_delay_ms);
 
 	// getters
 
@@ -33,6 +34,7 @@ public:
 	int get_max_connections() const;
 	int get_recieve_timeout_seconds() const;
 	int get_number_of_consumers() const;
+	int get_accept_delay_ms() const;
 
 	// public methods
 
@@ -41,7 +43,6 @@ public:
 
 	enum Constants {
 		DUMMY_SOCKET_ = -123456,
-		ACCEPT_DELAY_MS = 50,
 	};
 
 private:
@@ -53,11 +54,12 @@ private:
 	// configuration
 
 	std::string ip_address_{ "0.0.0.0" };
-	int port_{ 9100 };
-	int message_length_{ 1024 };
-	int max_connections_{ 50 };
-	int recieve_timeout_seconds_{ 5 };
-	int number_of_consumers_{ 3 };
+	int port_;
+	int message_length_;
+	int max_connections_;
+	int recieve_timeout_seconds_;
+	int number_of_consumers_;
+	int accept_delay_ms_;
 
 	// other private members
 

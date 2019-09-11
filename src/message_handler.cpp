@@ -20,7 +20,7 @@ void Message_handler::handle_message(const Return_events_request& message) {
 	auto min_date_str = message.get_min_date();
 	auto max_date_str = message.get_max_date();
 	auto tags_str = message.get_tags();
-
+	
 	Select_query query;
 	if (!min_date_str.empty()) {
 		query.set_min_date(min_date_str);
@@ -128,7 +128,7 @@ void Message_handler::handle_message(const Delete_tag_request& message) {
 	if (tag_exists) {
 		tag_name = res.get_data()[0][0];
 
-		if (tag_name == config::symbols::empty_tag) {
+		if (tag_name == config::database::empty_tag_name) {
 			empty_tag_delete_attempt = true;
 		}
 	}
@@ -155,7 +155,7 @@ void Message_handler::handle_message(const Delete_tag_request& message) {
 
 	if (tag_exists) {
 		if(empty_tag_delete_attempt)
-			socket_.send_string("Tag '" + config::symbols::empty_tag + "' cannot be deleted");
+			socket_.send_string("Tag '" + config::database::empty_tag_name + "' cannot be deleted");
 		else
 			socket_.send_string("Tag '" + tag_name + "' has been deleted");
 	}
@@ -182,12 +182,12 @@ void Message_handler::handle_message(const Update_tag_request& message) {
 
 		if (tag_exists) {
 			std::string old_tag_name = res.get_data()[0][0];
-			if (old_tag_name != config::symbols::empty_tag) {
+			if (old_tag_name != config::database::empty_tag_name) {
 				database_.execute(update_stmt);
 				return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
 			}
 			else {
-				return "Cannot update reserved tag: '" + config::symbols::empty_tag + "'";
+				return "Cannot update reserved tag: '" + config::database::empty_tag_name + "'";
 			}
 		}
 		else {

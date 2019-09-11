@@ -17,7 +17,7 @@ Tcp_server::~Tcp_server() {
 	close_socket_if_valid();
 }
 
-void Tcp_server::set_ip_address(std::string ip_address){
+void Tcp_server::set_ip_address(const std::string& ip_address){
 	ip_address_ = ip_address;
 }
 
@@ -39,6 +39,10 @@ void Tcp_server::set_recieve_timeout_seconds(int seconds){
 
 void Tcp_server::set_number_of_consumers(int number_of_consumers){
 	number_of_consumers_ = number_of_consumers;
+}
+
+void Tcp_server::set_accept_delay_ms(int accept_delay_ms) {
+	accept_delay_ms_ = accept_delay_ms;
 }
 
 const std::atomic<bool>& Tcp_server::get_running_flag() const {
@@ -71,6 +75,10 @@ int Tcp_server::get_recieve_timeout_seconds() const {
 
 int Tcp_server::get_number_of_consumers() const {
 	return number_of_consumers_;
+}
+
+int Tcp_server::get_accept_delay_ms() const {
+	return accept_delay_ms_;
 }
 
 void Tcp_server::initialize(){
@@ -117,7 +125,7 @@ void Tcp_server::run(){
 		
 		if(client_socket.is_not_valid()){
 			if( errno == EWOULDBLOCK ){
-				std::this_thread::sleep_for( std::chrono::milliseconds(Tcp_server::ACCEPT_DELAY_MS) );
+				std::this_thread::sleep_for( std::chrono::milliseconds(accept_delay_ms_) );
 			}
 			else{
 				utils::err_log(client_socket, "Error while accepting connection");
