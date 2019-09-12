@@ -22,5 +22,5 @@ const std::string& Return_events_request::get_max_date() const {
 }
 
 const std::string& Return_events_request::get_tags() const {
-	return max_date_;
+	return tags_;
 }
