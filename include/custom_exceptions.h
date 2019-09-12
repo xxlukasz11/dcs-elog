@@ -27,7 +27,8 @@ class Unknown_message : public Variadic_exception {
 
 class Unknown_message_format : public Base_exception {
 public:
-	Unknown_message_format();
+	Unknown_message_format(const std::string& message_name);
+	Unknown_message_format(const std::string& message_name, const std::string& error_description);
 	virtual const std::string& what() const noexcept override;
 private:
 	std::string message_;

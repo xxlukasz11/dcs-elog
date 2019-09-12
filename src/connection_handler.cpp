@@ -56,6 +56,9 @@ void Connection_handler::recieve_data_from_socket() {
 	catch (Timeout_error& e) {
 		utils::err_log(socket_, e.what());
 	}
+	catch (Client_disconnected_error& e) {
+		utils::err_log(socket_, e.what());
+	}
 }
 
 void Connection_handler::process_message(const std::string& message_string){
@@ -71,13 +74,9 @@ void Connection_handler::process_message(const std::string& message_string){
 		utils::err_log(socket_, e.what());
 	} catch (Unknown_message& e) {
 		utils::err_log(socket_, e.what());
-	} catch (Msg_parser_exception& e) {
-		utils::err_log(socket_, e.what());
 	} catch(Database_error& e){
 		utils::err_log(socket_, e.what());
 	} catch(Query_error& e){
-		utils::err_log(socket_, e.what());
-	} catch (Client_disconnected_error& e) {
 		utils::err_log(socket_, e.what());
 	} catch (Send_error& e) {
 		utils::err_log(socket_, e.what());

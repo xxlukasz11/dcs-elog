@@ -11,7 +11,9 @@ public:
 	std::shared_ptr<Message> create() const;
 
 private:
+	Message::Type extract_message_type(Msg_parser& parser) const;
 	std::shared_ptr<Message> create_message(Message::Type message_type) const;
+	void read_message_contents(const std::shared_ptr<Message>& message, Msg_parser& parser) const;
 
 	std::string message_string_;
 };

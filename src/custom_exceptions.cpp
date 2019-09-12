@@ -24,8 +24,12 @@ const std::string& Send_error::what() const noexcept {
 	return message_;
 }
 
-Unknown_message_format::Unknown_message_format() {
-	message_ = "Recieved message has unknown format";
+Unknown_message_format::Unknown_message_format(const std::string& message_name) {
+	message_ = message_name + " has unknown format";
+}
+
+Unknown_message_format::Unknown_message_format(const std::string& message_name, const std::string& error_description) {
+	message_ = message_name + " has unknown format: " + error_description;
 }
 
 const std::string& Unknown_message_format::what() const noexcept {

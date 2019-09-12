@@ -15,10 +15,20 @@ Message_factory::Message_factory(const std::string& message_string) : message_st
 
 std::shared_ptr<Message> Message_factory::create() const {
 	Msg_parser parser(message_string_);
-	auto message_type = Message::int_to_message_type(parser.get_mode());
+	auto message_type = extract_message_type(parser);
 	std::shared_ptr<Message> message = create_message(message_type);
-	message->extract_parameters(parser);
+	read_message_contents(message, parser);
 	return message;
+}
+
+Message::Type Message_factory::extract_message_type(Msg_parser& parser) const {
+	int parser_mode;
+	try {
+		parser_mode = parser.get_mode();
+	} catch (Msg_parser_exception& e) {
+		throw Unknown_message(e.what());
+	}
+	return Message::int_to_message_type(parser_mode);
 }
 
 std::shared_ptr<Message> Message_factory::create_message(Message::Type message_type) const {
@@ -33,5 +43,13 @@ std::shared_ptr<Message> Message_factory::create_message(Message::Type message_t
 		case T::update_event:		return std::make_shared<Update_event_request>();
 
 		default: throw Unknown_message("Message with id = ", static_cast<int>(message_type), " is unknown");
+	}
+}
+
+void Message_factory::read_message_contents(const std::shared_ptr<Message>& message, Msg_parser& parser) const {
+	try {
+		message->extract_parameters(parser);
+	} catch (Msg_parser_exception& e) {
+		throw Unknown_message_format(message->name());
 	}
 }

@@ -12,7 +12,7 @@ Msg_parser::Msg_parser(const std::string& msg) : msg_(msg) {
 		mode_ = std::stoi(mode_str);
 	}
 	catch (...) {
-		throw Unknown_message_format();
+		throw Msg_parser_exception("Cannot decode message id");
 	}
 	std::istringstream ss( raw_next() );
 
@@ -34,7 +34,7 @@ int Msg_parser::get_mode() const {
 
 std::string Msg_parser::next() {
 	if (!has_next())
-		throw Msg_parser_exception("Cant obtain next chunk with index ", current_chunk_);
+		throw Msg_parser_exception("Cant obtain next chunk with index: ", current_chunk_);
 
 	auto x1 = msg_.find("[", position_);
 	auto x2 = msg_.find("]", x1 + chunks_sizes_[current_chunk_]);
