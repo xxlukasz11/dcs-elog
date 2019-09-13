@@ -11,6 +11,7 @@ public:
 
 	const std::string& get_tag_name() const;
 
+	Prepared_statement create_get_tag_id_statement() const;
 	Prepared_statement create_tag_statement() const;
 	Prepared_statement create_tree_statement(const std::string& last_id) const;
 private:

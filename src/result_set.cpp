@@ -67,6 +67,10 @@ std::string Result_set::get_last_row_id() const {
 	return last_row_id;
 }
 
+bool Result_set::has_records() const {
+	return data_.size() > 0;
+}
+
 Result_set& Result_set::operator+=(Result_set&& result_set){
 	data_.reserve(data_.size() + result_set.data_.size());
 	std::move(result_set.data_.begin(), result_set.data_.end(), std::back_inserter(data_));

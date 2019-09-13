@@ -96,15 +96,23 @@ void Message_handler::handle_message(const Create_tag_request& message) {
 	query.set_tag_name(message.get_tag_name());
 	query.set_parent_id(message.get_parent_id());
 
+	Prepared_statement tag_exists_statement = query.create_get_tag_id_statement();
+	Prepared_statement add_tag_statement = query.create_tag_statement();
+
 	Database::Accessor accessor(database_);
 	accessor.open();
 
-	Result_set res = database_.execute(query.create_tag_statement());
-	std::string last_id = res.get_last_row_id();
-	database_.execute(query.create_tree_statement(last_id));
-	accessor.close();
-
-	socket_.send_string("Tag '" + query.get_tag_name() + "' has been created");
+	Result_set tag_exists_result = database_.execute(tag_exists_statement);
+	if (tag_exists_result.has_records()) {
+		socket_.send_string("Tag '" + query.get_tag_name() + "' already exists");
+	}
+	else {
+		Result_set res = database_.execute(add_tag_statement);
+		std::string last_id = res.get_last_row_id();
+		database_.execute(query.create_tree_statement(last_id));
+		accessor.close();
+		socket_.send_string("Tag '" + query.get_tag_name() + "' has been created");
+	}
 }
 
 void Message_handler::handle_message(const Delete_tag_request& message) {

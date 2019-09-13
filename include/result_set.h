@@ -19,6 +19,7 @@ public:
 
 	void set_last_row_id(std::string id);
 	std::string get_last_row_id() const;
+	bool has_records() const;
 
 	const header_type& get_header() const;
 	const data_type& get_data() const;
