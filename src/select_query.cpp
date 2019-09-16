@@ -17,13 +17,17 @@ namespace {
 }
 
 void Select_query::set_min_date(std::string date){
-	min_date_ = date;
-	min_date_is_set_ = true;
+	if (!date.empty()) {
+		min_date_ = date;
+		min_date_is_set_ = true;
+	}
 }
 
 void Select_query::set_max_date(std::string date){
-	max_date_ = date;
-	max_date_is_set_ = true;
+	if (!date.empty()) {
+		max_date_ = date;
+		max_date_is_set_ = true;
+	}
 }
 
 void Select_query::create_tag(std::string tag){
