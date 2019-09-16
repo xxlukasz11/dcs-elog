@@ -16,10 +16,14 @@ void Return_events_procedure::start() {
 			std::move(events)));
 }
 
+std::string Return_events_procedure::name() {
+	return "RETURN_EVENTS_PROCEDURE";
+}
+
 Select_query Return_events_procedure::prepare_query() const {
 	Select_query query;
 	query.set_min_date(message_->get_min_date());
-	query.set_max_date(message_->get_min_date());
+	query.set_max_date(message_->get_max_date());
 	auto extracted_tags = utils::string_to_vector(message_->get_tags());
 	query.set_tags(std::move(extracted_tags));
 	return query;

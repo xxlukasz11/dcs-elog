@@ -14,6 +14,10 @@ void Delete_tag_procedure::start() {
 	socket_.send_string(response_message);
 }
 
+std::string Delete_tag_procedure::name() {
+	return "DELETE_TAG_PROCEDURE";
+}
+
 Delete_tag_query Delete_tag_procedure::prepare_query() const {
 	Delete_tag_query query;
 	query.set_tag_id(message_->get_tag_id());

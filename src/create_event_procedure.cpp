@@ -13,6 +13,10 @@ void Create_event_procedure::start() {
 	socket_.send_string(response_message);
 }
 
+std::string Create_event_procedure::name() {
+	return "CREATE_EVENT_PROCEDURE";
+}
+
 Insert_query Create_event_procedure::prepare_query() const {
 	Insert_query query;
 	query.set_title(message_->get_title());

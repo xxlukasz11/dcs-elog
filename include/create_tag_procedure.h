@@ -11,6 +11,7 @@ class Create_tag_procedure : public Procedure {
 public:
 	Create_tag_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
 	virtual void start() override final;
+	virtual std::string name() override final;
 
 private:
 	Add_tag_query prepare_query() const;

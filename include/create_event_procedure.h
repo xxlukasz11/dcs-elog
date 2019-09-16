@@ -12,6 +12,7 @@ class Create_event_procedure : public Procedure {
 public:
 	Create_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
 	virtual void start() override final;
+	virtual std::string name() override final;
 
 private:
 	Insert_query prepare_query() const;

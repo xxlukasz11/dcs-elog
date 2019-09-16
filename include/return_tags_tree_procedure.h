@@ -10,6 +10,7 @@ class Return_tags_tree_procedure : public Procedure {
 public:
 	Return_tags_tree_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
 	virtual void start() override final;
+	virtual std::string name() override final;
 
 private:
 	Result_set load_tags_tree(const Prepared_statement& stmt);

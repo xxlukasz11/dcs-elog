@@ -16,6 +16,10 @@ void Return_tags_tree_procedure::start() {
 			std::move(tags_tree)));
 }
 
+std::string Return_tags_tree_procedure::name() {
+	return "RETURN_TAGS_TREE_PROCEDURE";
+}
+
 Result_set Return_tags_tree_procedure::load_tags_tree(const Prepared_statement& stmt) {
 	Database::Accessor accessor(database_);
 	accessor.open();

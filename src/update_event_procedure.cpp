@@ -14,6 +14,10 @@ void Update_event_procedure::start() {
 	socket_.send_string(response_message);
 }
 
+std::string Update_event_procedure::name() {
+	return "UPDATE_EVENT_PROCEDURE";
+}
+
 Update_event_query Update_event_procedure::prepare_update_query() const {
 	Update_event_query query;
 	query.set_id(message_->get_event_id());

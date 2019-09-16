@@ -32,7 +32,7 @@ void Connection_handler::run() {
 			continue;
 		}
 
-		utils::out_log(socket_, "Connected");
+		utils::out_log(socket_, "Connection accepted");
 		handle_connection();
 		utils::out_log(socket_, "Connection closed");
 		socket_.shutdown_rdwr();
@@ -50,7 +50,7 @@ void Connection_handler::handle_connection() {
 void Connection_handler::recieve_data_from_socket() {
 	try {
 		auto recv_msg = socket_.recv_string();
-		utils::out_log(socket_, "Message contents: " + recv_msg);
+		utils::out_log(socket_, "Recieved payload: " + recv_msg);
 		process_message(recv_msg);
 	}
 	catch (Timeout_error& e) {

@@ -11,6 +11,7 @@ class Return_events_procedure : public Procedure {
 public:
 	Return_events_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
 	virtual void start() override final;
+	virtual std::string name() override final;
 
 private:
 	Select_query prepare_query() const;

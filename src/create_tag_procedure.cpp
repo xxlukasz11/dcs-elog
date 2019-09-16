@@ -13,6 +13,10 @@ void Create_tag_procedure::start() {
 	socket_.send_string(response_message);
 }
 
+std::string Create_tag_procedure::name() {
+	return "CREATE_TAG_PROCEDURE";
+}
+
 Add_tag_query Create_tag_procedure::prepare_query() const {
 	Add_tag_query query;
 	query.set_tag_name(message_->get_tag_name());

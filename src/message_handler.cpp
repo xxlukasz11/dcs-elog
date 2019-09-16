@@ -1,4 +1,5 @@
 #include "custom_exceptions.h"
+#include "utils.h"
 #include "return_events_procedure.h"
 #include "return_tags_tree_procedure.h"
 #include "create_tag_procedure.h"
@@ -12,7 +13,9 @@ Message_handler::Message_handler(Socket socket, Database& database) : socket_(so
 
 void Message_handler::handle(const std::shared_ptr<Message>& message) {
 	std::unique_ptr<Procedure> procedure = create_procedure(message);
+	utils::out_log(socket_, "Starting " + procedure->name());
 	procedure->start();
+	utils::out_log(socket_, procedure->name() + " has finished");
 }
 
 std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_ptr<Message>& message) {
