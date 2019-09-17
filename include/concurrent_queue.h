@@ -1,10 +1,11 @@
-#ifndef _MULTITHREAD_QUEUE_H_
-#define _MULTITHREAD_QUEUE_H_
+#ifndef _CONCURRENT_QUEUE_H_
+#define _CONCURRENT_QUEUE_H_
 
 #include <mutex>
 #include <condition_variable>
 #include <deque>
 #include "socket.h"
+#include "log_item.h"
 
 template<typename Queue_element>
 class Concurrent_queue {
@@ -27,6 +28,7 @@ private:
 };
 
 using Socket_queue = Concurrent_queue<Socket>;
+using Log_item_queue = Concurrent_queue<Log_item>;
 
 template<typename Queue_element>
 inline void Concurrent_queue<Queue_element>::push(const Queue_element& element) {
@@ -55,4 +57,4 @@ inline Queue_element Concurrent_queue<Queue_element>::pop() {
 	return element;
 }
 
-#endif // !_MULTITHREAD_QUEUE_H_
+#endif // !_CONCURRENT_QUEUE_H_
