@@ -14,18 +14,17 @@ Log_event_provider Logger::create() {
 
 void Logger::run() {
 	release_flag_ = true;
-	while (release_flag_) {
+	while (release_flag_ || !queue_.is_empty()) {
 		Log_item log_item = queue_.pop();
 		Log_entry log_entry = create_log_entry(log_item);
-		std::cout << log_entry << std::endl;
+		std::cout << log_entry << "\n";
 	}
+	std::cout << std::flush;
 }
 
 void Logger::release() {
 	release_flag_ = false;
-	Log_item release_item;
-	release_item.set_message(Log_item::Type::STATUS, "Logger released");
-	queue_.push(release_item);
+	Logger::create().status("Logger released");
 }
 
 std::string Logger::create_date_time_string(time_t time) const {
@@ -37,6 +36,7 @@ std::string Logger::create_date_time_string(time_t time) const {
 
 Log_entry Logger::create_log_entry(const Log_item& log_item) {
 	std::string date_time_string = create_date_time_string(log_item.get_time());
+	std::string entry_type = determine_entry_type(log_item);
 	std::string context;
 	if (log_item.has_context()) {
 		context = std::to_string(log_item.get_context());
@@ -46,10 +46,26 @@ Log_entry Logger::create_log_entry(const Log_item& log_item) {
 	log_entry
 		.append(std::move(date_time_string))
 		.append(TAB)
-		.append(context)
-		.append(":" + TAB)
+		.append(entry_type)
+		.append(TAB)
 		.append(log_item.get_location())
 		.append(TAB)
+		.append(context)
+		.append(":" + TAB)
 		.append(log_item.get_message());
 	return log_entry;
+}
+
+std::string Logger::determine_entry_type(const Log_item& log_item) {
+	using T = Log_item::Type;
+	auto item_type = log_item.get_type();
+
+	switch (item_type) {
+		case T::INFO: return "INFO";
+		case T::WARNING: return "WARNING";
+		case T::ERROR: return "ERROR";
+		case T::STATUS: return "STATUS";
+
+		default: return "UNKNOWN";
+	}
 }

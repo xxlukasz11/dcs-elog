@@ -1,9 +1,9 @@
 #include <string>
 #include <atomic>
-#include "utils.h"
 #include "custom_exceptions.h"
 #include "connection_handler.h"
 #include "socket.h"
+#include "logger.h"
 
 #include "tcp_server.h"
 
@@ -128,7 +128,7 @@ void Tcp_server::run(){
 				std::this_thread::sleep_for( std::chrono::milliseconds(accept_delay_ms_) );
 			}
 			else{
-				utils::err_log(client_socket, "Error while accepting connection");
+				Logger::create().context(client_socket).error("Error while accepting connection");
 			}
 		}
 		else{

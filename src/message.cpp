@@ -1,6 +1,5 @@
 #include <memory>
 #include "message.h"
-#include "utils.h"
 
 Message::Message(Message::Type message_type) : message_type_(message_type) {
 }

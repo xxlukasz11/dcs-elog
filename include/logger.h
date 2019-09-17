@@ -1,6 +1,7 @@
 #ifndef _LOGGER_H_
 #define _LOGGER_H_
 
+#include <string>
 #include "dcs_thread.h"
 #include "concurrent_queue.h"
 #include "log_event_provider.h"
@@ -15,6 +16,7 @@ public:
 private:
 	std::string create_date_time_string(time_t time) const;
 	Log_entry create_log_entry(const Log_item& log_item);
+	std::string determine_entry_type(const Log_item& log_item);
 
 	bool release_flag_;
 	static Log_item_queue queue_;

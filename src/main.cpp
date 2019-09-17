@@ -1,5 +1,4 @@
 #include <iostream>
-#include "utils.h"
 #include "custom_exceptions.h"
 #include "database.h"
 #include "config.h"
@@ -10,10 +9,10 @@ int main(){
 	Administrator::instance().start();
 
 	Database db(config::database::path);
-	Database::Accessor accesor(db);
-	accesor.open();
-	std::cout << std::endl;
 	try{
+		Database::Accessor accesor(db);
+		accesor.open();
+		std::cout << std::endl;
 		db.execute(
 			"SELECT Events.Id, datetime(Events.Date, 'unixepoch') AS Date, Events.Title AS Title, "
 			"Events.Description AS Description, group_concat(Tags_list.Tag) AS Tags, Events.author "
@@ -29,7 +28,7 @@ int main(){
 				std::cout << ans << std::endl;
 		});
 	} catch(Database_error& e){
-		utils::err_log(e.what());
+		std::cout << e.what() << std::endl;
 	}
 
 	std::cout << "\nExit program" << std::endl;

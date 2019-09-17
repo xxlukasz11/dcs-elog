@@ -20,6 +20,7 @@ public:
 	void push(const Queue_element& element);
 	void push(Queue_element&& element);
 	Queue_element pop();
+	bool is_empty() const;
 
 private:
 	std::mutex mtx_;
@@ -55,6 +56,11 @@ inline Queue_element Concurrent_queue<Queue_element>::pop() {
 	auto element = std::move(queue_.front());
 	queue_.pop_front();
 	return element;
+}
+
+template<typename Queue_element>
+inline bool Concurrent_queue<Queue_element>::is_empty() const {
+	return queue_.empty();
 }
 
 #endif // !_CONCURRENT_QUEUE_H_
