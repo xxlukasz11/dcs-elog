@@ -2,7 +2,7 @@
 #define _TCP_SERVER_H_
 
 #include <atomic>
-#include "socket_queue.h"
+#include "concurrent_queue.h"
 #include "dcs_thread.h"
 
 class Tcp_server : public Dcs_thread {

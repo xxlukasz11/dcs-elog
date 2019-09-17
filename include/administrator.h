@@ -5,7 +5,7 @@
 #include "database.h"
 #include "thread_manager.h"
 #include "tcp_server.h"
-#include "socket_queue.h"
+#include "concurrent_queue.h"
 
 class Administrator {
 	Database database_;

@@ -4,7 +4,7 @@
 #include <string>
 #include <mutex>
 
-#include "socket_queue.h"
+#include "concurrent_queue.h"
 #include "database.h"
 #include "msg_parser.h"
 #include "dcs_thread.h"
