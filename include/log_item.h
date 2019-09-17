@@ -3,15 +3,10 @@
 
 #include <string>
 #include <ctime>
-#include <experimental/optional>
-
-// C++14 workaround
-// TODO delete after migration to C++17
-namespace stdd = std::experimental;
 
 class Log_item {
 public:
-	enum class Type { INFO, WARNING, ERROR };
+	enum class Type { INFO, WARNING, ERROR, STATUS };
 
 	Log_item();
 	bool has_context() const;
@@ -28,10 +23,12 @@ public:
 	void set_message(Type type, const std::string& message);
 
 private:
+	bool context_is_set_{ false };
+
 	Type type_;
 	time_t time_;
-	stdd::optional<int> context_;
-	stdd::optional<std::string> location_;
+	int context_{ 0 };
+	std::string location_;
 	std::string message_;
 };
 

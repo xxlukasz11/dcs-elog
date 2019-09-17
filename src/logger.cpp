@@ -13,11 +13,19 @@ Log_event_provider Logger::create() {
 }
 
 void Logger::run() {
-	while (true) {
+	release_flag_ = true;
+	while (release_flag_) {
 		Log_item log_item = queue_.pop();
 		Log_entry log_entry = create_log_entry(log_item);
 		std::cout << log_entry << std::endl;
 	}
+}
+
+void Logger::release() {
+	release_flag_ = false;
+	Log_item release_item;
+	release_item.set_message(Log_item::Type::STATUS, "Logger released");
+	queue_.push(release_item);
 }
 
 std::string Logger::create_date_time_string(time_t time) const {

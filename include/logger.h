@@ -11,10 +11,12 @@ class Logger : public Dcs_thread {
 public:
 	static Log_event_provider create();
 	virtual void run() override final;
+	void release();
 private:
 	std::string create_date_time_string(time_t time) const;
 	Log_entry create_log_entry(const Log_item& log_item);
 
+	bool release_flag_;
 	static Log_item_queue queue_;
 };
 

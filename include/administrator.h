@@ -6,12 +6,14 @@
 #include "thread_manager.h"
 #include "tcp_server.h"
 #include "concurrent_queue.h"
+#include "logger.h"
 
 class Administrator {
 	Database database_;
 	Thread_manager thread_manager_;
 	Socket_queue socket_queue_;
 	std::shared_ptr<Tcp_server> server_;
+	std::shared_ptr<Logger> logger_;
 
 	bool initialized_{ false };
 	bool started_{ false };
@@ -23,6 +25,7 @@ public:
 	void stop();
 
 private:
+	void setup_and_start_logger();
 	void setup_server();
 	void prepare_threads();
 	void on_exit();

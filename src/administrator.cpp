@@ -8,11 +8,12 @@ void Administrator::handle_sigint(int) {
 	instance().stop();
 }
 
-Administrator::Administrator() : database_(config::database::path) {
+Administrator::Administrator() : logger_(std::make_shared<Logger>()), database_(config::database::path) {
 	signal(SIGINT, &handle_sigint);
+	setup_and_start_logger();
 }
 
-Administrator & Administrator::instance() {
+Administrator& Administrator::instance() {
 	static Administrator administrator;
 	return administrator;
 }
@@ -42,7 +43,14 @@ void Administrator::stop() {
 	}
 	server_->stop_and_release_consumers();
 	thread_manager_.join_consumers();
+	logger_->release();
+	thread_manager_.join_loggers();
 	on_exit();
+}
+
+void Administrator::setup_and_start_logger() {
+	thread_manager_.add_logger(logger_);
+	thread_manager_.start_loggers();
 }
 
 void Administrator::setup_server() {

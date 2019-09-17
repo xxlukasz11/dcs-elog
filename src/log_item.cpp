@@ -4,17 +4,14 @@ Log_item::Log_item() : time_(std::time(nullptr)) {
 }
 
 bool Log_item::has_context() const {
-	if (context_) {
-		return true;
-	}
-	return false;
+	return context_is_set_;
 }
 
 bool Log_item::has_location() const {
-	if (location_) {
-		return true;
+	if (location_.empty()) {
+		return false;
 	}
-	return false;
+	return true;
 }
 
 time_t Log_item::get_time() const {
@@ -22,11 +19,11 @@ time_t Log_item::get_time() const {
 }
 
 int Log_item::get_context() const {
-	return context_.value_or(0);
+	return context_;
 }
 
 const std::string& Log_item::get_location() const {
-	return location_.value();
+	return location_;
 }
 
 const std::string& Log_item::get_message() const {
@@ -38,11 +35,12 @@ Log_item::Type Log_item::get_type() const {
 }
 
 void Log_item::set_context(int context) {
-	context_.emplace(context);
+	context_ = context;
+	context_is_set_ = true;
 }
 
 void Log_item::set_location(const std::string& location) {
-	location_.emplace(location);
+	location_ = location;
 }
 
 void Log_item::set_message(Log_item::Type type, const std::string& message) {
