@@ -9,6 +9,9 @@ tmp/
 sqlite/*
 !sqlite/CMakeLists.txt
 
+#connection library files
+connection_library/*/
+
 #Visual Studio files
 Debug/
 Release/
