@@ -85,7 +85,7 @@ std::string Socket::recv_string() {
 	return msg;
 }
 
-void Socket::send_string(const std::string & msg) {
+void Socket::send_string(const std::string& msg) {
 	int length = msg.size();
 	int total_bytes_sent = 0;
 	const char* buffer = msg.c_str();
