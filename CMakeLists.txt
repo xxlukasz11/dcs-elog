@@ -20,6 +20,7 @@ endif()
 unset(NOSQLITE CACHE)
 
 add_subdirectory(src)
+add_subdirectory(connection_library)
 
 if(NOT DEFINED NOTESTS)
 	add_subdirectory(tests)
