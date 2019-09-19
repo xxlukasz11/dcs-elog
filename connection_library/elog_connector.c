@@ -35,13 +35,14 @@ int open_connection(Elog_error_code* error_code) {
 }
 
 void send_data(int sockfd, Elog_event* event, Elog_error_code* error_code) {
-	char buffer[] = "ABCDEFGH................F";
-	int length = strlen(buffer);
-	printf("length = %d\n", length);
+	char send_buffer[] = "[0][7 6 3 8][title A][desc B][d,g][komputer]";
+	int length = strlen(send_buffer);
 	write(sockfd, &length, sizeof(length));
-	write(sockfd, buffer, sizeof(buffer));
-	read(sockfd, buffer, sizeof(buffer));
-	printf("%s\n", buffer);
+	write(sockfd, send_buffer, sizeof(send_buffer));
+
+	char recv_buffer[ELOG_STRING_LENGTH];
+	read(sockfd, recv_buffer, sizeof(recv_buffer));
+	printf("%s\n", recv_buffer);
 }
 
 void close_connection(int sockfd) {
