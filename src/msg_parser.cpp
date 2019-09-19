@@ -7,17 +7,19 @@
 #include "custom_exceptions.h"
 
 Msg_parser::Msg_parser(const std::string& msg) : msg_(msg) {
+}
+
+void Msg_parser::parse_header() {
 	std::string mode_str = raw_next();
 	try {
 		mode_ = std::stoi(mode_str);
-	}
-	catch (...) {
+	} catch (...) {
 		throw Msg_parser_exception("Cannot decode message id");
 	}
-	std::istringstream ss( raw_next() );
+	std::istringstream ss(raw_next());
 
-	for(int buffer; ss >> buffer;){
-		chunks_sizes_.push_back( buffer );
+	for (int buffer; ss >> buffer;) {
+		chunks_sizes_.push_back(buffer);
 	}
 
 	chunks_ = chunks_sizes_.size();

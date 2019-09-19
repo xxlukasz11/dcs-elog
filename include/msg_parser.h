@@ -14,7 +14,7 @@
 class Msg_parser {
 public:
 	Msg_parser(const std::string& msg);
-
+	void parse_header();
 	bool has_next() const;
 	std::string next();
 	int get_mode() const;
@@ -22,9 +22,9 @@ public:
 private:
 	std::string raw_next();
 
-	int mode_;
-	int chunks_;
-	int current_chunk_;
+	int mode_{ -1 };
+	int chunks_{ 0 };
+	int current_chunk_{ 0 };
 	std::vector<int> chunks_sizes_;
 
 	size_t position_{ 0 };

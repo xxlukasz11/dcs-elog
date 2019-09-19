@@ -22,12 +22,12 @@ std::shared_ptr<Message> Message_factory::create() const {
 }
 
 Message::Type Message_factory::extract_message_type(Msg_parser& parser) const {
-	int parser_mode;
 	try {
-		parser_mode = parser.get_mode();
+		parser.parse_header();
 	} catch (Msg_parser_exception& e) {
 		throw Unknown_message(e.what());
 	}
+	int parser_mode = parser.get_mode();
 	return Message::int_to_message_type(parser_mode);
 }
 

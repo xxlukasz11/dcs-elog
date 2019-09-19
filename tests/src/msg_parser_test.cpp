@@ -5,6 +5,7 @@
 TEST(msg_parser, select_mode)
 {
 	Msg_parser parser("[1]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::return_events);
@@ -12,6 +13,7 @@ TEST(msg_parser, select_mode)
 
 TEST(msg_parser, insert_mode) {
 	Msg_parser parser("[0]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::create_event);
@@ -19,6 +21,7 @@ TEST(msg_parser, insert_mode) {
 
 TEST(msg_parser, return_tags_tree_mode) {
 	Msg_parser parser("[2]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::return_tags_tree);
@@ -26,6 +29,7 @@ TEST(msg_parser, return_tags_tree_mode) {
 
 TEST(msg_parser, add_tag_mode) {
 	Msg_parser parser("[3]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::create_tag);
@@ -33,6 +37,7 @@ TEST(msg_parser, add_tag_mode) {
 
 TEST(msg_parser, delete_tag_mode) {
 	Msg_parser parser("[4]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::delete_tag);
@@ -40,6 +45,7 @@ TEST(msg_parser, delete_tag_mode) {
 
 TEST(msg_parser, update_tag_mode) {
 	Msg_parser parser("[5]");
+	parser.parse_header();
 	int mode = parser.get_mode();
 	Message::Type type = Message::int_to_message_type(mode);
 	EXPECT_EQ(type, Message::Type::update_tag);
