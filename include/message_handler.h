@@ -10,9 +10,10 @@
 class Message_handler {
 public:
 	Message_handler(Socket socket, Database& database);
-	void handle(const std::shared_ptr<Message>& message);
+	void process_message(const std::string& message);
 
 private:
+	void handle(const std::shared_ptr<Message>& message_string);
 	std::unique_ptr<Procedure> create_procedure(const std::shared_ptr<Message>& message);
 
 	Socket socket_;

@@ -8,8 +8,29 @@
 #include "update_event_procedure.h"
 #include "message_handler.h"
 #include "logger.h"
+#include "message_factory.h"
 
 Message_handler::Message_handler(Socket socket, Database& database) : socket_(socket), database_(database) {}
+
+void Message_handler::process_message(const std::string& message_string) {
+	try {
+		Message_factory factory(message_string);
+		auto internal_message = factory.create();
+		Logger::create().context(socket_).info(internal_message);
+		handle(internal_message);
+
+	} catch (Unknown_message_format& e) {
+		Logger::create().context(socket_).error(e.what());
+	} catch (Unknown_message& e) {
+		Logger::create().context(socket_).error(e.what());
+	} catch (Database_error& e) {
+		Logger::create().context(socket_).error(e.what());
+	} catch (Query_error& e) {
+		Logger::create().context(socket_).error(e.what());
+	} catch (Send_error& e) {
+		Logger::create().context(socket_).error(e.what());
+	}
+}
 
 void Message_handler::handle(const std::shared_ptr<Message>& message) {
 	std::unique_ptr<Procedure> procedure = create_procedure(message);

@@ -1,9 +1,6 @@
 #ifndef _CONNECTION_HANDLER_H_
 #define _CONNECTION_HANDLER_H_
 
-#include <string>
-#include <mutex>
-
 #include "concurrent_queue.h"
 #include "database.h"
 #include "msg_parser.h"
@@ -23,7 +20,6 @@ private:
 	virtual void run();
 	void handle_connection();
 	void recieve_data_from_socket();
-	void process_message(const std::string& message);
 };
 
 

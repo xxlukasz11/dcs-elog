@@ -4,10 +4,7 @@
 #include "socket.h"
 #include "custom_exceptions.h"
 #include "message_handler.h"
-#include "message_factory.h"
-#include "message.h"
 #include "logger.h"
-
 #include "connection_handler.h"
 
 namespace {
@@ -51,34 +48,13 @@ void Connection_handler::recieve_data_from_socket() {
 	try {
 		auto recv_msg = socket_.recv_string();
 		Logger::create().context(socket_).info("Recieved payload: " + recv_msg);
-		process_message(recv_msg);
+		Message_handler handler(socket_, database_);
+		handler.process_message(recv_msg);
 	}
 	catch (Timeout_error& e) {
 		Logger::create().context(socket_).warning(e.what());
 	}
 	catch (Client_disconnected_error& e) {
 		Logger::create().context(socket_).warning(e.what());
-	}
-}
-
-void Connection_handler::process_message(const std::string& message_string){
-	try{
-		Message_factory factory(message_string);
-		auto internal_message = factory.create();
-		Logger::create().context(socket_).info(internal_message);
-
-		Message_handler handler(socket_, database_);
-		handler.handle(internal_message);
-
-	} catch(Unknown_message_format& e){
-		Logger::create().context(socket_).error(e.what());
-	} catch (Unknown_message& e) {
-		Logger::create().context(socket_).error(e.what());
-	} catch(Database_error& e){
-		Logger::create().context(socket_).error(e.what());
-	} catch(Query_error& e){
-		Logger::create().context(socket_).error(e.what());
-	} catch (Send_error& e) {
-		Logger::create().context(socket_).error(e.what());
 	}
 }
