@@ -2,10 +2,9 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include "string.h"
+#include <string.h>
 #include "elog_connector.h"
-
-#include <stdio.h>
+#include "elog_create_event_message.h"
 
 const char* elog_ip() {
 	return "127.0.0.1";
@@ -34,28 +33,36 @@ int open_connection(Elog_error_code* error_code) {
 	return sockfd;
 }
 
-void send_data(int sockfd, Elog_event* event, Elog_error_code* error_code) {
-	char send_buffer[] = "[0][7 6 3 8][title A][desc B][d,g][komputer]";
-	int length = strlen(send_buffer);
-	write(sockfd, &length, sizeof(length));
-	write(sockfd, send_buffer, sizeof(send_buffer));
+void send_data(int sockfd, const Elog_event* event, Elog_error_code* error_code) {
+	Elog_create_event_message message = create_event_message(event);
+	int length = message.length;
+	if (write(sockfd, &length, sizeof(length)) <= 0) {
+		*error_code = ELOG_SEND_EVENT_ERROR;
+		return;
+	}
+	if (write(sockfd, message.data, sizeof(message.data)) <= 0) {
+		*error_code = ELOG_SEND_EVENT_ERROR;
+		return;
+	}
 
-	char recv_buffer[ELOG_STRING_LENGTH];
+	char recv_buffer[ELOG_MAX_STRING_LENGTH];
+	memset(recv_buffer, 0, ELOG_MAX_STRING_LENGTH);
 	read(sockfd, recv_buffer, sizeof(recv_buffer));
-	printf("%s\n", recv_buffer);
+	if (strstr(recv_buffer, "successfully") == NULL) {
+		*error_code = ElOG_FAILURE;
+	}
 }
 
 void close_connection(int sockfd) {
 	close(sockfd);
 }
 
-Elog_error_code send_event(Elog_event* event) {
+Elog_error_code send_event(const Elog_event* event) {
 	Elog_error_code error_code = ELOG_SUCCESS;
-
 	int sockfd = open_connection(&error_code);
-	if(error_code != ELOG_SUCCESS)
+	if (error_code != ELOG_SUCCESS) {
 		return error_code;
-
+	}
 	send_data(sockfd, event, &error_code);
 	close_connection(sockfd);
 	return error_code;

@@ -3,7 +3,7 @@
 
 Elog_string create_empty_elog_string() {
 	Elog_string elog_string = { .length = 0 };
-	memset(elog_string.value, 0, ELOG_STRING_LENGTH);
+	memset(elog_string.value, 0, ELOG_MAX_STRING_LENGTH);
 	return elog_string;
 }
 
@@ -11,7 +11,7 @@ Elog_string create_elog_string(const char* value) {
 	Elog_string elog_string = create_empty_elog_string();
 	if (value) {
 		size_t length = strlen(value);
-		if (length <= ELOG_STRING_LENGTH) {
+		if (length <= ELOG_MAX_STRING_LENGTH) {
 			strncpy(elog_string.value, value, length);
 			elog_string.length = length;
 		}

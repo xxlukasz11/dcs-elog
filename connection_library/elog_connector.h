@@ -6,6 +6,6 @@
 
 const char* elog_ip();
 int elog_port();
-Elog_error_code send_event(Elog_event* event);
+Elog_error_code send_event(const Elog_event* event);
 
 #endif // !_ELOG_CONNECTOR_H_

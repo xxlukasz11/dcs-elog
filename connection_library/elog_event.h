@@ -1,12 +1,12 @@
 #ifndef _ELOG_EVENT_H_
 #define _ELOG_EVENT_H_
 
-#define ELOG_STRING_LENGTH 512
+#define ELOG_MAX_STRING_LENGTH 512
 
 #include <stdlib.h>
 
 typedef struct {
-	char value[ELOG_STRING_LENGTH];
+	char value[ELOG_MAX_STRING_LENGTH];
 	size_t length;
 } Elog_string;
 
