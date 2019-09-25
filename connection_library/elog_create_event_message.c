@@ -83,9 +83,14 @@ void set_message_data(Elog_create_event_message* message, const Elog_event* even
 	append_body_sections(message, event);
 }
 
-Elog_create_event_message create_event_message(const Elog_event* event) {
-	Elog_create_event_message message = { .length = 0 };
-	memset(message.data, 0, ELOG_MAX_MESSAGE_LENGTH);
-	set_message_data(&message, event);
+Elog_create_event_message* create_event_message(const Elog_event* event) {
+	Elog_create_event_message* message = (Elog_create_event_message*)malloc(sizeof(Elog_create_event_message));
+	message->length = 0;
+	memset(message->data, 0, ELOG_MAX_MESSAGE_LENGTH);
+	set_message_data(message, event);
 	return message;
+}
+
+void free_event_message(Elog_create_event_message* message) {
+	free(message);
 }

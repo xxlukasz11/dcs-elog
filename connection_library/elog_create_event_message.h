@@ -9,6 +9,7 @@ typedef struct {
 	int length;
 } Elog_create_event_message;
 
-Elog_create_event_message create_event_message(const Elog_event* event);
+Elog_create_event_message* create_event_message(const Elog_event* event);
+void free_event_message(Elog_create_event_message* message);
 
 #endif // !_ELOG_CREATE_EVENT_MESSAGE_H_
