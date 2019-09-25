@@ -21,6 +21,7 @@ public:
 	std::string get_last_row_id() const;
 	bool has_records() const;
 
+	std::string get_first_field() const;
 	const header_type& get_header() const;
 	const data_type& get_data() const;
 	column_type get_column(size_t index);

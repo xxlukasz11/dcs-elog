@@ -48,10 +48,10 @@ std::string Delete_tag_procedure::run_main_procedure(const Delete_tag_query& que
 	}
 
 	Result_set res = database_.execute(parent_id_null_stmt);
-	std::string parent_id = res.get_data()[0][0];
+	std::string parent_id = res.get_first_field();
 
 	Result_set res_events = database_.execute(parent_id_default_stmt);
-	std::string parent_id_for_events = res_events.get_data()[0][0];
+	std::string parent_id_for_events = res_events.get_first_field();
 
 	Prepared_statement delete_events_tag_stmt = query.delete_events_tag_statement(parent_id_for_events);
 	Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
@@ -72,7 +72,7 @@ bool Delete_tag_procedure::check_if_tag_exists(const Result_set& result_set) {
 }
 
 std::string Delete_tag_procedure::extract_tag_name(const Result_set& result_set) {
-	return result_set.get_data()[0][0];
+	return result_set.get_first_field();
 }
 
 bool Delete_tag_procedure::check_if_tag_is_reserved(const std::string tag_name) {

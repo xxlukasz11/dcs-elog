@@ -36,6 +36,13 @@ void Result_set::set_header(std::vector<std::string>&& row){
 }
 
 
+std::string Result_set::get_first_field() const {
+	if (!data_.empty() && !data_[0].empty()) {
+		return data_[0][0];
+	}
+	return std::string{};
+}
+
 const Result_set::header_type& Result_set::get_header() const {
 	return header_;
 }

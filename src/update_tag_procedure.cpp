@@ -34,7 +34,7 @@ std::string Update_tag_procedure::update_tag(const Update_tag_query& query) {
 	bool tag_exists = tag_exists_result.has_records();
 
 	if (tag_exists) {
-		std::string old_tag_name = tag_exists_result.get_data()[0][0];
+		std::string old_tag_name = tag_exists_result.get_first_field();
 		if (old_tag_name != config::database::empty_tag_name) {
 			database_.execute(update_stmt);
 			return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
