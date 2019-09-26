@@ -36,9 +36,11 @@ std::string Create_tag_procedure::create_tag(const Add_tag_query& query) {
 		return "Tag '" + query.get_tag_name() + "' already exists";
 	}
 	else {
+		Database::Transaction transaction(database_);
 		Result_set res = database_.execute(add_tag_statement);
 		std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tree_statement(last_id));
+		transaction.commit();
 		return "Tag '" + query.get_tag_name() + "' has been created";
 	}
 }

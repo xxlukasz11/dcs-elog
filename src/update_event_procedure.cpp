@@ -54,11 +54,13 @@ std::string Update_event_procedure::run_main_procedure(const Update_event_query&
 		return message;
 	}
 
+	Database::Transaction transaction(database_);
 	database_.execute(update_event_stmt);
 	database_.execute(delete_event_tags_stmt);
 	if (update_query.has_any_tags()) {
 		database_.execute(insert_event_tags_stmt);
 	}
+	transaction.commit();
 
 	return "Event with id: " + message_->get_event_id() + " has been successfully updated";
 }

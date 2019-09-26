@@ -35,9 +35,11 @@ std::string Create_event_procedure::run_main_procedure(const Insert_query & quer
 
 	auto not_existing_tags = load_not_existing_tags(exists_stmt);
 	if (not_existing_tags.empty()) {
+		Database::Transaction transaction(database_);
 		Result_set res = database_.execute(events_stmt);
 		std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tags_statement(last_id));
+		transaction.commit();
 		return "Event with id: " + last_id + " has been successfully saved";
 	}
 	else {

@@ -36,7 +36,9 @@ std::string Update_tag_procedure::update_tag(const Update_tag_query& query) {
 	if (tag_exists) {
 		std::string old_tag_name = tag_exists_result.get_first_field();
 		if (old_tag_name != config::database::empty_tag_name) {
+			Database::Transaction transaction(database_);
 			database_.execute(update_stmt);
+			transaction.commit();
 			return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
 		}
 		else {

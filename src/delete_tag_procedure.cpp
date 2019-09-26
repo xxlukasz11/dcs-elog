@@ -57,12 +57,14 @@ std::string Delete_tag_procedure::run_main_procedure(const Delete_tag_query& que
 	Prepared_statement update_events_tag_stmt = query.update_events_tag_statement(parent_id_for_events);
 	Prepared_statement update_tree_stmt = query.update_tree_statement(parent_id);
 
+	Database::Transaction transaction(database_);
 	database_.execute(delete_events_tag_stmt);
 	database_.execute(update_events_tag_stmt);
 	database_.execute(delete_redundant_stmt);
 	database_.execute(update_tree_stmt);
 	database_.execute(delete_tree_stmt);
 	database_.execute(delete_list_stmt);
+	transaction.commit();
 
 	return "Tag '" + tag_name + "' has been deleted";
 }

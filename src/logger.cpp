@@ -6,6 +6,7 @@
 #include "logger.h"
 
 static const std::string TAB = "\t";
+static const std::string DOUBLE_TAB = "\t\t";
 Log_item_queue Logger::queue_;
 
 Log_event_provider Logger::create() {
@@ -47,9 +48,9 @@ Log_entry Logger::create_log_entry(const Log_item& log_item) {
 		.append(std::move(date_time_string))
 		.append(TAB)
 		.append(entry_type)
-		.append(TAB)
+		.append(DOUBLE_TAB)
 		.append(log_item.get_location())
-		.append(TAB)
+		.append(DOUBLE_TAB)
 		.append(context)
 		.append(":" + TAB)
 		.append(log_item.get_message());
