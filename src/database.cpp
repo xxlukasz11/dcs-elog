@@ -5,6 +5,7 @@
 
 #include "custom_exceptions.h"
 #include "result_set.h"
+#include "logger.h"
 #include "sqlite3.h"
 
 #include "database.h"
@@ -28,6 +29,18 @@ void Database::close() {
 		sqlite3* db = handler_.release();
 		sqlite3_close(db);
 	}
+}
+
+void Database::begin_transaction() {
+	execute("BEGIN TRANSACTION;");
+}
+
+void Database::commit() {
+	execute("COMMIT;");
+}
+
+void Database::rollback() {
+	execute("ROLLBACK;");
 }
 
 void Database::assert_database_opened() {
@@ -179,4 +192,25 @@ void Database::Accessor::close() {
 
 Database::Accessor::~Accessor() {
 	close();
+}
+
+void Database::Transaction::commit() {
+	closed_ = true;
+	database_.commit();
+}
+
+void Database::Transaction::rollback() {
+	closed_ = true;
+	database_.rollback();
+}
+
+Database::Transaction::Transaction(Database& database) : database_(database) {
+	database_.begin_transaction();
+}
+
+Database::Transaction::~Transaction() {
+	if(!closed_) {
+		database_.rollback();
+		Logger::create().location("DATABSE").warning("Implicitly performed ROLLBACK");
+	}
 }

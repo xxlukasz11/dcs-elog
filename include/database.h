@@ -15,13 +15,24 @@ class Database{
 	using deleter_type = std::function<void(sqlite3*)>;
 public:
 	class Accessor {
-		Database& database_;
-		std::unique_lock<std::mutex> locker_;
 	public:
 		Accessor(Database& database);
 		void open();
 		void close();
 		~Accessor();
+	private:
+		Database& database_;
+		std::unique_lock<std::mutex> locker_;
+	};
+	class Transaction {
+	public:
+		void commit();
+		void rollback();
+		Transaction(Database& database);
+		~Transaction();
+	private:
+		bool closed_{ false };
+		Database& database_;
 	};
 
 	using callback_type = int(*)(void*, int, char**, char**);
@@ -43,6 +54,10 @@ private:
 
 	void open();
 	void close();
+	void begin_transaction();
+	void commit();
+	void rollback();
+
 	void assert_database_opened();
 	bool is_database_opened() const;
 	void bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_type& params);
