@@ -58,6 +58,8 @@ std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_p
 			return std::make_unique<Update_tag_procedure>(database_, socket_, message);
 		case T::update_event:
 			return std::make_unique<Update_event_procedure>(database_, socket_, message);
+		//case T::create_library_event:
+		//	return std::make_unique<Create_library_event_procedure>(database_, socket_, message);
 
 		default: throw Unknown_message("Message with id = ", static_cast<int>(message_type), " is unknown");
 	}

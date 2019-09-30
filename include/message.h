@@ -13,18 +13,16 @@ public:
 		create_tag,
 		delete_tag,
 		update_tag,
-		update_event
+		update_event,
+		create_library_event
 	};
 
 	virtual void extract_parameters(Msg_parser& parser) = 0;
 	virtual std::string name() const = 0;
+	virtual Type get_message_type() const = 0;
 
-	Message(Type message_type);
-	Type get_message_type() const;
 	virtual ~Message() = default;
 	static Type int_to_message_type(int mode);
-private:
-	Type message_type_;
 };
 
 #endif

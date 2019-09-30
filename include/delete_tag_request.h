@@ -5,9 +5,9 @@
 
 class Delete_tag_request : public Message {
 public:
-	Delete_tag_request();
 	virtual void extract_parameters(Msg_parser& parser);
 	virtual std::string name() const;
+	virtual Type get_message_type() const;
 
 	const std::string& get_tag_id() const;
 

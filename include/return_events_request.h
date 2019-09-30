@@ -5,9 +5,9 @@
 
 class Return_events_request : public Message {
 public:
-	Return_events_request();
 	virtual void extract_parameters(Msg_parser& parser);
 	virtual std::string name() const;
+	virtual Type get_message_type() const;
 
 	const std::string& get_min_date() const;
 	const std::string& get_max_date() const;

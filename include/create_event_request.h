@@ -5,9 +5,10 @@
 
 class Create_event_request : public Message {
 public:
-	Create_event_request();
 	virtual void extract_parameters(Msg_parser& parser);
 	virtual std::string name() const;
+	virtual Type get_message_type() const;
+	virtual ~Create_event_request() = default;
 
 	const std::string& get_title() const;
 	const std::string& get_description() const;

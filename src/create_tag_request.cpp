@@ -1,8 +1,5 @@
 #include "create_tag_request.h"
 
-Create_tag_request::Create_tag_request() : Message(Type::create_tag) {
-}
-
 void Create_tag_request::extract_parameters(Msg_parser& parser) {
 	tag_name_ = parser.next();
 	parent_id_ = parser.next();
@@ -10,6 +7,10 @@ void Create_tag_request::extract_parameters(Msg_parser& parser) {
 
 std::string Create_tag_request::name() const {
 	return "CREATE_TAG_REQUEST";
+}
+
+Message::Type Create_tag_request::get_message_type() const {
+	return Message::Type::create_tag;
 }
 
 const std::string& Create_tag_request::get_tag_name() const {

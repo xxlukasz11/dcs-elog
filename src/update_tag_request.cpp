@@ -1,8 +1,5 @@
 #include "update_tag_request.h"
 
-Update_tag_request::Update_tag_request() : Message(Type::update_tag) {
-}
-
 void Update_tag_request::extract_parameters(Msg_parser& parser) {
 	tag_id_ = parser.next();
 	new_name_ = parser.next();
@@ -10,6 +7,10 @@ void Update_tag_request::extract_parameters(Msg_parser& parser) {
 
 std::string Update_tag_request::name() const {
 	return "UPDATE_TAG_REQUEST";
+}
+
+Message::Type Update_tag_request::get_message_type() const {
+	return Message::Type::update_tag;
 }
 
 const std::string& Update_tag_request::get_tag_id() const {

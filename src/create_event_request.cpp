@@ -1,8 +1,5 @@
 #include "create_event_request.h"
 
-Create_event_request::Create_event_request() : Message(Type::create_event) {
-}
-
 void Create_event_request::extract_parameters(Msg_parser& parser) {
 	title_ = parser.next();
 	description_ = parser.next();
@@ -12,6 +9,10 @@ void Create_event_request::extract_parameters(Msg_parser& parser) {
 
 std::string Create_event_request::name() const {
 	return "CREATE_EVENT_REQUEST";
+}
+
+Message::Type Create_event_request::get_message_type() const {
+	return Message::Type::create_event;
 }
 
 const std::string& Create_event_request::get_title() const {

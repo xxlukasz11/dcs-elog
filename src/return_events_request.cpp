@@ -1,8 +1,5 @@
 #include "return_events_request.h"
 
-Return_events_request::Return_events_request() : Message(Type::return_events) {
-}
-
 void Return_events_request::extract_parameters(Msg_parser& parser) {
 	min_date_ = parser.next();
 	max_date_ = parser.next();
@@ -11,6 +8,10 @@ void Return_events_request::extract_parameters(Msg_parser& parser) {
 
 std::string Return_events_request::name() const {
 	return "RETURN_EVENTS_REQUEST";
+}
+
+Message::Type Return_events_request::get_message_type() const {
+	return Message::Type::return_events;
 }
 
 const std::string& Return_events_request::get_min_date() const {
