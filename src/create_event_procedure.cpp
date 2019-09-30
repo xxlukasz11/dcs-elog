@@ -26,7 +26,7 @@ Insert_query Create_event_procedure::prepare_query() const {
 	return query;
 }
 
-std::string Create_event_procedure::run_main_procedure(const Insert_query & query) {
+std::string Create_event_procedure::run_main_procedure(Insert_query & query) {
 	Prepared_statement events_stmt = query.create_events_statement();
 	Prepared_statement exists_stmt = query.create_tags_exist_statement();
 

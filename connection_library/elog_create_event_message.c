@@ -2,6 +2,17 @@
 #include <stdio.h>
 #include "elog_create_event_message.h"
 
+enum MsgType {
+	create_event,
+	return_events,
+	return_tags_tree,
+	create_tag,
+	delete_tag,
+	update_tag,
+	update_event,
+	create_library_event
+};
+
 void open_section(Elog_create_event_message* message) {
 	strcat(message->data, "[");
 	message->length += 1;
@@ -40,9 +51,9 @@ void append_space(Elog_create_event_message* message) {
 }
 
 
-void append_mode_section(Elog_create_event_message* message, const char* mode) {
+void append_mode_section(Elog_create_event_message* message, int mode) {
 	open_section(message);
-	append_raw_string(message, mode);
+	append_number(message, mode);
 	close_section(message);
 }
 
@@ -78,7 +89,7 @@ void append_body_sections(Elog_create_event_message* message, const Elog_event* 
 }
 
 void set_message_data(Elog_create_event_message* message, const Elog_event* event) {
-	append_mode_section(message, "0");
+	append_mode_section(message, create_library_event);
 	append_header_section(message, event);
 	append_body_sections(message, event);
 }

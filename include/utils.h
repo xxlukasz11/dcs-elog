@@ -5,8 +5,10 @@
 #include <vector>
 
 namespace utils{
-	std::string concatenate_string_array(const std::vector<std::string>& array);
-	std::vector<std::string> string_to_vector(std::string string);
+	using String_array = std::vector<std::string>;
+	std::string concatenate_string_array(const String_array& array);
+	String_array exclude_from_array(const String_array& base, const String_array& pattern);
+	String_array string_to_vector(std::string string);
 };
 
 #endif
