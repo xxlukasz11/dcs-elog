@@ -22,3 +22,4 @@ Release/
 *.sln
 /tests/include
 /.leu
+scripts/log.txt

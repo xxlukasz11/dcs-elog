@@ -5,8 +5,12 @@
 #include "administrator.h"
 
 int main(){
-	Administrator::instance().initialize();
-	Administrator::instance().start();
+	try {
+		Administrator::instance().initialize();
+		Administrator::instance().start();
+	} catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
 
 	Database db(config::database::path);
 	try{

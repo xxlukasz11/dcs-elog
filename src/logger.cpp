@@ -7,7 +7,16 @@
 
 static const std::string TAB = "\t";
 static const std::string DOUBLE_TAB = "\t\t";
+static const int defult_timeout_value = 10;
+
 Log_item_queue Logger::queue_;
+
+Logger::Logger(const std::string& file_path) : stream_(file_path), timeout_(defult_timeout_value) {
+}
+
+void Logger::set_timeout(const Timeout_t& timeout) {
+	timeout_ = timeout;
+}
 
 Log_event_provider Logger::create() {
 	return Log_event_provider(queue_);
@@ -16,11 +25,18 @@ Log_event_provider Logger::create() {
 void Logger::run() {
 	release_flag_ = true;
 	while (release_flag_ || !queue_.is_empty()) {
-		Log_item log_item = queue_.pop();
-		Log_entry log_entry = create_log_entry(log_item);
-		std::cout << log_entry << "\n";
+		auto log_item = queue_.try_pop(timeout_);
+		if (log_item == stdd::nullopt) {
+			stream_.close();
+		}
+		else {
+			Log_entry log_entry = create_log_entry(log_item.value());
+			stream_.open_if_closed();
+			stream_.write_line(log_entry);
+		}
 	}
-	std::cout << std::flush;
+	stream_.flush();
+	stream_.close();
 }
 
 void Logger::release() {

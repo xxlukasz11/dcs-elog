@@ -1,8 +1,4 @@
 #!/bin/bash
 cd "${0%/*}"
-if [ -f "log.txt" ];
-then
-	rm log.txt
-fi
-../bin/e_log > ../build/log.txt &
+../bin/e_log &
 echo "E-log started"

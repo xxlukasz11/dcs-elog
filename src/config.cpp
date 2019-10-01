@@ -22,4 +22,9 @@ namespace config {
 		std::string path = "../resources/database.db";
 		std::string empty_tag_name = "-";
 	}
+
+	namespace logger {
+		std::string file_name = "log.txt";
+		Timeout_t timeout = Timeout_t(5);
+	}
 }

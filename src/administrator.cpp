@@ -7,7 +7,9 @@ void Administrator::handle_sigint(int) {
 	instance().stop();
 }
 
-Administrator::Administrator() : logger_(std::make_shared<Logger>()), database_(config::database::path) {
+Administrator::Administrator() :
+		logger_(std::make_shared<Logger>(config::logger::file_name)),
+		database_(config::database::path) {
 	signal(SIGINT, &handle_sigint);
 	setup_and_start_logger();
 }
@@ -25,7 +27,7 @@ void Administrator::initialize() {
 
 void Administrator::start() {
 	if (!initialized_) {
-		Logger::create().location("Administrator::start").error("Attemted to start uninitialized Administartor object");
+		Logger::create().location("Administrator").error("Attemted to start Administartor without initialization");
 		return;
 	}
 	started_ = true;
@@ -48,6 +50,7 @@ void Administrator::stop() {
 }
 
 void Administrator::setup_and_start_logger() {
+	logger_->set_timeout(config::logger::timeout);
 	thread_manager_.add_logger(logger_);
 	thread_manager_.start_loggers();
 }

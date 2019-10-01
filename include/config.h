@@ -2,6 +2,7 @@
 #define _CONFIG_H_
 
 #include <string>
+#include <chrono>
 
 namespace config {
 
@@ -24,6 +25,13 @@ namespace config {
 	namespace database {
 		extern std::string path;
 		extern std::string empty_tag_name;
+	}
+
+	namespace logger {
+		using Timeout_t = std::chrono::seconds;
+
+		extern std::string file_name;
+		extern Timeout_t timeout;
 	}
 }
 
