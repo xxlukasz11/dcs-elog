@@ -1,6 +1,10 @@
 #main app
 
-file(GLOB SOURCES "*.cpp" "*.c")
+file(GLOB SOURCES
+	"*.cpp"
+	"json/*.cpp"
+	"*.c"
+)
 list(REMOVE_ITEM SOURCES "main.cpp")
 
 add_library(e_log_lib ${SOURCES})
