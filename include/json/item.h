@@ -6,15 +6,12 @@
 
 namespace json {
 
-class Json_item {
+class Item {
 public:
 	virtual std::string to_string() const = 0;
-	~Json_item() = default;
+	~Item() = default;
 
 protected:
-	template<typename T>
-	using Array = std::vector<T>;
-
 	static const std::string DOUBLE_QUOTES;
 	static const std::string COLON;
 	static const std::string COMMA;

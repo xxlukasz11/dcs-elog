@@ -2,17 +2,17 @@
 #define _JSON_VALUE_H_
 
 #include <memory>
-#include "json_item.h"
+#include "json/item.h"
 
 namespace json {
 
-class Json_value : public Json_item {
+class Value : public Item {
 public:
 	virtual std::string to_string() const override = 0;
-	~Json_value() = default;
+	~Value() = default;
 };
 
-using Json_value_ptr = std::shared_ptr<Json_value>;
+using Value_ptr = std::shared_ptr<Value>;
 
 } // namespace json
 

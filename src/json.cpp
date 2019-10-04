@@ -1,17 +1,17 @@
-#include "json.h"
+#include "json/json.h"
 
 namespace json {
 
-Json_string_ptr json::Json::string(const std::string& value) {
-	return Json_string::create(value);
+String_ptr json::Json::string(const std::string& value) {
+	return String::create(value);
 }
 
-Json_array_ptr Json::array() {
-	return Json_array::create();
+Array_ptr Json::array() {
+	return Array::create();
 }
 
-Json_object_ptr Json::object() {
-	return Json_object::create();
+Object_ptr Json::object() {
+	return Object::create();
 }
 
 }

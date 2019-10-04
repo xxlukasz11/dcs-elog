@@ -1,12 +1,12 @@
 #include <utility>
-#include "json.h"
+#include "json/json.h"
 #include "json_stringifier.h"
 
 using namespace json;
 
 namespace {
 
-Json_object_ptr create_event_object(size_t row_index, const Result_set& result_set) {
+Object_ptr create_event_object(size_t row_index, const Result_set& result_set) {
 	auto event_object = Json::object();
 	size_t row_length = result_set.header_length();
 	auto& header = result_set.get_header();
@@ -18,7 +18,7 @@ Json_object_ptr create_event_object(size_t row_index, const Result_set& result_s
 	return event_object;
 }
 
-Json_object_ptr create_event_object(size_t row_index, Result_set&& result_set) {
+Object_ptr create_event_object(size_t row_index, Result_set&& result_set) {
 	auto event_object = Json::object();
 	size_t row_length = result_set.header_length();
 	Result_set::header_type& header = result_set.get_header();
