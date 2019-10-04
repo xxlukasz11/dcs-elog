@@ -1,3 +1,4 @@
+#include <sstream>
 #include "json_array.h"
 
 namespace json {
@@ -15,15 +16,15 @@ void Json_array::push(const Json_value_ptr& value) {
 }
 
 std::string Json_array::values_to_string() const {
-	std::string result;
+	std::ostringstream stream;
 	size_t no_of_fields = values_.size();
 	for (size_t i = 0; i < no_of_fields; ++i) {
-		result += values_[i]->to_string();
+		stream << values_[i]->to_string();
 		if (i != no_of_fields - 1) {
-			result += COMMA;
+			stream << COMMA;
 		}
 	}
-	return result;
+	return stream.str();
 }
 
 }

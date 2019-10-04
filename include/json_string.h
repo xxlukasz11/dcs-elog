@@ -15,7 +15,9 @@ public:
 
 	Json_string() = default;
 	Json_string(const std::string& value);
+	Json_string(std::string&& value);
 	static Json_string_ptr create(const std::string& value = "");
+	static Json_string_ptr create(std::string&& value = "");
 private:
 	std::string value_;
 };

@@ -11,7 +11,8 @@ int main(){
 	} catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
-
+	
+	#ifdef _DEBUG_
 	Database db(config::database::path);
 	try{
 		Database::Accessor accesor(db);
@@ -36,5 +37,6 @@ int main(){
 	}
 
 	std::cout << "\nExit program" << std::endl;
+	#endif
 	return 0;
 }

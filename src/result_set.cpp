@@ -47,27 +47,41 @@ const Result_set::header_type& Result_set::get_header() const {
 	return header_;
 }
 
+Result_set::header_type& Result_set::get_header() {
+	return header_;
+}
+
 
 const Result_set::data_type& Result_set::get_data() const {
 	return data_;
 }
 
 Result_set::column_type Result_set::get_column(size_t index) {
-
 	Result_set::column_type column;
-	if (data_.size() == 0 || data_[0].size() <= index || index < 0)
+	if (data_.size() == 0 || data_[0].size() <= index || index < 0) {
 		return column;
-
+	}
 	column.reserve(data_.size());
 	for (const auto& row : data_) {
 		column.push_back( row[index] );
 	}
-
 	return column;
+}
+
+const Result_set::row_type& Result_set::get_row(size_t index) const {
+	return data_[index];
 }
 
 void Result_set::set_last_row_id(std::string id){
 	last_row_id = id;
+}
+
+size_t Result_set::data_size() const {
+	return data_.size();
+}
+
+size_t Result_set::header_length() const {
+	return header_.size();
 }
 
 std::string Result_set::get_last_row_id() const {
@@ -78,10 +92,13 @@ bool Result_set::has_records() const {
 	return data_.size() > 0;
 }
 
+Result_set::row_type& Result_set::operator[](size_t index) {
+	return data_[index];
+}
+
 Result_set& Result_set::operator+=(Result_set&& result_set){
 	data_.reserve(data_.size() + result_set.data_.size());
 	std::move(result_set.data_.begin(), result_set.data_.end(), std::back_inserter(data_));
-
 	return *this;
 }
 
