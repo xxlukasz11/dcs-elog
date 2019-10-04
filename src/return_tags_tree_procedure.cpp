@@ -1,5 +1,5 @@
 #include "select_tags_query.h"
-#include "json.h"
+#include "json_stringifier.h"
 #include "prepared_statement.h"
 #include "return_tags_tree_procedure.h"
 
@@ -12,8 +12,7 @@ void Return_tags_tree_procedure::start() {
 	auto stmt = query.create_sql();
 	Result_set tags_tree = load_tags_tree(stmt);
 	socket_.send_string(
-		json::stringify(
-			std::move(tags_tree)));
+		Json_stringifier::stringify( std::move(tags_tree) ));
 }
 
 std::string Return_tags_tree_procedure::name() {

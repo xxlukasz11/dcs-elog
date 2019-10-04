@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "json.h"
+#include "json_stringifier.h"
 #include "prepared_statement.h"
 #include "return_events_procedure.h"
 
@@ -12,8 +12,7 @@ void Return_events_procedure::start() {
 	auto stmt = query.create_statement();
 	Result_set events = load_events(stmt);
 	socket_.send_string(
-		json::stringify(
-			std::move(events)));
+		Json_stringifier::stringify( std::move(events) ));
 }
 
 std::string Return_events_procedure::name() {
