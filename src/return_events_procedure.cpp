@@ -16,7 +16,7 @@ void Return_events_procedure::start() {
 	response_.set_data(
 		Json_stringifier::stringify(std::move(events)));
 	socket_.send_string(
-		Json_stringifier::stringify(std::move(response_)));
+		Json_stringifier::stringify( std::move(response_) ));
 }
 
 std::string Return_events_procedure::name() {

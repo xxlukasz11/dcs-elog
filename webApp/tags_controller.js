@@ -6,11 +6,12 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 		
 		sender.send("load_tags.php", {}).then(
 		function (response) {
-			$scope.tree = from_table_to_tree(response.data);
+			const response_data = response.data;
+			$scope.tree = from_table_to_tree(response_data.data);
 			let container = document.getElementById('tags_tree_container');
 			$scope.tree.set_container(container);
 			$scope.tree.display();
-			logger.get_log().event("Tags have been loaded");
+			logger.get_log().data(response_data);
 
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));

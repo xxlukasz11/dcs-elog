@@ -11,8 +11,12 @@ void Return_tags_tree_procedure::start() {
 	Select_tags_query query;
 	auto stmt = query.create_sql();
 	Result_set tags_tree = load_tags_tree(stmt);
+
+	response_.set_success("Tags tree has been loaded");
+	response_.set_data(
+		Json_stringifier::stringify(std::move(tags_tree)));
 	socket_.send_string(
-		Json_stringifier::stringify( std::move(tags_tree) ));
+		Json_stringifier::stringify( std::move(response_) ));
 }
 
 std::string Return_tags_tree_procedure::name() {
