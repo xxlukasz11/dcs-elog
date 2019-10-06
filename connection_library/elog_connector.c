@@ -46,10 +46,9 @@ void send_message_contents(int sockfd, Elog_error_code* error_code, Elog_create_
 }
 
 void receive_server_response(int sockfd, Elog_error_code* error_code) {
-	char recv_buffer[ELOG_MAX_STRING_LENGTH];
-	memset(recv_buffer, 0, ELOG_MAX_STRING_LENGTH);
-	read(sockfd, recv_buffer, sizeof(recv_buffer));
-	if (strstr(recv_buffer, "successfully") == NULL) {
+	uint32_t response_code = 0;
+	read(sockfd, &response_code, sizeof(response_code));
+	if (response_code != ELOG_SERVER_SUCCESS) {
 		*error_code = ElOG_FAILURE;
 	}
 }
