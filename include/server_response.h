@@ -5,13 +5,12 @@
 
 class Server_response final : public Response {
 public:
-	Server_response(Code response_code);
 	Code get_response_code() const;
-	void set_error();
+	void set_failure();
 	void set_success();
 
 private:
-	Code response_code_;
+	Code response_code_{ Code::FAILURE };
 };
 
 #endif // !_SERVER_RESPONSE_H_

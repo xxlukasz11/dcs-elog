@@ -43,7 +43,12 @@ template<typename Message, typename Data>
 Object_ptr create_response_object(Response::Code code, Message&& message, Data&& data) {
 	auto response_object = create_response_object(code);
 	response_object->add_field("message", Json::string(std::forward<Message>(message)));
-	response_object->add_field("data", Json::json_string(std::forward<Data>(data)));
+	if (data.empty()) {
+		response_object->add_field("data", Json::string());
+	}
+	else {
+		response_object->add_field("data", Json::json_string(std::forward<Data>(data)));
+	}
 	return response_object;
 }
 

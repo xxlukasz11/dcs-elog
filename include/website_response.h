@@ -11,13 +11,13 @@ public:
 	const std::string& get_data() const;
 	std::string& get_message();
 	std::string& get_data();
-	void set_error(const std::string& message);
+	void set_failure(const std::string& message);
 	void set_success(const std::string& message);
 	void set_data(const std::string& data);
 	void set_data(std::string&& data);
 
 private:
-	Code response_code_{ Code::SUCCESS };
+	Code response_code_{ Code::FAILURE };
 	std::string message_;
 	std::string data_;
 };

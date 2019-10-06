@@ -15,6 +15,7 @@ public:
 	static Number_ptr<T> number(T value);
 	static Array_ptr array();
 	static Object_ptr object();
+	static String_ptr string();
 	static String_ptr string(const std::string& value);
 	static String_ptr string(std::string&& value);
 	static Json_string_ptr json_string(const std::string& value);

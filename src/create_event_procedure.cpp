@@ -1,6 +1,7 @@
 #include "prepared_statement.h"
 #include "result_set.h"
 #include "utils.h"
+#include "json_stringifier.h"
 #include "create_event_procedure.h"
 
 Create_event_procedure::Create_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
@@ -9,8 +10,9 @@ Create_event_procedure::Create_event_procedure(Database& database, const Socket&
 
 void Create_event_procedure::start() {
 	Insert_query query = prepare_query();
-	std::string response_message = run_main_procedure(query);
-	socket_.send_string(response_message);
+	run_main_procedure(query);
+	socket_.send_string(
+		Json_stringifier::stringify(std::move(response_)));
 }
 
 std::string Create_event_procedure::name() {
@@ -26,7 +28,7 @@ Insert_query Create_event_procedure::prepare_query() const {
 	return query;
 }
 
-std::string Create_event_procedure::run_main_procedure(Insert_query & query) {
+void Create_event_procedure::run_main_procedure(Insert_query & query) {
 	Prepared_statement events_stmt = query.create_events_statement();
 	Prepared_statement exists_stmt = query.create_tags_exist_statement();
 
@@ -40,13 +42,13 @@ std::string Create_event_procedure::run_main_procedure(Insert_query & query) {
 		std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tags_statement(last_id));
 		transaction.commit();
-		return "Event with id: " + last_id + " has been successfully saved";
+		response_.set_success("Event with id: " + last_id + " has been successfully saved");
 	}
 	else {
 		accessor.close();
 		std::string message = "Cannot save event. Following tags do not exist: ";
 		message += utils::concatenate_string_array(not_existing_tags);
-		return message;
+		response_.set_failure(message);
 	}
 }
 

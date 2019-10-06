@@ -18,7 +18,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 
 		sender.send("insert.php", get_input_data()).then(
 		function (response) {
-			logger.get_log().event( response.data.message );
+			logger.get_log().data(response.data);
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
 		});

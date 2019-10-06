@@ -16,8 +16,9 @@ public:
 	String() = default;
 	String(const std::string& value);
 	String(std::string&& value);
-	static String_ptr create(const std::string& value = "");
-	static String_ptr create(std::string&& value = "");
+	static String_ptr create();
+	static String_ptr create(const std::string& value);
+	static String_ptr create(std::string&& value);
 
 private:
 	std::string value_;

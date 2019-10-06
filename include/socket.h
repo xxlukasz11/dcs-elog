@@ -40,7 +40,10 @@ public:
 
 	void set_message_length(int length);
 	std::string recv_string();
-	void send_string(const std::string & msg);
+	void send_string(const std::string& msg);
+
+	template<typename T>
+	void send_value(T value);
 
 	bool is_not_valid() const;
 	bool is_valid() const;
@@ -53,5 +56,10 @@ private:
 	timeval create_time_val(int seconds, int u_seconds);
 	int safe_recv(void* buffer, size_t size, int flags);
 };
+
+template<typename T>
+void Socket::send_value(T value) {
+	send(socket_descriptor_, &value, sizeof(value), 0);
+}
 
 #endif

@@ -7,20 +7,20 @@
 #include "procedure.h"
 #include "create_event_request.h"
 #include "insert_query.h"
+#include "website_response.h"
 
 class Create_event_procedure : public Procedure {
 public:
 	Create_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
 	virtual void start() override final;
-	virtual std::string name() override;
-
-protected:
-	std::vector<std::string> load_not_existing_tags(const Prepared_statement& stmt);
+	virtual std::string name() override final;
 
 private:
+	std::vector<std::string> load_not_existing_tags(const Prepared_statement& stmt);
 	Insert_query prepare_query() const;
-	virtual std::string run_main_procedure(Insert_query& query);
+	void run_main_procedure(Insert_query& query);
 
+	Website_response response_;
 	std::shared_ptr<Create_event_request> message_;
 };
 

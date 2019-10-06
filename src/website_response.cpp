@@ -21,7 +21,7 @@ std::string& Website_response::get_data() {
 	return data_;
 }
 
-void Website_response::set_error(const std::string& message) {
+void Website_response::set_failure(const std::string& message) {
 	response_code_ = Response::Code::FAILURE;
 	message_ = message;
 }

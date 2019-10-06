@@ -4,18 +4,25 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "create_event_procedure.h"
+#include "procedure.h"
 #include "create_library_event_request.h"
+#include "server_response.h"
 #include "insert_query.h"
 
-class Create_library_event_procedure : public Create_event_procedure {
+class Create_library_event_procedure : public Procedure {
 public:
-	using Create_event_procedure::Create_event_procedure;
+	Create_library_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
+	virtual void start() override final;
 	virtual std::string name() override final;
 
 private:
+	std::vector<std::string> load_not_existing_tags(const Prepared_statement& stmt);
 	void leave_only_existing_tags(Insert_query& query, const std::vector<std::string>& not_existing_tags);
-	std::string run_main_procedure(Insert_query& query);
+	Insert_query prepare_query() const;
+	void run_main_procedure(Insert_query& query);
+
+	Server_response response_;
+	std::shared_ptr<Create_library_event_request> message_;
 };
 
 #endif // !_CREATE_LIBRARY_EVENT_PROCEDURE_H_

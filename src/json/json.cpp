@@ -11,6 +11,10 @@ Object_ptr Json::object() {
 	return Object::create();
 }
 
+String_ptr Json::string() {
+	return String::create();
+}
+
 String_ptr Json::string(const std::string& value) {
 	return String::create(value);
 }
