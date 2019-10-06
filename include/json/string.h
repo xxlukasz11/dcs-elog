@@ -18,6 +18,7 @@ public:
 	String(std::string&& value);
 	static String_ptr create(const std::string& value = "");
 	static String_ptr create(std::string&& value = "");
+
 private:
 	std::string value_;
 };

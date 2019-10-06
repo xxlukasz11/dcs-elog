@@ -3,11 +3,16 @@
 
 #include <string>
 #include "result_set.h"
+#include "website_response.h"
+#include "server_response.h"
 
 class Json_stringifier {
 public:
 	static std::string stringify(const Result_set& result_set);
 	static std::string stringify(Result_set&& result_set);
+	static std::string stringify(const Website_response& response);
+	static std::string stringify(Website_response&& response);
+	static std::string stringify(const Server_response& response);
 };
 
 #endif // !_JSON_STRINGIFIER_H_

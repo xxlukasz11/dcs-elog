@@ -32,6 +32,21 @@ Object_ptr create_event_object(size_t row_index, Result_set&& result_set) {
 	return event_object;
 }
 
+Object_ptr create_response_object(Response::Code code) {
+	int integer_code = static_cast<int>(code);
+	auto response_object = Json::object();
+	response_object->add_field("error_code", Json::number(integer_code));
+	return response_object;
+}
+
+template<typename Message, typename Data>
+Object_ptr create_response_object(Response::Code code, Message&& message, Data&& data) {
+	auto response_object = create_response_object(code);
+	response_object->add_field("message", Json::string(std::forward<Message>(message)));
+	response_object->add_field("data", Json::json_string(std::forward<Data>(data)));
+	return response_object;
+}
+
 } // namespace
 
 std::string Json_stringifier::stringify(const Result_set& result_set) {
@@ -52,4 +67,27 @@ std::string Json_stringifier::stringify(Result_set&& result_set) {
 		array->push(event_object);
 	}
 	return array->to_string();
+}
+
+std::string Json_stringifier::stringify(const Website_response& response) {
+	auto response_object = create_response_object(
+		response.get_response_code(),
+		response.get_message(),
+		response.get_data()
+	);
+	return response_object->to_string();
+}
+
+std::string Json_stringifier::stringify(Website_response&& response) {
+	auto response_object = create_response_object(
+		response.get_response_code(),
+		std::move(response.get_message()),
+		std::move(response.get_data())
+	);
+	return response_object->to_string();
+}
+
+std::string Json_stringifier::stringify(const Server_response& response) {
+	auto response_object = create_response_object(response.get_response_code());
+	return response_object->to_string();
 }
