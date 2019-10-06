@@ -57,8 +57,9 @@ app.controller('select_data', function ($scope, sender, logger) {
     $scope.send_request = function () {
     	sender.send("select.php", getParams()).then(
 		function (response) {
-        	$scope.table_data = response.data;
-        	logger.get_log().event("Events loaded");
+			const response_data = response.data;
+			logger.get_log().data(response_data);
+			$scope.table_data = response_data.data;
         }, function (response) {
         	logger.get_log().error(read_error_msg(response));
         });

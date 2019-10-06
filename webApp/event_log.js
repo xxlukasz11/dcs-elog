@@ -40,6 +40,15 @@ class Event_log {
 	event(message) {
 		this.events.unshift(new Event(message));
 	}
+
+	data(response_data) {
+		if (response_data.error_code == 0) {
+			this.success(response_data.message);
+		}
+		else {
+			this.event(response_data.message);
+		}
+	}
 }
 
 class Console_logger {

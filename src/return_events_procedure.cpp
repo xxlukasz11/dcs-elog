@@ -11,8 +11,12 @@ void Return_events_procedure::start() {
 	auto query = prepare_query();
 	auto stmt = query.create_statement();
 	Result_set events = load_events(stmt);
+
+	response_.set_success("Successfully loaded events");
+	response_.set_data(
+		Json_stringifier::stringify(std::move(events)));
 	socket_.send_string(
-		Json_stringifier::stringify( std::move(events) ));
+		Json_stringifier::stringify(std::move(response_)));
 }
 
 std::string Return_events_procedure::name() {
