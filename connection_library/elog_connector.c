@@ -49,7 +49,7 @@ void receive_server_response(int sockfd, Elog_error_code* error_code) {
 	int32_t response_code = 0;
 	read(sockfd, &response_code, sizeof(response_code));
 	if (response_code != ELOG_SERVER_SUCCESS) {
-		*error_code = ElOG_FAILURE;
+		*error_code = ElOG_SERVER_FAILURE;
 	}
 }
 
