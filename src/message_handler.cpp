@@ -20,15 +20,15 @@ void Message_handler::process_message(const std::string& message_string) {
 		Logger::create().context(socket_).info(internal_message);
 		handle(internal_message);
 
-	} catch (Unknown_message_format& e) {
+	} catch (const Unknown_message_format& e) {
 		Logger::create().context(socket_).error(e.what());
-	} catch (Unknown_message& e) {
+	} catch (const Unknown_message& e) {
 		Logger::create().context(socket_).error(e.what());
-	} catch (Database_error& e) {
+	} catch (const Database_error& e) {
 		Logger::create().context(socket_).error(e.what());
-	} catch (Query_error& e) {
+	} catch (const Query_error& e) {
 		Logger::create().context(socket_).error(e.what());
-	} catch (Send_error& e) {
+	} catch (const Send_error& e) {
 		Logger::create().context(socket_).error(e.what());
 	}
 }

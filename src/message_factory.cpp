@@ -25,7 +25,7 @@ std::shared_ptr<Message> Message_factory::create() const {
 Message::Type Message_factory::extract_message_type(Msg_parser& parser) const {
 	try {
 		parser.parse_header();
-	} catch (Msg_parser_exception& e) {
+	} catch (const Msg_parser_exception& e) {
 		throw Unknown_message(e.what());
 	}
 	int parser_mode = parser.get_mode();
@@ -51,7 +51,7 @@ std::shared_ptr<Message> Message_factory::create_message(Message::Type message_t
 void Message_factory::read_message_contents(const std::shared_ptr<Message>& message, Msg_parser& parser) const {
 	try {
 		message->extract_parameters(parser);
-	} catch (Msg_parser_exception& e) {
+	} catch (const Msg_parser_exception& e) {
 		throw Unknown_message_format(message->name());
 	}
 }

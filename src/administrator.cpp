@@ -66,7 +66,7 @@ void Administrator::setup_server() {
 	try {
 		server_->initialize();
 	}
-	catch (Init_server_error& e) {
+	catch (const Init_server_error& e) {
 		Logger::create().error(e.what());
 		exit(1);
 	}

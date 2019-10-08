@@ -51,10 +51,10 @@ void Connection_handler::recieve_data_from_socket() {
 		Message_handler handler(socket_, database_);
 		handler.process_message(recv_msg);
 	}
-	catch (Timeout_error& e) {
+	catch (const Timeout_error& e) {
 		Logger::create().context(socket_).warning(e.what());
 	}
-	catch (Client_disconnected_error& e) {
+	catch (const Client_disconnected_error& e) {
 		Logger::create().context(socket_).warning(e.what());
 	}
 }
