@@ -3,7 +3,8 @@
 
 enum class Log_level {
 	NONE,
-	ERROR,
+	CRITICAL,
+	BASIC,
 	WARNING,
 	INFO,
 	ALL

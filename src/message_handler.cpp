@@ -17,27 +17,27 @@ void Message_handler::process_message(const std::string& message_string) {
 	try {
 		Message_factory factory(message_string);
 		auto internal_message = factory.create();
-		Logger::create().context(socket_).info(internal_message);
+		Logger::create().context(socket_).level(Log_level::INFO).info(internal_message);
 		handle(internal_message);
 
 	} catch (const Unknown_message_format& e) {
-		Logger::create().context(socket_).error(e.what());
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Unknown_message& e) {
-		Logger::create().context(socket_).error(e.what());
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Database_error& e) {
-		Logger::create().context(socket_).error(e.what());
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Query_error& e) {
-		Logger::create().context(socket_).error(e.what());
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Send_error& e) {
-		Logger::create().context(socket_).error(e.what());
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	}
 }
 
 void Message_handler::handle(const std::shared_ptr<Message>& message) {
 	std::unique_ptr<Procedure> procedure = create_procedure(message);
-	Logger::create().context(socket_).info("Starting " + procedure->name());
+	Logger::create().context(socket_).level(Log_level::INFO).info("Starting " + procedure->name());
 	procedure->start();
-	Logger::create().context(socket_).info(procedure->name() + " has finished");
+	Logger::create().context(socket_).level(Log_level::INFO).info(procedure->name() + " has finished");
 }
 
 std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_ptr<Message>& message) {

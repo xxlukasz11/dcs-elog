@@ -27,14 +27,15 @@ void Administrator::initialize() {
 
 void Administrator::start() {
 	if (!initialized_) {
-		Logger::create().location("Administrator").error("Attemted to start Administartor without initialization");
+		Logger::create().location("Administrator").level(Log_level::CRITICAL)
+			.error("Attemted to start Administartor without initialization");
 		return;
 	}
 	started_ = true;
 	thread_manager_.start_servers();
 	thread_manager_.start_consumers();
 
-	Logger::create().info("E-log is ready");
+	Logger::create().level(Log_level::BASIC).info("E-log is ready");
 	thread_manager_.join_servers();
 }
 
@@ -68,7 +69,7 @@ void Administrator::setup_server() {
 		server_->initialize();
 	}
 	catch (const Init_server_error& e) {
-		Logger::create().error(e.what());
+		Logger::create().level(Log_level::CRITICAL).error(e.what());
 		exit(1);
 	}
 }
@@ -84,5 +85,5 @@ void Administrator::prepare_threads() {
 }
 
 void Administrator::on_exit() {
-	Logger::create().info("E-log finished");
+	Logger::create().level(Log_level::BASIC).info("E-log finished");
 }

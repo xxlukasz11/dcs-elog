@@ -128,7 +128,8 @@ void Tcp_server::run(){
 				std::this_thread::sleep_for( std::chrono::milliseconds(accept_delay_ms_) );
 			}
 			else{
-				Logger::create().context(client_socket).error("Error while accepting connection");
+				Logger::create().context(client_socket).level(Log_level::WARNING)
+					.error("Error while accepting connection");
 			}
 		}
 		else{
