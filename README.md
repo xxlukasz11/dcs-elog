@@ -19,6 +19,10 @@ Logbook for NA61/SHINE experiment
 - If you want to build project without unit tests, add NOTESTS flag: `-DNOTESTS=True`
 
 ### 4. Run
-- From build directory: `../bin/e_log`
+- Execute `scripts/start_elog.sh`
 - Run all tests: `ctest all`
-- Run single test: `ctest <test_name>` or with more detailed output: `../bin/<test_name>`
+- Run single test: `ctest <test_name>` or with more detailed output: `../bin/<test_name>`` di
+
+To stop, execute: `scripts/elog_stop.sh`
+
+Log file appears in `scripts/` directory
