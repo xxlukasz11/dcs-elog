@@ -1,3 +1,4 @@
+#include <utility>
 #include "config.h"
 #include "result_set.h"
 #include "prepared_statement.h"
@@ -9,8 +10,8 @@ Update_tag_procedure::Update_tag_procedure(Database& database, const Socket& soc
 
 void Update_tag_procedure::start() {
 	Update_tag_query query = prepare_query();
-	std::string response_message = update_tag(query);
-	socket_.send_string(response_message);
+	update_tag(query);
+	send_response(std::move(response_));
 }
 
 std::string Update_tag_procedure::name() {
@@ -24,7 +25,7 @@ Update_tag_query Update_tag_procedure::prepare_query() const {
 	return query;
 }
 
-std::string Update_tag_procedure::update_tag(const Update_tag_query& query) {
+void Update_tag_procedure::update_tag(const Update_tag_query& query) {
 	Prepared_statement select_stmt = query.create_select_tag_statement();
 	Prepared_statement update_stmt = query.create_update_statement();
 	Database::Accessor accessor(database_);
@@ -39,13 +40,12 @@ std::string Update_tag_procedure::update_tag(const Update_tag_query& query) {
 			Database::Transaction transaction(database_);
 			database_.execute(update_stmt);
 			transaction.commit();
-			return "Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'";
+			response_.set_success("Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'");
 		}
 		else {
-			return "Cannot update reserved tag: '" + config::database::empty_tag_name + "'";
+			response_.set_failure("Cannot update reserved tag: '" + config::database::empty_tag_name + "'");
 		}
 	}
-	else {
-		return "Cannot update tag. It does not exist.";
-	}
+	
+	response_.set_failure("Cannot update tag. It does not exist.");
 }

@@ -1,3 +1,4 @@
+#include <utility>
 #include "add_tag_query.h"
 #include "result_set.h"
 #include "prepared_statement.h"
@@ -9,8 +10,8 @@ Create_tag_procedure::Create_tag_procedure(Database& database, const Socket& soc
 
 void Create_tag_procedure::start() {
 	Add_tag_query query = prepare_query();
-	std::string response_message = create_tag(query);
-	socket_.send_string(response_message);
+	create_tag(query);
+	send_response(std::move(response_));
 }
 
 std::string Create_tag_procedure::name() {
@@ -24,7 +25,7 @@ Add_tag_query Create_tag_procedure::prepare_query() const {
 	return query;
 }
 
-std::string Create_tag_procedure::create_tag(const Add_tag_query& query) {
+void Create_tag_procedure::create_tag(const Add_tag_query& query) {
 	Prepared_statement tag_exists_statement = query.create_get_tag_id_statement();
 	Prepared_statement add_tag_statement = query.create_tag_statement();
 
@@ -33,7 +34,7 @@ std::string Create_tag_procedure::create_tag(const Add_tag_query& query) {
 
 	Result_set tag_exists_result = database_.execute(tag_exists_statement);
 	if (tag_exists_result.has_records()) {
-		return "Tag '" + query.get_tag_name() + "' already exists";
+		response_.set_failure("Tag '" + query.get_tag_name() + "' already exists");
 	}
 	else {
 		Database::Transaction transaction(database_);
@@ -41,6 +42,6 @@ std::string Create_tag_procedure::create_tag(const Add_tag_query& query) {
 		std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tree_statement(last_id));
 		transaction.commit();
-		return "Tag '" + query.get_tag_name() + "' has been created";
+		response_.set_success("Tag '" + query.get_tag_name() + "' has been created");
 	}
 }

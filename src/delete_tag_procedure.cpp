@@ -1,4 +1,5 @@
 #include <queue>
+#include <utility>
 #include "config.h"
 #include "result_set.h"
 #include "prepared_statement.h"
@@ -10,8 +11,8 @@ Delete_tag_procedure::Delete_tag_procedure(Database& database, const Socket& soc
 
 void Delete_tag_procedure::start() {
 	Delete_tag_query query = prepare_query();
-	std::string response_message = run_main_procedure(query);
-	socket_.send_string(response_message);
+	run_main_procedure(query);
+	send_response(std::move(response_));
 }
 
 std::string Delete_tag_procedure::name() {
@@ -24,7 +25,7 @@ Delete_tag_query Delete_tag_procedure::prepare_query() const {
 	return query;
 }
 
-std::string Delete_tag_procedure::run_main_procedure(const Delete_tag_query& query) {
+void Delete_tag_procedure::run_main_procedure(const Delete_tag_query& query) {
 	Prepared_statement select_stmt = query.select_statement();
 	std::queue<Prepared_statement> statement_queue;
 	Prepared_statement parent_id_null_stmt = query.parent_id_statement(Delete_tag_query::ALLOW_NULL);
@@ -39,12 +40,14 @@ std::string Delete_tag_procedure::run_main_procedure(const Delete_tag_query& que
 	Result_set select_tag_result = database_.execute(select_stmt);
 	bool tag_exists = check_if_tag_exists(select_tag_result);
 	if (!tag_exists) {
-		return "Tag with id: " + query.get_tag_id() + " does not exist";
+		response_.set_failure("Tag with id: " + query.get_tag_id() + " does not exist");
+		return;
 	}
 	std::string tag_name = extract_tag_name(select_tag_result);
 	bool tag_is_reserved = check_if_tag_is_reserved(tag_name);
 	if (tag_is_reserved) {
-		return "Tag '" + tag_name + "' cannot be deleted";
+		response_.set_failure("Tag '" + tag_name + "' cannot be deleted");
+		return;
 	}
 
 	Result_set res = database_.execute(parent_id_null_stmt);
@@ -66,7 +69,7 @@ std::string Delete_tag_procedure::run_main_procedure(const Delete_tag_query& que
 	database_.execute(delete_list_stmt);
 	transaction.commit();
 
-	return "Tag '" + tag_name + "' has been deleted";
+	response_.set_success("Tag '" + tag_name + "' has been deleted");
 }
 
 bool Delete_tag_procedure::check_if_tag_exists(const Result_set& result_set) {

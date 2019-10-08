@@ -1,3 +1,4 @@
+#include <utility>
 #include "prepared_statement.h"
 #include "result_set.h"
 #include "utils.h"
@@ -11,8 +12,7 @@ Create_event_procedure::Create_event_procedure(Database& database, const Socket&
 void Create_event_procedure::start() {
 	Insert_query query = prepare_query();
 	run_main_procedure(query);
-	socket_.send_string(
-		Json_stringifier::stringify(std::move(response_)));
+	send_response(std::move(response_));
 }
 
 std::string Create_event_procedure::name() {

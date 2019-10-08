@@ -19,7 +19,7 @@ if(isset($_GET['content'])){
 	$response = send_data($str);
 	
 	http_response_code(200);
-	echo create_json_response($response);
+	echo $response;
 }
 
 function prepare_message($params){

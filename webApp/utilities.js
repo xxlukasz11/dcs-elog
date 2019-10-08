@@ -3,7 +3,7 @@ function read_error_msg(response) {
 	if (error_msg)
 		return error_msg;
 	else
-		return "Connection failed: Server may be unavialiable.";
+		return "Connection failed: PHP server may be unavialiable.";
 }
 
 function convert_description_to_send(description) {

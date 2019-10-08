@@ -6,6 +6,7 @@
 #include "procedure.h"
 #include "delete_tag_request.h"
 #include "delete_tag_query.h"
+#include "website_response.h"
 
 class Delete_tag_procedure : public Procedure {
 public:
@@ -15,11 +16,12 @@ public:
 
 private:
 	Delete_tag_query prepare_query() const;
-	std::string run_main_procedure(const Delete_tag_query& query);
+	void run_main_procedure(const Delete_tag_query& query);
 	bool check_if_tag_exists(const Result_set& result_set);
 	std::string extract_tag_name(const Result_set& result_set);
 	bool check_if_tag_is_reserved(const std::string tag_name);
 
+	Website_response response_;
 	std::shared_ptr<Delete_tag_request> message_;
 };
 

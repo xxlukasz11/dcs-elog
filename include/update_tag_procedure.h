@@ -6,6 +6,7 @@
 #include "procedure.h"
 #include "update_tag_request.h"
 #include "update_tag_query.h"
+#include "website_response.h"
 
 class Update_tag_procedure : public Procedure {
 public:
@@ -15,8 +16,9 @@ public:
 
 private:
 	Update_tag_query prepare_query() const;
-	std::string update_tag(const Update_tag_query& query);
+	void update_tag(const Update_tag_query& query);
 
+	Website_response response_;
 	std::shared_ptr<Update_tag_request> message_;
 };
 

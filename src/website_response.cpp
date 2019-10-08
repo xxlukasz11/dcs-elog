@@ -1,4 +1,5 @@
 #include <utility>
+#include "json_stringifier.h"
 #include "website_response.h"
 
 Response::Code Website_response::get_response_code() const {
@@ -37,4 +38,12 @@ void Website_response::set_data(const std::string& data) {
 
 void Website_response::set_data(std::string&& data) {
 	data_ = std::move(data);
+}
+
+void Website_response::set_data(const Result_set& data) {
+	data_ = Json_stringifier::stringify(data);
+}
+
+void Website_response::set_data(Result_set&& data) {
+	data_ = Json_stringifier::stringify(std::move(data));
 }

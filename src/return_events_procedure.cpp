@@ -1,7 +1,10 @@
+#include <utility>
 #include "utils.h"
 #include "json_stringifier.h"
 #include "prepared_statement.h"
 #include "return_events_procedure.h"
+
+static const std::string ON_SUCCESS_MESSAGE = "Successfully loaded events";
 
 Return_events_procedure::Return_events_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
 	: Procedure(database, socket), message_(std::static_pointer_cast<Return_events_request>(message)) {
@@ -12,11 +15,9 @@ void Return_events_procedure::start() {
 	auto stmt = query.create_statement();
 	Result_set events = load_events(stmt);
 
-	response_.set_success("Successfully loaded events");
-	response_.set_data(
-		Json_stringifier::stringify(std::move(events)));
-	socket_.send_string(
-		Json_stringifier::stringify( std::move(response_) ));
+	response_.set_success(ON_SUCCESS_MESSAGE);
+	response_.set_data(events);
+	send_response(std::move(response_));
 }
 
 std::string Return_events_procedure::name() {

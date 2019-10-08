@@ -13,7 +13,6 @@ function send_data($data){
 	//release
 	error_reporting(E_ERROR);
 	
-	
 	$server_port = 9100;
 	
 	// remote server

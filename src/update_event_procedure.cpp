@@ -1,3 +1,4 @@
+#include <utility>
 #include "utils.h"
 #include "prepared_statement.h"
 #include "result_set.h"
@@ -10,8 +11,8 @@ Update_event_procedure::Update_event_procedure(Database& database, const Socket&
 void Update_event_procedure::start() {
 	Update_event_query update_query = prepare_update_query();
 	Insert_query insert_query = prepare_insert_query();
-	std::string response_message = run_main_procedure(update_query, insert_query);
-	socket_.send_string(response_message);
+	run_main_procedure(update_query, insert_query);
+	send_response(std::move(response_));
 }
 
 std::string Update_event_procedure::name() {
@@ -33,7 +34,7 @@ Insert_query Update_event_procedure::prepare_insert_query() const {
 	return query;
 }
 
-std::string Update_event_procedure::run_main_procedure(const Update_event_query& update_query, const Insert_query& insert_query) {
+void Update_event_procedure::run_main_procedure(const Update_event_query& update_query, const Insert_query& insert_query) {
 	Prepared_statement event_exists_stmt = update_query.create_event_exists_stmt();
 	Prepared_statement tags_exists_stmt = insert_query.create_tags_exist_statement();
 	Prepared_statement update_event_stmt = update_query.create_update_event_stmt();
@@ -44,14 +45,16 @@ std::string Update_event_procedure::run_main_procedure(const Update_event_query&
 	accessor.open();
 
 	if (!check_if_event_exists(event_exists_stmt)) {
-		return "Cannot update event with id: " + message_->get_event_id() + ". It does not exist";
+		response_.set_failure("Cannot update event with id: " + message_->get_event_id() + ". It does not exist");
+		return;
 	}
 
 	auto not_existing_tags = load_not_existing_tags(tags_exists_stmt);
 	if (!not_existing_tags.empty()) {
 		std::string message = "Cannot update event. Following tags do not exist: ";
 		message += utils::concatenate_string_array(not_existing_tags);
-		return message;
+		response_.set_failure(message);
+		return;
 	}
 
 	Database::Transaction transaction(database_);
@@ -62,7 +65,7 @@ std::string Update_event_procedure::run_main_procedure(const Update_event_query&
 	}
 	transaction.commit();
 
-	return "Event with id: " + message_->get_event_id() + " has been successfully updated";
+	response_.set_success("Event with id: " + message_->get_event_id() + " has been successfully updated");
 }
 
 bool Update_event_procedure::check_if_event_exists(const Prepared_statement& stmt) {

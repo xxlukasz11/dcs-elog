@@ -2,6 +2,7 @@
 #define _WEBSITE_RESPONSE_H_
 
 #include "response.h"
+#include "result_set.h"
 #include <string>
 
 class Website_response final : public Response {
@@ -15,6 +16,8 @@ public:
 	void set_success(const std::string& message);
 	void set_data(const std::string& data);
 	void set_data(std::string&& data);
+	void set_data(const Result_set& data);
+	void set_data(Result_set&& data);
 
 private:
 	Code response_code_{ Code::FAILURE };
