@@ -5,6 +5,7 @@
 #include <string>
 #include "logger.h"
 
+static const std::string COLON_AND_SPACE = ": ";
 static const std::string TAB = "\t";
 static const std::string DOUBLE_TAB = "\t\t";
 static const char* LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
@@ -44,7 +45,7 @@ void Logger::run() {
 
 void Logger::release() {
 	release_flag_ = false;
-	Logger::create().status("Logger released");
+	Logger::create().level(Log_level::INFO).status("Logger released");
 }
 
 std::string Logger::create_date_time_string(time_t time) const {
@@ -54,12 +55,15 @@ std::string Logger::create_date_time_string(time_t time) const {
 	return ss.str();
 }
 
+/*
+*  Log location is not already needed
+*/
 Log_entry Logger::create_log_entry(const Log_item& log_item) {
 	std::string date_time_string = create_date_time_string(log_item.get_time());
 	std::string entry_type = determine_entry_type(log_item);
 	std::string context;
 	if (log_item.has_context()) {
-		context = std::to_string(log_item.get_context());
+		context = std::to_string(log_item.get_context()) + COLON_AND_SPACE;
 	}
 
 	Log_entry log_entry;
@@ -68,10 +72,9 @@ Log_entry Logger::create_log_entry(const Log_item& log_item) {
 		.append(TAB)
 		.append(entry_type)
 		.append(DOUBLE_TAB)
-		.append(log_item.get_location())
-		.append(DOUBLE_TAB)
+		//.append(log_item.get_location())
+		//.append(DOUBLE_TAB)
 		.append(context)
-		.append(":" + TAB)
 		.append(log_item.get_message());
 	return log_entry;
 }
