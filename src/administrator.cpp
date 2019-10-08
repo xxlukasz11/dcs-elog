@@ -51,6 +51,7 @@ void Administrator::stop() {
 
 void Administrator::setup_and_start_logger() {
 	logger_->set_timeout(config::logger::timeout);
+	logger_->set_log_level(config::logger::log_level);
 	thread_manager_.add_logger(logger_);
 	thread_manager_.start_loggers();
 }

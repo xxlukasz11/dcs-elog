@@ -34,6 +34,10 @@ Log_item::Type Log_item::get_type() const {
 	return type_;
 }
 
+Log_level Log_item::get_log_level() const {
+	return log_level_;
+}
+
 void Log_item::set_context(int context) {
 	context_ = context;
 	context_is_set_ = true;
@@ -46,4 +50,8 @@ void Log_item::set_location(const std::string& location) {
 void Log_item::set_message(Log_item::Type type, const std::string& message) {
 	type_ = type;
 	message_ = message;
+}
+
+void Log_item::set_log_level(Log_level log_level) {
+	log_level_ = log_level;
 }

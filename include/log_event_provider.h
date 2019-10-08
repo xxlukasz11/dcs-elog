@@ -4,6 +4,7 @@
 #include "concurrent_queue.h"
 #include "log_item.h"
 #include "message.h"
+#include "log_level.h"
 
 class Log_event_provider {
 public:
@@ -11,6 +12,7 @@ public:
 	
 	Log_event_provider& context(int id);
 	Log_event_provider& location(const std::string& location);
+	Log_event_provider& level(Log_level level);
 
 	void info(const std::string& message);
 	void info(const std::shared_ptr<Message>& message);

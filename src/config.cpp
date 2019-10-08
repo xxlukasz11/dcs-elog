@@ -26,5 +26,6 @@ namespace config {
 	namespace logger {
 		std::string file_name = "log.txt";
 		Timeout_t timeout = Timeout_t(5);
+		Log_level log_level = Log_level::INFO;
 	}
 }

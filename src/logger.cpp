@@ -7,6 +7,7 @@
 
 static const std::string TAB = "\t";
 static const std::string DOUBLE_TAB = "\t\t";
+static const char* LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
 static const int defult_timeout_value = 10;
 
 Log_item_queue Logger::queue_;
@@ -14,8 +15,12 @@ Log_item_queue Logger::queue_;
 Logger::Logger(const std::string& file_path) : stream_(file_path), timeout_(defult_timeout_value) {
 }
 
-void Logger::set_timeout(const Timeout_t& timeout) {
+void Logger::set_timeout(Timeout_t timeout) {
 	timeout_ = timeout;
+}
+
+void Logger::set_log_level(Log_level log_level) {
+	log_level_ = log_level;
 }
 
 Log_event_provider Logger::create() {
@@ -30,9 +35,7 @@ void Logger::run() {
 			stream_.close();
 		}
 		else {
-			Log_entry log_entry = create_log_entry(log_item.value());
-			stream_.open_if_closed();
-			stream_.write_line(log_entry);
+			write_log(log_item.value());
 		}
 	}
 	stream_.flush();
@@ -47,7 +50,7 @@ void Logger::release() {
 std::string Logger::create_date_time_string(time_t time) const {
 	tm t_local = *std::localtime(&time);
 	std::ostringstream ss;
-	ss << std::put_time(&t_local, "%Y-%m-%d %H:%M:%S");
+	ss << std::put_time(&t_local, LOG_DATE_FORMAT);
 	return ss.str();
 }
 
@@ -84,5 +87,17 @@ std::string Logger::determine_entry_type(const Log_item& log_item) {
 		case T::STATUS: return "STATUS";
 
 		default: return "UNKNOWN";
+	}
+}
+
+bool Logger::should_be_logged(const Log_item& log_item) {
+	return log_item.get_log_level() <= log_level_;
+}
+
+void Logger::write_log(const Log_item& log_item) {
+	if (should_be_logged(log_item)) {
+		Log_entry log_entry = create_log_entry(log_item);
+		stream_.open_if_closed();
+		stream_.write_line(log_entry);
 	}
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <chrono>
+#include "log_level.h"
 
 namespace config {
 
@@ -32,6 +33,7 @@ namespace config {
 
 		extern std::string file_name;
 		extern Timeout_t timeout;
+		extern Log_level log_level;
 	}
 }
 

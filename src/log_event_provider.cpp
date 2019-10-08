@@ -15,6 +15,11 @@ Log_event_provider& Log_event_provider::location(const std::string& location) {
 	return *this;
 }
 
+Log_event_provider& Log_event_provider::level(Log_level log_level) {
+	log_item_.set_log_level(log_level);
+	return *this;
+}
+
 void Log_event_provider::info(const std::string& message) {
 	log_item_.set_message(Log_item::Type::INFO, message);
 	push_to_queue();
