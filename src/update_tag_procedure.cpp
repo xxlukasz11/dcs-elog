@@ -1,5 +1,5 @@
 #include <utility>
-#include "config.h"
+#include "administrator.h"
 #include "result_set.h"
 #include "prepared_statement.h"
 #include "update_tag_procedure.h"
@@ -35,15 +35,16 @@ void Update_tag_procedure::update_tag(const Update_tag_query& query) {
 	bool tag_exists = tag_exists_result.has_records();
 
 	if (tag_exists) {
+		auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
 		std::string old_tag_name = tag_exists_result.get_first_field();
-		if (old_tag_name != config::database::empty_tag_name) {
+		if (old_tag_name != empty_tag_name) {
 			Database::Transaction transaction(database_);
 			database_.execute(update_stmt);
 			transaction.commit();
 			response_.set_success("Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'");
 		}
 		else {
-			response_.set_failure("Cannot update reserved tag: '" + config::database::empty_tag_name + "'");
+			response_.set_failure("Cannot update reserved tag: '" + empty_tag_name + "'");
 		}
 	}
 	

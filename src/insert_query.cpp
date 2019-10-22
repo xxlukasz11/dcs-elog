@@ -4,7 +4,7 @@
 
 #include "custom_exceptions.h"
 #include "insert_query.h"
-#include "config.h"
+#include "administrator.h"
 
 namespace {
 	namespace sql {
@@ -35,7 +35,8 @@ void Insert_query::create_tag(std::string tag) {
 void Insert_query::set_tags(std::vector<std::string>&& tags){
 	tags_ = std::move(tags);
 	if (tags_.empty()) {
-		tags_.push_back(config::database::empty_tag_name);
+		auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
+		tags_.push_back(empty_tag_name);
 	}
 }
 

@@ -1,6 +1,6 @@
 #include <queue>
 #include <utility>
-#include "config.h"
+#include "administrator.h"
 #include "result_set.h"
 #include "prepared_statement.h"
 #include "delete_tag_procedure.h"
@@ -81,5 +81,5 @@ std::string Delete_tag_procedure::extract_tag_name(const Result_set& result_set)
 }
 
 bool Delete_tag_procedure::check_if_tag_is_reserved(const std::string tag_name) {
-	return tag_name == config::database::empty_tag_name;
+	return tag_name == Administrator::instance().params().get_empty_tag_name();
 }

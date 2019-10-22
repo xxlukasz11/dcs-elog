@@ -7,25 +7,20 @@
 #include "tcp_server.h"
 #include "concurrent_queue.h"
 #include "logger.h"
+#include "parameters.h"
 
 class Administrator {
-	Database database_;
-	Thread_manager thread_manager_;
-	Socket_queue socket_queue_;
-	std::shared_ptr<Tcp_server> server_;
-	std::shared_ptr<Logger> logger_;
-
-	bool initialized_{ false };
-	bool started_{ false };
-
 public:
 	static Administrator& instance();
-	void initialize();
+	const Parameters& params() const;
+	void initialize(const Parameters& parameters);
 	void start();
 	void stop();
 
 private:
-	void setup_and_start_logger();
+	void create_database();
+	void stop_logger();
+	void create_and_start_logger();
 	void setup_server();
 	void prepare_threads();
 	void on_exit();
@@ -36,6 +31,15 @@ private:
 	Administrator(Administrator&&) = default;
 	Administrator& operator=(const Administrator&) = default;
 	Administrator& operator=(Administrator&&) = default;
+
+	Parameters parameters_;
+	Thread_manager thread_manager_;
+	Socket_queue socket_queue_;
+	std::unique_ptr<Database> database_;
+	std::shared_ptr<Tcp_server> server_;
+	std::shared_ptr<Logger> logger_;
+	bool initialized_{ false };
+	bool started_{ false };
 };
 
 #endif // !_ADMINISTRATOR_H_

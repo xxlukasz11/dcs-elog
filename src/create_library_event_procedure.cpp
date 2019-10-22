@@ -1,6 +1,6 @@
 #include <string>
 #include "utils.h"
-#include "config.h"
+#include "administrator.h"
 #include "database.h"
 #include "result_set.h"
 #include "add_tag_query.h"
@@ -35,7 +35,7 @@ std::string Create_library_event_procedure::name() {
 void Create_library_event_procedure::leave_only_existing_tags(Insert_query& query,
 	const std::vector<std::string>& not_existing_tags) {
 	auto existing_tags = utils::exclude_from_array(query.get_tags(), not_existing_tags);
-	existing_tags.push_back(config::database::empty_tag_name);
+	existing_tags.push_back(Administrator::instance().params().get_empty_tag_name());
 	query.set_tags(std::move(existing_tags));
 }
 

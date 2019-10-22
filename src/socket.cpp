@@ -51,7 +51,7 @@ int Socket::shutdown_rdwr() {
 	return shutdown(socket_descriptor_, SHUT_RDWR);
 }
 
-Socket Socket::accept(Addr_in_wrapper & config) {
+Socket Socket::accept(Addr_in_wrapper& config) {
 	sockaddr_in& addr_in = config.unwrap();
 	socklen_t length = sizeof(addr_in);
 	return ::accept(socket_descriptor_, (struct sockaddr *) &addr_in, &length);

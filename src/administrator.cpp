@@ -1,17 +1,14 @@
 #include "connection_handler.h"
-#include "config.h"
 #include "custom_exceptions.h"
+#include "param_manager.h"
 #include "administrator.h"
 
 void Administrator::handle_sigint(int) {
 	instance().stop();
 }
 
-Administrator::Administrator() :
-		logger_(std::make_shared<Logger>(config::logger::file_name)),
-		database_(config::database::path) {
+Administrator::Administrator() {
 	signal(SIGINT, &handle_sigint);
-	setup_and_start_logger();
 }
 
 Administrator& Administrator::instance() {
@@ -19,8 +16,15 @@ Administrator& Administrator::instance() {
 	return administrator;
 }
 
-void Administrator::initialize() {
+const Parameters& Administrator::params() const {
+	return parameters_;
+}
+
+void Administrator::initialize(const Parameters& parameters) {
+	parameters_ = parameters;
 	initialized_ = true;
+	create_and_start_logger();
+	create_database();
 	setup_server();
 	prepare_threads();
 }
@@ -46,25 +50,34 @@ void Administrator::stop() {
 	server_->stop_and_release_consumers();
 	thread_manager_.join_consumers();
 	on_exit();
+	stop_logger();
+}
+
+void Administrator::create_database() {
+	database_ = std::make_unique<Database>(parameters_.get_database_path());
+}
+
+void Administrator::stop_logger() {
 	logger_->release();
 	thread_manager_.join_loggers();
 }
 
-void Administrator::setup_and_start_logger() {
-	logger_->set_timeout(config::logger::timeout);
-	logger_->set_log_level(config::logger::log_level);
+void Administrator::create_and_start_logger() {
+	logger_ = std::make_shared<Logger>(parameters_.get_log_file_path());
+	logger_->set_timeout(parameters_.get_logger_inactivity_timeout());
+	logger_->set_log_level(parameters_.get_log_level());
 	thread_manager_.add_logger(logger_);
 	thread_manager_.start_loggers();
 }
 
 void Administrator::setup_server() {
 	server_ = std::make_shared<Tcp_server>(socket_queue_);
-	server_->set_ip_address(config::server::ip_address);
-	server_->set_port(config::server::port);
-	server_->set_max_connections(config::connection::max_no_of_connections);
-	server_->set_message_length(config::connection::tcp_message_length);
-	server_->set_number_of_consumers(config::thread::no_of_connection_handlers);
-	server_->set_accept_delay_ms(config::server::accept_delay_ms);
+	server_->set_ip_address(parameters_.get_local_ip_address());
+	server_->set_port(parameters_.get_listening_port());
+	server_->set_max_connections(parameters_.get_max_no_of_connections());
+	server_->set_message_length(parameters_.get_tcp_message_length());
+	server_->set_number_of_consumers(parameters_.get_no_of_connection_handlers());
+	server_->set_accept_delay_ms(parameters_.get_connection_accept_delay_ms());
 	try {
 		server_->initialize();
 	}
@@ -77,10 +90,10 @@ void Administrator::setup_server() {
 void Administrator::prepare_threads() {
 	thread_manager_.add_server(server_);
 
-	int number_of_consumers = config::thread::no_of_connection_handlers;
+	int number_of_consumers = parameters_.get_no_of_connection_handlers();
 	for (int i = 0; i < number_of_consumers; ++i) {
 		thread_manager_.add_consumer(
-			std::make_shared<Connection_handler>(socket_queue_, database_, server_));
+			std::make_shared<Connection_handler>(socket_queue_, *database_, server_));
 	}
 }
 
