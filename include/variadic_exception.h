@@ -38,6 +38,4 @@ inline void Variadic_exception::expand_parameters(std::ostringstream& stream, U&
 	expand_parameters(stream, args...);
 }
 
-
-
-#endif
+#endif // !_VARIADIC_EXCEPTION_H_
