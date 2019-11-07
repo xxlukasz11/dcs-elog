@@ -98,7 +98,7 @@ void Tcp_server::initialize(){
         throw Init_server_error("Cannot create server socket");
     }
 
-	if( !server_socket_.set_sock_opt(SOL_SOCKET, SO_REUSEADDR) < 0 ){
+	if( !server_socket_.set_reuse_address() < 0 ) {
 		throw Init_server_error("Setsockopt with SO_REUSEADDR parameter error");
 	}
 	

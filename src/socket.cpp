@@ -24,6 +24,10 @@ int Socket::set_sock_opt(int opt_name, int opt_value) {
 	return ::setsockopt(socket_descriptor_, opt_name, opt_value, &opt, sizeof(opt));
 }
 
+int Socket::set_reuse_address() {
+	return set_sock_opt(SOL_SOCKET, SO_REUSEADDR);
+}
+
 int Socket::set_to_nonblock_mode() {
 	return ::fcntl(socket_descriptor_, F_SETFL, O_NONBLOCK);
 }

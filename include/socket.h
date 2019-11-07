@@ -30,6 +30,7 @@ public:
 
 	int descriptor() const;
 	int set_sock_opt(int property, int value);
+	int set_reuse_address();
 	int set_to_nonblock_mode();
 	int bind(Addr_in_wrapper& config);
 	int listen(int max_no_of_connections);
