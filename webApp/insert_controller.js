@@ -69,15 +69,13 @@ app.controller('insert_data', function ($scope, sender, logger) {
 	}
 
 	$scope.pack_parameters = function () {
-		const obj = {
+		return {
 			title: $scope.title,
 			description: $scope.description,
 			tags: $scope.tags.toLowerCase(),
 			author: $scope.author,
 			attachments: $scope.file_list
 		};
-		console.log(obj);
-		return obj;
 	}
 
 	$scope.send_insert_request = function () {
