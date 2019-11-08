@@ -1,22 +1,88 @@
-function get_input_data() {
-	let title_input_value = read_from_input('title_input');
-	let description_input_value = convert_description_to_send(read_from_input('description_input'))
-	let tags_input_value = read_lower_from_input('insert_tags_input');
-	let author_input_value = read_from_input('author_input');
-
-	return {
-		title: title_input_value,
-		description: description_input_value,
-		tags: tags_input_value,
-		author: author_input_value
-	};
+function uint8array_to_binary_string(array) {
+	const len = array.byteLength;
+	let binaryString = "";
+	for (let i = 0; i < len; i++) {
+		binaryString += String.fromCharCode(array[i]);
+	}
+	return binaryString;
 }
 
+class Attachment {
+	constructor(name, type, size) {
+		this.name = name;
+		this.type = type;
+		this.size = size;
+
+		this.loaded = false;
+		this.payload = null;
+
+		this.progress_value = 0;
+		this.progress_max = 0;
+	}
+}
 
 app.controller('insert_data', function ($scope, sender, logger) {
+
+	$scope.title = "";
+	$scope.description = "";
+	$scope.tags = "";
+	$scope.author = "";
+	$scope.file_list = [];
+
+	$scope.append_file = function () {
+		const file_input = document.createElement('input');
+		file_input.type = "file";
+		file_input.onchange = $scope.load_file;
+		file_input.click();
+	}
+
+	$scope.load_file = function () {
+		const file = this.files[0];
+		const attachment = new Attachment(file.name, file.type, file.size);
+		$scope.file_list.push(attachment);
+		$scope.$apply();
+
+		const reader = new FileReader();
+		reader.onprogress = function (e) {
+			if (e.lengthComputable) {
+				attachment.progress_max = e.total;
+				attachment.progress_value = e.loaded;
+				$scope.$apply();
+			}
+		}
+
+		reader.onload = function () {
+			const arrayBuffer = this.result;
+			const array = new Uint8Array(arrayBuffer);
+			const binaryString = uint8array_to_binary_string(array);
+			const base64 = btoa(binaryString);
+
+			attachment.payload = base64;
+			attachment.loaded = true;
+			$scope.$apply();
+		}
+		reader.readAsArrayBuffer(file);
+	}
+
+	$scope.remove_file = function (index) {
+		$scope.file_list.splice(index, 1);
+	}
+
+	$scope.pack_parameters = function () {
+		const obj = {
+			title: $scope.title,
+			description: $scope.description,
+			tags: $scope.tags.toLowerCase(),
+			author: $scope.author,
+			attachments: $scope.file_list
+		};
+		console.log(obj);
+		return obj;
+	}
+
 	$scope.send_insert_request = function () {
 
-		sender.send("insert.php", get_input_data()).then(
+		sender.send("insert.php", $scope.pack_parameters()).then(
 		function (response) {
 			logger.get_log().data(response.data);
 		}, function (response) {

@@ -94,19 +94,32 @@
 				<div class="input_wrapper">
 					<div>
 						<span>Title: </span>
-						<input id="title_input" type="text" />
+						<input id="title_input" type="text" ng-model="title" />
 					</div>
 					<div>
 						<p class="text_area_caption">Description:</p>
-						<textarea id="description_input">No description</textarea>
+						<textarea id="description_input" ng-model="description">No description</textarea>
 					</div>
 					<div>
 						<span>Tags: </span>
-						<input id="insert_tags_input" type="text" />
+						<input id="insert_tags_input" type="text" ng-model="tags" />
 					</div>
 					<div>
 						<span>Author: </span>
-						<input id="author_input" type="text" />
+						<input id="author_input" type="text" ng-model="author" />
+					</div>
+					<div>
+						<div>
+							<span>Attachments: </span>
+							<button ng-click="append_file()">Append</button>
+						</div>
+						<div>
+							<p ng-repeat="file in file_list">
+								<span class="attachment_name">{{ file.name }} </span>
+								<button class="{{ !file.loaded ? 'hidden' : '' }}" ng-click="remove_file($index)">X</button>
+								<progress class="{{ file.loaded ? 'hidden' : '' }}" value="{{ file.progress_value }}" max="{{ file.progress_max }}" />
+							</p>
+						</div>
 					</div>
 					<div>
 						<button ng-click="send_insert_request()">Add</button>

@@ -17,8 +17,9 @@ app.service('sender', function ($http, host) {
 	this.send = function (destination, parameter_object) {
 		return $http({
 			url: host + destination,
-			method: "GET",
-			params: {
+			method: "POST",
+			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+			data: {
 				date: new Date().getTime(),
 				content: JSON.stringify(parameter_object)
 			}

@@ -11,3 +11,12 @@
 	margin: 0px;
 	padding 0px;
 }
+
+.hidden {
+	display: none;
+}
+
+.attachment_name {
+	font-weight: bold;
+	font-size: 1em;
+}
