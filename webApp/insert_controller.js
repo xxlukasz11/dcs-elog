@@ -51,6 +51,11 @@ app.controller('insert_data', function ($scope, sender, logger) {
 			}
 		}
 
+		reader.onerror = function (event) {
+			reader.abort();
+			logger.get_log().error("Failed to load " + attachment.name + ". " + reader.error);
+		};
+
 		reader.onload = function () {
 			const arrayBuffer = this.result;
 			const array = new Uint8Array(arrayBuffer);
@@ -68,6 +73,14 @@ app.controller('insert_data', function ($scope, sender, logger) {
 		$scope.file_list.splice(index, 1);
 	}
 
+	$scope.reset_fields = function () {
+		$scope.title = "";
+		$scope.description = "";
+		$scope.tags = "";
+		$scope.author = "";
+		$scope.file_list = [];
+	}
+
 	$scope.pack_parameters = function () {
 		return {
 			title: $scope.title,
@@ -83,6 +96,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 		sender.send("insert.php", $scope.pack_parameters()).then(
 		function (response) {
 			logger.get_log().data(response.data);
+			$scope.reset_fields();
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
 		});
