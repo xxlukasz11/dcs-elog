@@ -33,8 +33,13 @@ function prepare_message($params){
 
 	$author = $params->author;
 	$author_len = strlen($author);
+
+	$attachment_names = array_column($params->attachments, 'name');
+	$attachment_names_str = implode($attachment_names, ' ');
+	$attachment_names_str_len = strlen($attachment_names_str);
 	
-	$str = "[0][$title_len $description_len $tags_len $author_len][$title][$description][$tags][$author]";
+	$str = "[0][$title_len $description_len $tags_len $author_len $attachment_names_str_len]
+				[$title][$description][$tags][$author][$attachment_names_str]";
 	return $str;
 }
 
