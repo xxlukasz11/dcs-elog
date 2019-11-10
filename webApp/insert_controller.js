@@ -7,7 +7,7 @@ function uint8array_to_binary_string(array) {
 	return binaryString;
 }
 
-class Attachment {
+class Attachment_item {
 	constructor(name, type, size) {
 		this.name = name;
 		this.type = type;
@@ -18,6 +18,15 @@ class Attachment {
 
 		this.progress_value = 0;
 		this.progress_max = 0;
+	}
+}
+
+class Attachment {
+	constructor(name, type, size, payload) {
+		this.name = name;
+		this.type = type;
+		this.size = size;
+		this.payload = payload;
 	}
 }
 
@@ -38,7 +47,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 
 	$scope.load_file = function () {
 		const file = this.files[0];
-		const attachment = new Attachment(file.name, file.type, file.size);
+		const attachment = new Attachment_item(file.name, file.type, file.size);
 		$scope.file_list.push(attachment);
 		$scope.$apply();
 
@@ -81,17 +90,43 @@ app.controller('insert_data', function ($scope, sender, logger) {
 		$scope.file_list = [];
 	}
 
+	$scope.check_all_files_loaded = function () {
+		for (file of $scope.file_list) {
+			if (!file.loaded) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	$scope.create_attachment_list = function () {
+		let attachment_list = [];
+		for (a of $scope.file_list) {
+			attachment_list.push(new Attachment(
+				a.name,
+				a.type,
+				a.size,
+				a.payload
+			));
+		}
+		return attachment_list;
+	}
+
 	$scope.pack_parameters = function () {
 		return {
 			title: $scope.title,
 			description: $scope.description,
 			tags: $scope.tags.toLowerCase(),
 			author: $scope.author,
-			attachments: $scope.file_list
+			attachments: $scope.create_attachment_list()
 		};
 	}
 
 	$scope.send_insert_request = function () {
+		if (!$scope.check_all_files_loaded()) {
+			logger.get_log().error("Cannot add event. Somme attachments are still loading.");
+			return;
+		}
 
 		sender.send("insert.php", $scope.pack_parameters()).then(
 		function (response) {
