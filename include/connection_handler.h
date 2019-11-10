@@ -10,16 +10,18 @@
 class Tcp_server;
 
 class Connection_handler : public Dcs_thread {
-	std::shared_ptr<Tcp_server> server_;
-	Socket_queue& queue_;
-	Database& database_;
-	Socket socket_;
 public:
 	Connection_handler(Socket_queue& queue, Database& database, const std::shared_ptr<Tcp_server>& server);
+
 private:
 	virtual void run();
 	void handle_connection();
 	void recieve_data_from_socket();
+
+	std::shared_ptr<Tcp_server> server_;
+	Socket_queue& queue_;
+	Database& database_;
+	Socket socket_;
 };
 
 

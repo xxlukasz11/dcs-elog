@@ -8,6 +8,9 @@
 
 namespace utils {
 
+const char SPACE_SEPARATOR = ' ';
+const char COMMA_SEPARATOR = ',';
+
 std::string concatenate_string_array(const String_array& array) {
 	std::string text;
 	size_t array_size = array.size();
@@ -28,12 +31,33 @@ String_array exclude_from_array(const String_array& base, const String_array& pa
 }
 
 String_array string_to_vector(std::string string) {
-	std::replace(string.begin(), string.end(), ',', ' ');
+	std::replace(string.begin(), string.end(), COMMA_SEPARATOR, SPACE_SEPARATOR);
 	std::istringstream ss(std::move(string));
 	String_array vector;
 	for (std::string buffer; ss >> buffer;)
 		vector.push_back(std::move(buffer));
 	return vector;
+}
+
+Pair_array string_to_pair_array(char pair_separator, std::string string) {
+	std::replace(string.begin(), string.end(), pair_separator, SPACE_SEPARATOR);
+	std::istringstream ss(std::move(string));
+	Pair_array pair_array;
+	for (std::string first; ss >> first;) {
+		std::string second;
+		ss >> second;
+		pair_array.emplace_back(first, second);
+	}
+	return pair_array;
+}
+
+Attachment_info_array pair_array_to_attachment(const Pair_array& pair_array) {
+	Attachment_info_array attachment_array;
+	attachment_array.reserve(pair_array.size());
+	for (const auto& pair : pair_array) {
+		attachment_array.emplace_back(pair.first, pair.second);
+	}
+	return attachment_array;
 }
 
 Log_level decode_log_level(const std::string& string) {

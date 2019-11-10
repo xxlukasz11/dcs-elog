@@ -21,6 +21,14 @@ http_response_code(200);
 echo $response;
 
 
+function create_attachment_info_array($attachments) {
+	$info_array = array();
+	foreach($attachments as $att) {
+		array_push($info_array, "$att->name;$att->type");
+	}
+	return $info_array;
+}
+
 function prepare_message($params){
 	$title = $params->title;
 	$title_len = strlen($title);
@@ -34,12 +42,12 @@ function prepare_message($params){
 	$author = $params->author;
 	$author_len = strlen($author);
 
-	$attachment_names = array_column($params->attachments, 'name');
-	$attachment_names_str = implode($attachment_names, ' ');
-	$attachment_names_str_len = strlen($attachment_names_str);
+	$attachment_info = create_attachment_info_array($params->attachments);
+	$attachment_info_str = implode($attachment_info, ' ');
+	$attachment_info_str_len = strlen($attachment_info_str);
 	
-	$str = "[0][$title_len $description_len $tags_len $author_len $attachment_names_str_len]
-				[$title][$description][$tags][$author][$attachment_names_str]";
+	$str = "[0][$title_len $description_len $tags_len $author_len $attachment_info_str_len]
+				[$title][$description][$tags][$author][$attachment_info_str]";
 	return $str;
 }
 

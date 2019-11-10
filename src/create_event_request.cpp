@@ -8,7 +8,8 @@ void Create_event_request::extract_parameters(Msg_parser& parser) {
 	author_ = parser.next();
 
 	std::string attachachments_string = parser.next();
-	attachments_names_ = utils::string_to_vector(attachachments_string);
+	utils::Pair_array pairs = utils::string_to_pair_array(';', attachachments_string);
+	attachments_info_ = utils::pair_array_to_attachment(pairs);
 }
 
 std::string Create_event_request::name() const {
@@ -35,6 +36,6 @@ const std::string& Create_event_request::get_author() const {
 	return author_;
 }
 
-const std::vector<std::string>& Create_event_request::get_attachments_names() const {
-	return attachments_names_;
+const std::vector<Attachment_info>& Create_event_request::get_attachments_info() const {
+	return attachments_info_;
 }
