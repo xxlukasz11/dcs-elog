@@ -6,6 +6,12 @@ function create_json_response($message){
 	return $msg;
 }
 
+function yeld_error($error_code, $message) {
+	$msg = create_json_response($message);
+	http_response_code($error_code);
+	echo $msg;
+}
+
 function send_data($data){
 	// debug
 	//error_reporting(E_ALL);
@@ -23,31 +29,23 @@ function send_data($data){
 
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 	if ($socket === false) {
-		$msg = create_json_response('Internal server error: CREATE_ERROR');
-	    http_response_code(500);
-		echo $msg;
+		
 		exit();
 	}
 	
 	if (!socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1)) {
-		$msg = create_json_response('Internal server error: REUSEADDR_ERROR');
-	    http_response_code(500);
-		echo $msg;
+		yeld_error(500, 'Internal server error: REUSEADDR_ERROR');
 		exit();
 	}
 	
 	if (!socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 10, "usec" => 0))) {
-		$msg = create_json_response('Internal server error: RCVTIMEO_ERROR');
-	    http_response_code(500);
-		echo $msg;
+		yeld_error(500, 'Internal server error: RCVTIMEO_ERROR');
 		exit();
 	}
 
 	$conn = socket_connect($socket, $server_address, $server_port);
 	if ($conn === false) {
-		$msg = create_json_response('Cannot connect to the server');
-	    http_response_code(500);
-		echo $msg;
+		yeld_error(500, 'Cannot connect to the remote server');
 		exit();
 	}
 
