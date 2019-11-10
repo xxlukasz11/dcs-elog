@@ -47,14 +47,14 @@ app.controller('select_data', function ($scope, sender, logger) {
 	$scope.send_update_request = function (parameter_object) {
 		sender.send("update_event.php", parameter_object).then(
 		function (response) {
-			$scope.send_request();
+			$scope.send_select_request();
 			logger.get_log().event(response.data.message);
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
 		});
 	}
 
-    $scope.send_request = function () {
+    $scope.send_select_request = function () {
     	sender.send("select.php", getParams()).then(
 		function (response) {
 			const response_data = response.data;
