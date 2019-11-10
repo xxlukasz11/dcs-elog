@@ -7,9 +7,14 @@
 
 namespace utils{
 	using String_array = std::vector<std::string>;
+
 	std::string concatenate_string_array(const String_array& array);
+
 	String_array exclude_from_array(const String_array& base, const String_array& pattern);
+
+	// converts comma and space separated string to std::vector
 	String_array string_to_vector(std::string string);
+
 	Log_level decode_log_level(const std::string& string);
 
 	template<typename T>
