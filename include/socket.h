@@ -44,6 +44,12 @@ public:
 	void send_string(const std::string& msg);
 
 	template<typename T>
+	T receive();
+
+	template<typename Buffer_t>
+	void fill_buffer(Buffer_t& buffer, size_t bytes_to_fill);
+
+	template<typename T>
 	void send_value(T value);
 
 	bool is_not_valid() const;
@@ -57,6 +63,21 @@ private:
 	timeval create_time_val(int seconds, int u_seconds);
 	int safe_recv(void* buffer, size_t size, int flags);
 };
+
+template<typename T>
+inline T Socket::receive() {
+	T buffer;
+	safe_recv(&buffer, sizeof(buffer), 0);
+	return buffer;
+}
+
+template<typename Buffer_t>
+inline void Socket::fill_buffer(Buffer_t& buffer, size_t bytes_to_fill) {
+	int received = 0;
+	while (received < bytes_to_fill) {
+		received += safe_recv(&buffer[received], bytes_to_fill - received, 0);
+	}
+}
 
 template<typename T>
 void Socket::send_value(T value) {
