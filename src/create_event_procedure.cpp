@@ -5,11 +5,9 @@
 #include "json_stringifier.h"
 #include "create_event_procedure.h"
 
-Create_event_procedure::Create_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Create_event_request>(message)) {
-}
-
 void Create_event_procedure::start() {
+	attachment_handler_.handle_attachments(
+		message_->get_attachments_info());
 	Insert_query query = prepare_query();
 	run_main_procedure(query);
 	send_response(std::move(response_));
@@ -17,6 +15,10 @@ void Create_event_procedure::start() {
 
 std::string Create_event_procedure::name() {
 	return "CREATE_EVENT_PROCEDURE";
+}
+
+void Create_event_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Create_event_request>(message);
 }
 
 Insert_query Create_event_procedure::prepare_query() const {

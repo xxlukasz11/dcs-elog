@@ -11,9 +11,10 @@
 
 class Create_library_event_procedure : public Procedure {
 public:
-	Create_library_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
+	using Procedure::Procedure;
 	virtual void start() override final;
 	virtual std::string name() override final;
+	virtual void set_message(const std::shared_ptr<Message>& message) override final;
 
 private:
 	std::vector<std::string> load_not_existing_tags(const Prepared_statement& stmt);

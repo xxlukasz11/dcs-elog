@@ -11,7 +11,7 @@
 #include "logger.h"
 #include "message_factory.h"
 
-Message_handler::Message_handler(Socket socket, Database& database) : socket_(socket), database_(database) {}
+Message_handler::Message_handler(Socket socket, Database& database) : socket_(socket), database_(database), attachment_handler_(socket) {}
 
 void Message_handler::process_message(const std::string& message_string) {
 	try {
@@ -46,21 +46,21 @@ std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_p
 
 	switch (message_type) {
 		case T::create_event:
-			return std::make_unique<Create_event_procedure>(database_, socket_, message);
+			return create_procedure<Create_event_procedure>(message);
 		case T::return_events:
-			return std::make_unique<Return_events_procedure>(database_, socket_, message);
+			return create_procedure<Return_events_procedure>(message);
 		case T::return_tags_tree:
-			return std::make_unique<Return_tags_tree_procedure>(database_, socket_, message);
+			return create_procedure<Return_tags_tree_procedure>(message);
 		case T::create_tag:
-			return std::make_unique<Create_tag_procedure>(database_, socket_, message);
+			return create_procedure<Create_tag_procedure>(message);
 		case T::delete_tag:
-			return std::make_unique<Delete_tag_procedure>(database_, socket_, message);
+			return create_procedure<Delete_tag_procedure>(message);
 		case T::update_tag:
-			return std::make_unique<Update_tag_procedure>(database_, socket_, message);
+			return create_procedure<Update_tag_procedure>(message);
 		case T::update_event:
-			return std::make_unique<Update_event_procedure>(database_, socket_, message);
+			return create_procedure<Update_event_procedure>(message);
 		case T::create_library_event:
-			return std::make_unique<Create_library_event_procedure>(database_, socket_, message);
+			return create_procedure<Create_library_event_procedure>(message);
 
 		default: throw Unknown_message("Message with id = ", static_cast<int>(message_type), " is unknown");
 	}

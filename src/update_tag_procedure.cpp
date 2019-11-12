@@ -4,10 +4,6 @@
 #include "prepared_statement.h"
 #include "update_tag_procedure.h"
 
-Update_tag_procedure::Update_tag_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Update_tag_request>(message)) {
-}
-
 void Update_tag_procedure::start() {
 	Update_tag_query query = prepare_query();
 	update_tag(query);
@@ -16,6 +12,10 @@ void Update_tag_procedure::start() {
 
 std::string Update_tag_procedure::name() {
 	return "UPDATE_TAG_PROCEDURE";
+}
+
+void Update_tag_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Update_tag_request>(message);
 }
 
 Update_tag_query Update_tag_procedure::prepare_query() const {

@@ -10,9 +10,10 @@
 
 class Delete_tag_procedure : public Procedure {
 public:
-	Delete_tag_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message);
+	using Procedure::Procedure;
 	virtual void start() override final;
 	virtual std::string name() override final;
+	virtual void set_message(const std::shared_ptr<Message>& message) override final;
 
 private:
 	Delete_tag_query prepare_query() const;

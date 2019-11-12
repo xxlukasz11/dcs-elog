@@ -5,10 +5,6 @@
 #include "prepared_statement.h"
 #include "delete_tag_procedure.h"
 
-Delete_tag_procedure::Delete_tag_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Delete_tag_request>(message)) {
-}
-
 void Delete_tag_procedure::start() {
 	Delete_tag_query query = prepare_query();
 	run_main_procedure(query);
@@ -17,6 +13,10 @@ void Delete_tag_procedure::start() {
 
 std::string Delete_tag_procedure::name() {
 	return "DELETE_TAG_PROCEDURE";
+}
+
+void Delete_tag_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Delete_tag_request>(message);
 }
 
 Delete_tag_query Delete_tag_procedure::prepare_query() const {

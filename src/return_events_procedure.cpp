@@ -6,10 +6,6 @@
 
 static const std::string ON_SUCCESS_MESSAGE = "Successfully loaded events";
 
-Return_events_procedure::Return_events_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Return_events_request>(message)) {
-}
-
 void Return_events_procedure::start() {
 	auto query = prepare_query();
 	auto stmt = query.create_statement();
@@ -22,6 +18,10 @@ void Return_events_procedure::start() {
 
 std::string Return_events_procedure::name() {
 	return "RETURN_EVENTS_PROCEDURE";
+}
+
+void Return_events_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Return_events_request>(message);
 }
 
 Select_query Return_events_procedure::prepare_query() const {

@@ -8,10 +8,6 @@
 #include "prepared_statement.h"
 #include "create_library_event_procedure.h"
 
-Create_library_event_procedure::Create_library_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Create_library_event_request>(message)) {
-}
-
 Insert_query Create_library_event_procedure::prepare_query() const {
 	Insert_query query;
 	query.set_title(message_->get_title());
@@ -30,6 +26,10 @@ void Create_library_event_procedure::start() {
 
 std::string Create_library_event_procedure::name() {
 	return "CREATE_LIBRARY_EVENT_PROCEDURE";
+}
+
+void Create_library_event_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Create_library_event_request>(message);
 }
 
 void Create_library_event_procedure::leave_only_existing_tags(Insert_query& query,

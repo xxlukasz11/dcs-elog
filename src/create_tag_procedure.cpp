@@ -4,10 +4,6 @@
 #include "prepared_statement.h"
 #include "create_tag_procedure.h"
 
-Create_tag_procedure::Create_tag_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Create_tag_request>(message)) {
-}
-
 void Create_tag_procedure::start() {
 	Add_tag_query query = prepare_query();
 	create_tag(query);
@@ -16,6 +12,10 @@ void Create_tag_procedure::start() {
 
 std::string Create_tag_procedure::name() {
 	return "CREATE_TAG_PROCEDURE";
+}
+
+void Create_tag_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Create_tag_request>(message);
 }
 
 Add_tag_query Create_tag_procedure::prepare_query() const {

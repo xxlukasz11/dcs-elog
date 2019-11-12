@@ -4,10 +4,6 @@
 #include "result_set.h"
 #include "update_event_procedure.h"
 
-Update_event_procedure::Update_event_procedure(Database& database, const Socket& socket, const std::shared_ptr<Message>& message)
-	: Procedure(database, socket), message_(std::static_pointer_cast<Update_event_request>(message)) {
-}
-
 void Update_event_procedure::start() {
 	Update_event_query update_query = prepare_update_query();
 	Insert_query insert_query = prepare_insert_query();
@@ -17,6 +13,10 @@ void Update_event_procedure::start() {
 
 std::string Update_event_procedure::name() {
 	return "UPDATE_EVENT_PROCEDURE";
+}
+
+void Update_event_procedure::set_message(const std::shared_ptr<Message>& message) {
+	message_ = std::static_pointer_cast<Update_event_request>(message);
 }
 
 Update_event_query Update_event_procedure::prepare_update_query() const {

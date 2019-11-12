@@ -2,6 +2,7 @@
 #define _ATTACHMENT_INFO_H_
 
 #include <string>
+#include <vector>
 
 class Attachment_info {
 public:
@@ -13,5 +14,7 @@ private:
 	std::string name_;
 	std::string type_;
 };
+
+using Attachment_info_array = std::vector<Attachment_info>;
 
 #endif // !_ATTACHMENT_INFO_H_
