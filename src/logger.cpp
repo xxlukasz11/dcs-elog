@@ -102,5 +102,6 @@ void Logger::write_log(const Log_item& log_item) {
 		Log_entry log_entry = create_log_entry(log_item);
 		stream_.open_if_closed();
 		stream_.write_line(log_entry);
+		stream_.flush();
 	}
 }

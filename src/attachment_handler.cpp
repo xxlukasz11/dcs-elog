@@ -3,7 +3,7 @@
 #include "attachment_handler.h"
 #include "logger.h"
 
-constexpr uint32_t RX_BUFFER_SIZE = 10000;
+constexpr int RX_BUFFER_SIZE = 100000;
 
 Attachment_handler::Attachment_handler(Socket socket) : socket_(socket) {
 }
@@ -19,12 +19,13 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 	std::ofstream file(file_name, std::ios::binary);
 	std::vector<uint8_t> buffer(RX_BUFFER_SIZE);
 
-	uint32_t file_size = socket_.receive<uint32_t>();
-	uint32_t bytes_to_receive = file_size;
-	while (bytes_to_receive > 0) {
-		uint32_t bytes_to_save = std::min(RX_BUFFER_SIZE, bytes_to_receive);
+	int file_size = socket_.receive<int>();
+	int bytes_sent = 0;
+	while (bytes_sent < file_size) {
+		int bytes_to_save = std::min(RX_BUFFER_SIZE, file_size - bytes_sent);
 		socket_.fill_buffer(buffer, bytes_to_save);
 		file.write(reinterpret_cast<const char*>(buffer.data()), bytes_to_save);
+		bytes_sent += bytes_to_save;
 	}
 	file.close();
 }

@@ -8,26 +8,15 @@ header('Content-type: text/plain; charset=UTF-8');
 require_once("tcp_ip.php");
 require_once("utils.php");
 
-
-$params = decode_input_message();
 	
 // debug
-//$params = json_decode('{"title":"title","description":"d","tags":"a,b,c"}');
-	
-$str = prepare_message($params);
-$response = send_data($str);
-	
-http_response_code(200);
-echo $response;
+//$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[{"name":"bit.txt","type":"text/plain","size":15,"payload":"0123456789abcde"}]}');
+//$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[]}');
 
-
-function create_attachment_info_array($attachments) {
-	$info_array = array();
-	foreach($attachments as $att) {
-		array_push($info_array, "$att->name;$att->type");
-	}
-	return $info_array;
-}
+$params = decode_input_message();
+$message = prepare_message($params);
+$response = send_message_with_attachments($message, $params);
+yeld_success($response);
 
 function prepare_message($params){
 	$title = $params->title;
@@ -46,8 +35,8 @@ function prepare_message($params){
 	$attachment_info_str = implode($attachment_info, ' ');
 	$attachment_info_str_len = strlen($attachment_info_str);
 	
-	$str = "[0][$title_len $description_len $tags_len $author_len $attachment_info_str_len]
-				[$title][$description][$tags][$author][$attachment_info_str]";
+	$str = "[0][$title_len $description_len $tags_len $author_len $attachment_info_str_len]"
+				."[$title][$description][$tags][$author][$attachment_info_str]";
 	return $str;
 }
 

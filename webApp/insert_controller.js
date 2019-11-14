@@ -71,7 +71,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 			const binaryString = uint8array_to_binary_string(array);
 			const base64 = btoa(binaryString);
 
-			attachment.payload = base64;
+			attachment.payload = binaryString;
 			attachment.loaded = true;
 			$scope.$apply();
 		}

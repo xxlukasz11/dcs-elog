@@ -9,16 +9,13 @@ require_once("tcp_ip.php");
 require_once("utils.php");
 
 
-$params = decode_input_message();
-	
 // debug
 //$params = json_decode('{"min_date":"","max_date":"","tags":""}');
 	
-$str = prepare_message($params);
-$response = send_data($str);
-	
-http_response_code(200);
-echo $response;
+$params = decode_input_message();
+$message = prepare_message($params);
+$response = send_message($message);
+yeld_success($response);
 
 function prepare_message($params){
 	$min_date = $params->min_date;

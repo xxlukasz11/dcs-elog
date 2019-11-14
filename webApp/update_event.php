@@ -10,16 +10,9 @@ require_once("utils.php");
 
 
 $params = decode_input_message();
-	
-// debug
-//$params = json_decode('{"id":57,"title":"title","description":"d","tags":"a,b,c"}');
-	
-$str = prepare_message($params);
-$response = send_data($str);
-	
-http_response_code(200);
-echo $response;
-
+$message = prepare_message($params);
+$response = send_message($message);
+yeld_success($response);
 
 function prepare_message($params){
 	$id = $params->id;

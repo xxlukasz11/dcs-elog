@@ -12,7 +12,7 @@ function yeld_error($error_code, $message) {
 	echo $msg;
 }
 
-function send_data($data){
+function create_server_connection() {
 	// debug
 	//error_reporting(E_ALL);
 	
@@ -49,20 +49,33 @@ function send_data($data){
 		exit();
 	}
 
+	return $socket;
+}
+
+function read_response($socket) {
 	$resp = '';
-	
-	$length = strlen($data);
-	$binary_length = strrev( pack("N", $length) );
-	
-	socket_send($socket, $binary_length, 4, 0);
-	socket_send($socket, $data, $length, 0);
-	
 	while ($bff = socket_read($socket, 1024)) {
 		$resp .= $bff;
 	}
 	
 	socket_close($socket);
 	return $resp;
+}
+
+function send_data($socket, $data){
+	$length = strlen($data);
+	send_payload($socket, $length, $data);
+}
+
+function send_payload($socket, $size, $payload) {
+	$binary_size = strrev( pack("N", $size) );
+	socket_send($socket, $binary_size, 4, 0);
+
+	$bytes_sent = 0;
+	while ($bytes_sent < $size) {
+		$remaining = $size - $bytes_sent;
+		$bytes_sent += socket_send($socket, $payload[$bytes_sent], $remaining, 0);
+	}
 }
 
 ?>

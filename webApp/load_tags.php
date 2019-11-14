@@ -9,16 +9,10 @@ require_once("tcp_ip.php");
 require_once("utils.php");
 
 
-$str = prepare_message();
-	
-$response = send_data($str);
-	
-// debug
-//$response = '[{"tag":"a","parent":""},{"tag":"b","parent":"a"},{"tag":"c","parent":"a"},{"tag":"d","parent":"b"},{"tag":"e","parent":"b"},{"tag":"f","parent":"c"},{"tag":"g","parent":"c"},{"tag":"X","parent":null},{"tag":"Y","parent":"X"},{"tag":"Z","parent":"X"}]';
-	
-http_response_code(200);
-echo $response;
-
+$params = decode_input_message();
+$message = prepare_message($params);
+$response = send_message($message);
+yeld_success($response);
 
 function prepare_message(){
 	$str = "[2]";

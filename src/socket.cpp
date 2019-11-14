@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <sys/fcntl.h>
 #include "custom_exceptions.h"
+#include <vector>
 #include "socket.h"
 
 Socket::Socket(Descriptor descriptor) : Socket(static_cast<int>(descriptor)) {
@@ -69,23 +70,19 @@ Socket Socket::create(Domain domain, Type type, Protocol protocol) {
 }
 
 std::string Socket::recv_string() {
+	int length = receive<int>();
 	std::string msg;
-
-	int length = 0;
-	safe_recv(&length, sizeof(length), 0);
-
 	int total_bytes_read = 0;
-	int buffer_size = message_length_;
-
+	std::vector<char> recv_buffer;
 	while (total_bytes_read < length) {
-		char recv_buffer[buffer_size + 1];
-		int bytes_read = safe_recv(recv_buffer, buffer_size, 0);
+		int current_buffer_size = std::min(message_length_, length - total_bytes_read);
+		recv_buffer.resize(current_buffer_size + 1);
+		int bytes_read = safe_recv(recv_buffer.data(), current_buffer_size, 0);
 
 		total_bytes_read += bytes_read;
 		recv_buffer[bytes_read] = '\0';
-		msg += recv_buffer;
+		msg += recv_buffer.data();
 	}
-
 	return msg;
 }
 
