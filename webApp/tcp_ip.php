@@ -19,17 +19,16 @@ function create_server_connection() {
 	//release
 	error_reporting(E_ERROR);
 	
-	$server_port = 9100;
-	
 	// remote server
 	//$server_address = "194.29.174.79";
-	
 	// localhost
 	$server_address = "127.0.0.1";
 
+	$server_port = 9100;
+
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 	if ($socket === false) {
-		
+		yeld_error(500, 'Internal server error: Socket creation failed');
 		exit();
 	}
 	
