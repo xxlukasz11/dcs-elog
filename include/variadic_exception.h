@@ -29,13 +29,13 @@ template<typename U, typename... T, typename>
 Variadic_exception::Variadic_exception(U&& arg, T&&... args){
 	std::ostringstream stream;
 	stream << arg;
-	expand_parameters(stream, args...);
+	expand_parameters(stream, std::forward<T>(args)...);
 }
 
 template<typename U, typename ...T>
 inline void Variadic_exception::expand_parameters(std::ostringstream& stream, U&& arg, T && ...args) {
 	stream << arg;
-	expand_parameters(stream, args...);
+	expand_parameters(stream, std::forward<T>(args)...);
 }
 
 #endif // !_VARIADIC_EXCEPTION_H_
