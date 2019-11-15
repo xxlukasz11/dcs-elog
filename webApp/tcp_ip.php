@@ -15,7 +15,6 @@ function yeld_error($error_code, $message) {
 function create_server_connection() {
 	// debug
 	//error_reporting(E_ALL);
-	
 	//release
 	error_reporting(E_ERROR);
 	
@@ -23,7 +22,6 @@ function create_server_connection() {
 	//$server_address = "194.29.174.79";
 	// localhost
 	$server_address = "127.0.0.1";
-
 	$server_port = 9100;
 
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -61,12 +59,8 @@ function read_response($socket) {
 	return $resp;
 }
 
-function send_data($socket, $data){
-	$length = strlen($data);
-	send_payload($socket, $length, $data);
-}
-
-function send_payload($socket, $size, $payload) {
+function send_payload($socket, $payload) {
+	$size = strlen($payload);
 	$binary_size = strrev( pack("N", $size) );
 	socket_send($socket, $binary_size, 4, 0);
 

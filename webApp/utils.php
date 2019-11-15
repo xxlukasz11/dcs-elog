@@ -9,7 +9,7 @@ function decode_input_message() {
 function send_attachments($socket, $params) {
 	$attachments = $params->attachments;
 	foreach($attachments as $att) {
-		send_payload($socket, $att->size, $att->payload);
+		send_payload($socket, $att->payload);
 	}
 }
 
@@ -23,14 +23,14 @@ function create_attachment_info_array($attachments) {
 
 function send_message($message) {
 	$socket = create_server_connection();
-	send_data($socket, $message);
+	send_payload($socket, $message);
 	$response = read_response($socket);
 	return $response;
 }
 
 function send_message_with_attachments($message, $params) {
 	$socket = create_server_connection();
-	send_data($socket, $message);
+	send_payload($socket, $message);
 	send_attachments($socket, $params);
 	$response = read_response($socket);
 	return $response;

@@ -8,10 +8,9 @@ function uint8array_to_binary_string(array) {
 }
 
 class Attachment_item {
-	constructor(name, type, size) {
+	constructor(name, type) {
 		this.name = name;
 		this.type = type;
-		this.size = size;
 
 		this.loaded = false;
 		this.payload = null;
@@ -22,10 +21,9 @@ class Attachment_item {
 }
 
 class Attachment {
-	constructor(name, type, size, payload) {
+	constructor(name, type, payload) {
 		this.name = name;
 		this.type = type;
-		this.size = size;
 		this.payload = payload;
 	}
 }
@@ -47,7 +45,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 
 	$scope.load_file = function () {
 		const file = this.files[0];
-		const attachment = new Attachment_item(file.name, file.type, file.size);
+		const attachment = new Attachment_item(file.name, file.type);
 		$scope.file_list.push(attachment);
 		$scope.$apply();
 
@@ -71,7 +69,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 			const binaryString = uint8array_to_binary_string(array);
 			const base64 = btoa(binaryString);
 
-			attachment.payload = binaryString;
+			attachment.payload = base64;
 			attachment.loaded = true;
 			$scope.$apply();
 		}
@@ -105,7 +103,6 @@ app.controller('insert_data', function ($scope, sender, logger) {
 			attachment_list.push(new Attachment(
 				a.name,
 				a.type,
-				a.size,
 				a.payload
 			));
 		}

@@ -10,7 +10,7 @@ require_once("utils.php");
 
 	
 // debug
-//$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[{"name":"bit.txt","type":"text/plain","size":15,"payload":"0123456789abcde"}]}');
+//$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[{"name":"bit.txt","type":"text/plain","payload":"0123456789abcde"}]}');
 //$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[]}');
 
 $params = decode_input_message();
