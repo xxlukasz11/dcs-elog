@@ -3,6 +3,7 @@
 
 #include "attachment_info.h"
 #include "socket.h"
+#include <atomic>
 
 class Attachment_handler {
 public:
@@ -15,6 +16,10 @@ public:
 
 
 private:
+	std::ofstream create_unique_file(const std::string& file_name);
+	std::string generate_file_name_discriminator();
+
+	static std::atomic<unsigned long> attachment_control_index_;
 	Socket socket_;
 };
 

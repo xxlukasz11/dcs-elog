@@ -3,8 +3,10 @@
 #include "attachment_handler.h"
 #include "logger.h"
 #include "base64.h"
+#include "file_name_parser.h"
 
 constexpr int RX_BUFFER_SIZE = 100000;
+std::atomic<unsigned long> Attachment_handler::attachment_control_index_{ 0 };
 
 Attachment_handler::Attachment_handler(Socket socket) : socket_(socket) {
 }
@@ -17,7 +19,7 @@ void Attachment_handler::handle_attachments(const Attachment_info_array& attachm
 
 void Attachment_handler::receive_and_save_attachment(const Attachment_info& attachment_info) {
 	std::string file_name = attachment_info.get_name();
-	std::ofstream file(file_name, std::ios::binary);
+	std::ofstream file = create_unique_file(file_name);
 	std::vector<char> buffer(RX_BUFFER_SIZE);
 
 	int file_size = socket_.receive<int>();
@@ -36,4 +38,18 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 	}
 	file.close();
 	Logger::create().info("File " + file_name + " successfully received; Size: " + std::to_string(binary_file_size) + " bytes");
+}
+
+std::ofstream Attachment_handler::create_unique_file(const std::string& file_name) {
+	File_name_parser parser;
+	if (!parser.parse(file_name)) {
+		//throw Attachment_error("Invalid file name: ", file_name);
+	}
+	std::string unique_file_name = parser.get_name() + "_" + generate_file_name_discriminator() + parser.get_extension();
+	Logger::create().info("Saving " + file_name + " in " + unique_file_name);
+	return std::ofstream(unique_file_name, std::ios::binary);
+}
+
+std::string Attachment_handler::generate_file_name_discriminator() {
+	return std::to_string(attachment_control_index_++);
 }
