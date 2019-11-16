@@ -32,6 +32,10 @@ const std::string& Parameters::get_database_path() const {
 	return database_path_;
 }
 
+const std::string& Parameters::get_attachment_storage_path() const {
+	return attachment_storage_path_;
+}
+
 const std::string& Parameters::get_empty_tag_name() const {
 	return empty_tag_name_;
 }
@@ -78,6 +82,10 @@ void Parameters::set_local_ip_address(const std::string& local_ip_address) {
 
 void Parameters::set_database_path(const std::string& database_path) {
 	database_path_ = database_path;
+}
+
+void Parameters::set_attachment_storage_path(const std::string& attachment_storage_path) {
+	attachment_storage_path_ = attachment_storage_path;
 }
 
 void Parameters::set_empty_tag_name(const std::string& empty_tag_name) {

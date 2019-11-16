@@ -7,7 +7,7 @@
 
 Parameters load_parameters(const std::string& parameter_file_path) {
 	Param_manager param_manager(parameter_file_path);
-	return param_manager.extract_pareameters();
+	return param_manager.extract_parameters();
 }
 
 void assert_valid_no_of_args(int args_count) {

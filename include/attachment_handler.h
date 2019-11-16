@@ -18,6 +18,8 @@ public:
 private:
 	std::ofstream create_unique_file(const std::string& file_name);
 	std::string generate_file_name_discriminator();
+	std::string create_attachment_path(const std::string& file_name);
+	std::string create_unique_file_name(const std::string& file_name);
 
 	static std::atomic<unsigned long> attachment_control_index_;
 	Socket socket_;

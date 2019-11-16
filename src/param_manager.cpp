@@ -5,7 +5,7 @@ Param_manager::Param_manager(const std::string& parameter_file_path) :
 	parameter_file_path_(parameter_file_path) {
 }
 
-Parameters Param_manager::extract_pareameters() {
+Parameters Param_manager::extract_parameters() {
 	Param_loader loader(parameter_file_path_);
 	loader.load();
 
@@ -33,6 +33,9 @@ Parameters Param_manager::extract_pareameters() {
 	);
 	params.set_database_path(
 		loader.get_parameter<std::string>("database_path")
+	);
+	params.set_attachment_storage_path(
+		loader.get_parameter<std::string>("attachment_storage_path")
 	);
 	params.set_empty_tag_name(
 		loader.get_parameter<std::string>("empty_tag_name")

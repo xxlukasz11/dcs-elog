@@ -5,6 +5,7 @@
 #include "base64.h"
 #include "file_name_parser.h"
 #include "custom_exceptions.h"
+#include "administrator.h"
 
 constexpr int RX_BUFFER_SIZE = 100000;
 std::atomic<unsigned long> Attachment_handler::attachment_control_index_{ 0 };
@@ -42,15 +43,24 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 }
 
 std::ofstream Attachment_handler::create_unique_file(const std::string& file_name) {
-	File_name_parser parser;
-	if (!parser.parse(file_name)) {
-		throw Attachment_error("Invalid file name: ", file_name);
-	}
-	std::string unique_file_name = parser.get_name() + "_" + generate_file_name_discriminator() + parser.get_extension();
-	Logger::create().info("Saving " + file_name + " in " + unique_file_name);
-	return std::ofstream(unique_file_name, std::ios::binary);
+	std::string unique_file_name = create_unique_file_name(file_name);
+	std::string path = create_attachment_path(unique_file_name);
+	Logger::create().info("Saving " + file_name + " in " + path);
+	return std::ofstream(path, std::ios::binary);
 }
 
 std::string Attachment_handler::generate_file_name_discriminator() {
 	return std::to_string(attachment_control_index_++);
+}
+
+std::string Attachment_handler::create_attachment_path(const std::string& file_name) {
+	return Administrator::instance().params().get_attachment_storage_path() + file_name;
+}
+
+std::string Attachment_handler::create_unique_file_name(const std::string& file_name) {
+	File_name_parser parser;
+	if (!parser.parse(file_name)) {
+		throw Attachment_error("Invalid file name: ", file_name);
+	}
+	return parser.get_name() + "_" + generate_file_name_discriminator() + parser.get_extension();
 }

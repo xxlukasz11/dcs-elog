@@ -15,6 +15,7 @@ public:
 	int get_connection_accept_delay_ms() const;
 	const std::string& get_local_ip_address() const;
 	const std::string& get_database_path() const;
+	const std::string& get_attachment_storage_path() const;
 	const std::string& get_empty_tag_name() const;
 	const std::string& get_log_file_path() const;
 	std::chrono::seconds get_logger_inactivity_timeout() const;
@@ -28,6 +29,7 @@ public:
 	void set_connection_accept_delay_ms(int connection_accept_delay_ms);
 	void set_local_ip_address(const std::string& local_ip_address);
 	void set_database_path(const std::string& database_path);
+	void set_attachment_storage_path(const std::string& attachment_storage_path);
 	void set_empty_tag_name(const std::string& empty_tag_name);
 	void set_log_file_path(const std::string& log_file_path);
 	void set_logger_inactivity_timeout(std::chrono::seconds logger_inactivity_timeout);
@@ -42,6 +44,7 @@ private:
 	int connection_accept_delay_ms_;
 	std::string local_ip_address_;
 	std::string database_path_;
+	std::string attachment_storage_path_;
 	std::string empty_tag_name_;
 	std::string log_file_path_;
 	std::chrono::seconds logger_inactivity_timeout_;

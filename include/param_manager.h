@@ -7,7 +7,7 @@
 class Param_manager {
 public:
 	Param_manager(const std::string& parameter_file_path);
-	Parameters extract_pareameters();
+	Parameters extract_parameters();
 
 private:
 	std::string parameter_file_path_;
