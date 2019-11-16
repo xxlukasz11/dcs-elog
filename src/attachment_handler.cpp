@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "base64.h"
 #include "file_name_parser.h"
+#include "custom_exceptions.h"
 
 constexpr int RX_BUFFER_SIZE = 100000;
 std::atomic<unsigned long> Attachment_handler::attachment_control_index_{ 0 };
@@ -43,7 +44,7 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 std::ofstream Attachment_handler::create_unique_file(const std::string& file_name) {
 	File_name_parser parser;
 	if (!parser.parse(file_name)) {
-		//throw Attachment_error("Invalid file name: ", file_name);
+		throw Attachment_error("Invalid file name: ", file_name);
 	}
 	std::string unique_file_name = parser.get_name() + "_" + generate_file_name_discriminator() + parser.get_extension();
 	Logger::create().info("Saving " + file_name + " in " + unique_file_name);

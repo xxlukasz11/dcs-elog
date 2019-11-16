@@ -30,6 +30,8 @@ void Message_handler::process_message(const std::string& message_string) {
 		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Send_error& e) {
 		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+	} catch (const Attachment_error& e) {
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	}
 }
 

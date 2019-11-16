@@ -29,6 +29,10 @@ class Load_parameters_error : public Variadic_exception {
 	using Variadic_exception::Variadic_exception;
 };
 
+class Attachment_error : public Variadic_exception {
+	using Variadic_exception::Variadic_exception;
+};
+
 class Unknown_message_format : public Base_exception {
 public:
 	Unknown_message_format(const std::string& message_name);
