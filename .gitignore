@@ -23,3 +23,6 @@ Release/
 /tests/include
 /.leu
 scripts/log.txt
+
+storage/
+!storage/dummy_file.txt

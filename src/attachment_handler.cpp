@@ -6,8 +6,12 @@
 #include "file_name_parser.h"
 #include "custom_exceptions.h"
 #include "administrator.h"
+#include "utils.h"
 
 constexpr int RX_BUFFER_SIZE = 100000;
+static const std::string FILE_NAME_FORMAT = "%Y_%m_%d_%H_%M_%S";
+static const std::string UNDERSCORE = "_";
+
 std::atomic<unsigned long> Attachment_handler::attachment_control_index_{ 0 };
 
 Attachment_handler::Attachment_handler(Socket socket) : socket_(socket) {
@@ -25,7 +29,7 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 	std::vector<char> buffer(RX_BUFFER_SIZE);
 
 	int file_size = socket_.receive<int>();
-	Logger::create().info("Receiving " + file_name);
+	Logger::create().level(Log_level::ALL).info("Receiving " + file_name);
 
 	Base64 base64;
 	int bytes_received = 0;
@@ -45,7 +49,7 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 std::ofstream Attachment_handler::create_unique_file(const std::string& file_name) {
 	std::string unique_file_name = create_unique_file_name(file_name);
 	std::string path = create_attachment_path(unique_file_name);
-	Logger::create().info("Saving " + file_name + " in " + path);
+	Logger::create().level(Log_level::ALL).info("Saving " + file_name + " in " + path);
 	return std::ofstream(path, std::ios::binary);
 }
 
@@ -62,5 +66,9 @@ std::string Attachment_handler::create_unique_file_name(const std::string& file_
 	if (!parser.parse(file_name)) {
 		throw Attachment_error("Invalid file name: ", file_name);
 	}
-	return parser.get_name() + "_" + generate_file_name_discriminator() + parser.get_extension();
+	time_t now = std::time(0);
+	return utils::create_date_time_string(now, FILE_NAME_FORMAT)
+		+ UNDERSCORE
+		+ generate_file_name_discriminator()
+		+ parser.get_extension();
 }

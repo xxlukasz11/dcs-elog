@@ -5,6 +5,7 @@
 #include <sstream>
 #include <algorithm>
 #include <utility>
+#include <iomanip>
 
 namespace utils {
 
@@ -28,6 +29,13 @@ String_array exclude_from_array(const String_array& base, const String_array& pa
 		return std::find(pattern.begin(), pattern.end(), element) == pattern.end();
 	});
 	return array;
+}
+
+std::string create_date_time_string(time_t time, const std::string& format) {
+	tm t_local = *std::localtime(&time);
+	std::ostringstream ss;
+	ss << std::put_time(&t_local, format.c_str());
+	return ss.str();
 }
 
 String_array string_to_vector(std::string string) {

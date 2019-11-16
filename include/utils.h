@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
 #include "log_level.h"
 #include "attachment_info.h"
 
@@ -11,9 +12,14 @@ namespace utils{
 	using Pair_array = std::vector<std::pair<std::string, std::string>>;
 	using Attachment_info_array = std::vector<Attachment_info>;
 
+	// Concatenate array of strings
 	std::string concatenate_string_array(const String_array& array);
 
+	// Excludes elements from base which are present in pattern
 	String_array exclude_from_array(const String_array& base, const String_array& pattern);
+
+	// Converts time parameter to string acrond to format parameter.
+	std::string create_date_time_string(time_t time, const std::string& format);
 
 	// converts comma and space separated string to std::vector
 	String_array string_to_vector(std::string string);
@@ -24,8 +30,10 @@ namespace utils{
 	// creates attachment objects from pair values
 	Attachment_info_array pair_array_to_attachment(const Pair_array& pair_array);
 
+	// Converts string to Log_level enum. Returns -1 on error.
 	Log_level decode_log_level(const std::string& string);
 
+	// Converts std::string to T
 	template<typename T>
 	T convert_string(const std::string& string);
 }

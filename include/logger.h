@@ -23,7 +23,6 @@ public:
 	void release();
 
 private:
-	std::string create_date_time_string(time_t time) const;
 	Log_entry create_log_entry(const Log_item& log_item);
 	std::string determine_entry_type(const Log_item& log_item);
 	bool should_be_logged(const Log_item& log_item);

@@ -1,14 +1,13 @@
 #include <sstream>
 #include <iostream>
-#include <iomanip>
-#include <ctime>
 #include <string>
+#include "utils.h"
 #include "logger.h"
 
 static const std::string COLON_AND_SPACE = ": ";
 static const std::string TAB = "\t";
 static const std::string DOUBLE_TAB = "\t\t";
-static const char* LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
+static const std::string LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S";
 static const int defult_timeout_value = 10;
 
 Log_item_queue Logger::queue_;
@@ -48,18 +47,11 @@ void Logger::release() {
 	Logger::create().level(Log_level::INFO).status("Logger released");
 }
 
-std::string Logger::create_date_time_string(time_t time) const {
-	tm t_local = *std::localtime(&time);
-	std::ostringstream ss;
-	ss << std::put_time(&t_local, LOG_DATE_FORMAT);
-	return ss.str();
-}
-
 /*
 *  Log location is not already needed
 */
 Log_entry Logger::create_log_entry(const Log_item& log_item) {
-	std::string date_time_string = create_date_time_string(log_item.get_time());
+	std::string date_time_string = utils::create_date_time_string(log_item.get_time(), LOG_DATE_FORMAT);
 	std::string entry_type = determine_entry_type(log_item);
 	std::string context;
 	if (log_item.has_context()) {
