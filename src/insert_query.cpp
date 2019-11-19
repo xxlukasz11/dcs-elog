@@ -15,20 +15,23 @@ namespace {
 		std::string insert_event = "INSERT INTO Events VALUES(null, strftime('%s'), ?, ?, ?);";
 		std::string insert_tags_before = "INSERT INTO Tags_of_events(Event_id, Tag_id) SELECT ?, Tags_list.id FROM Tags_list WHERE ";
 		std::string insert_tags_condition = "Tags_list.tag = ?";
+
+		std::string insert_attachments_before = "INSERT INTO Attachments(Event_id, Name, Type, File_name) SELECT ?, ?, ?, ?";
+		std::string insert_attachments_union = " UNION ALL SELECT ?, ?, ?, ?";
 	}
 }
 
-void Insert_query::set_title(std::string title) {
+void Insert_query::set_title(const std::string& title) {
 	title_ = title;
 	title_is_set_ = true;
 }
 
-void Insert_query::set_desc(std::string desc) {
+void Insert_query::set_desc(const std::string& desc) {
 	desc_ = desc;
 	desc_is_set_ = true;
 }
 
-void Insert_query::create_tag(std::string tag) {
+void Insert_query::create_tag(const std::string& tag) {
 	tags_.push_back(tag);
 }
 
@@ -45,8 +48,16 @@ void Insert_query::set_author(const std::string& author) {
 	author_is_set_ = true;
 }
 
+void Insert_query::set_attachments(const Attachment_database_info_array& attachment_array) {
+	attachment_array_ = attachment_array;
+}
+
 const std::vector<std::string>& Insert_query::get_tags() const {
 	return tags_;
+}
+
+bool Insert_query::has_attachments() const {
+	return attachment_array_.size() > 0;
 }
 
 Prepared_statement Insert_query::create_tags_exist_statement() const {
@@ -88,6 +99,29 @@ Prepared_statement Insert_query::create_tags_statement(const std::string& event_
 			stmt += " OR ";
 		stmt += sql::insert_tags_condition;
 		stmt.add_param(tags_[i]);
+	}
+	stmt += ";";
+	return stmt;
+}
+
+Prepared_statement Insert_query::create_attachments_statement(const std::string& event_id) const {
+	if (attachment_array_.size() == 0) {
+		return Prepared_statement{};
+	}
+
+	Prepared_statement stmt{ sql::insert_attachments_before };
+	stmt.add_param(event_id);
+	stmt.add_param(attachment_array_[0].get_name());
+	stmt.add_param(attachment_array_[0].get_type());
+	stmt.add_param(attachment_array_[0].get_file_name());
+
+	for (size_t i = 1; i < attachment_array_.size(); ++i) {
+		
+		stmt += sql::insert_attachments_union;
+		stmt.add_param(event_id);
+		stmt.add_param(attachment_array_[i].get_name());
+		stmt.add_param(attachment_array_[i].get_type());
+		stmt.add_param(attachment_array_[i].get_file_name());
 	}
 	stmt += ";";
 	return stmt;

@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <vector>
 #include "attachment_handler.h"
 #include "logger.h"
 #include "base64.h"
@@ -18,22 +19,20 @@ Attachment_handler::Attachment_handler(Socket socket) : socket_(socket) {
 }
 
 void Attachment_handler::handle_attachments(const Attachment_info_array& attachments_info) {
+	attachment_array_.clear();
 	for (const auto& att_info : attachments_info) {
 		receive_and_save_attachment(att_info);
 	}
 }
 
 void Attachment_handler::receive_and_save_attachment(const Attachment_info& attachment_info) {
-	std::string file_name = attachment_info.get_name();
-	std::ofstream file = create_unique_file(file_name);
-	std::vector<char> buffer(RX_BUFFER_SIZE);
-
-	int file_size = socket_.receive<int>();
-	Logger::create().level(Log_level::ALL).info("Receiving " + file_name);
+	auto file_size = receive_attachment_size(attachment_info);
 
 	Base64 base64;
 	int bytes_received = 0;
 	int binary_file_size = 0;
+	std::ofstream file = create_unique_file(attachment_info);
+	std::vector<char> buffer(RX_BUFFER_SIZE);
 	while (bytes_received < file_size) {
 		int current_buffer_size = std::min(RX_BUFFER_SIZE, file_size - bytes_received);
 		socket_.fill_buffer(buffer, current_buffer_size);
@@ -43,13 +42,20 @@ void Attachment_handler::receive_and_save_attachment(const Attachment_info& atta
 		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
 	}
 	file.close();
-	Logger::create().info("File " + file_name + " successfully received; Size: " + std::to_string(binary_file_size) + " bytes");
+	Logger::create().info("File " + attachment_info.get_name() + " successfully received; Size: " +
+		std::to_string(binary_file_size) + " bytes");
 }
 
-std::ofstream Attachment_handler::create_unique_file(const std::string& file_name) {
-	std::string unique_file_name = create_unique_file_name(file_name);
+const Attachment_database_info_array& Attachment_handler::get_attachment_array() const {
+	return attachment_array_;
+}
+
+std::ofstream Attachment_handler::create_unique_file(const Attachment_info& attachment_info) {
+	std::string unique_file_name = create_unique_file_name(attachment_info.get_name());
+	attachment_array_.emplace_back(attachment_info.get_name(), attachment_info.get_type(), unique_file_name);
+
 	std::string path = create_attachment_path(unique_file_name);
-	Logger::create().level(Log_level::ALL).info("Saving " + file_name + " in " + path);
+	Logger::create().level(Log_level::ALL).info("Saving " + attachment_info.get_name() + " as " + path);
 	return std::ofstream(path, std::ios::binary);
 }
 
@@ -71,4 +77,11 @@ std::string Attachment_handler::create_unique_file_name(const std::string& file_
 		+ UNDERSCORE
 		+ generate_file_name_discriminator()
 		+ parser.get_extension();
+}
+
+int Attachment_handler::receive_attachment_size(const Attachment_info& attachment_info) {
+	int file_size = socket_.receive<int>();
+	Logger::create().level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
+		" of type: " + attachment_info.get_type());
+	return file_size;
 }

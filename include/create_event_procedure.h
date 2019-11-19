@@ -20,6 +20,7 @@ private:
 	std::vector<std::string> load_not_existing_tags(const Prepared_statement& stmt);
 	Insert_query prepare_query() const;
 	void run_main_procedure(Insert_query& query);
+	void yeld_success(const std::string& event_id);
 
 	Website_response response_;
 	std::shared_ptr<Create_event_request> message_;

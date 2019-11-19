@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "json_stringifier.h"
 #include "create_event_procedure.h"
+#include "logger.h"
 
 void Create_event_procedure::start() {
 	attachment_handler_.handle_attachments(
@@ -27,6 +28,7 @@ Insert_query Create_event_procedure::prepare_query() const {
 	query.set_desc(message_->get_description());
 	query.set_tags(utils::string_to_vector(message_->get_tags()));
 	query.set_author(message_->get_author());
+	query.set_attachments(attachment_handler_.get_attachment_array());
 	return query;
 }
 
@@ -43,8 +45,11 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 		Result_set res = database_.execute(events_stmt);
 		std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tags_statement(last_id));
+		if (query.has_attachments()) {
+			database_.execute(query.create_attachments_statement(last_id));
+		}
 		transaction.commit();
-		response_.set_success("Event with id: " + last_id + " has been successfully saved");
+		yeld_success(last_id);
 	}
 	else {
 		accessor.close();
@@ -52,6 +57,12 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 		message += utils::concatenate_string_array(not_existing_tags);
 		response_.set_failure(message);
 	}
+}
+
+void Create_event_procedure::yeld_success(const std::string& event_id) {
+	std::string message = "Event with id: " + event_id + " has been successfully saved";
+	Logger::create().level(Log_level::INFO).info(message);
+	response_.set_success(message);
 }
 
 std::vector<std::string> Create_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {
