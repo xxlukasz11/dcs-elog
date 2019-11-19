@@ -53,9 +53,8 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 	}
 	else {
 		accessor.close();
-		std::string message = "Cannot save event. Following tags do not exist: ";
-		message += utils::concatenate_string_array(not_existing_tags);
-		response_.set_failure(message);
+		attachment_handler_.delete_attachments_from_disc();
+		yeld_missing_tags_error(not_existing_tags);
 	}
 }
 
@@ -63,6 +62,13 @@ void Create_event_procedure::yeld_success(const std::string& event_id) {
 	std::string message = "Event with id: " + event_id + " has been successfully saved";
 	Logger::create().level(Log_level::INFO).info(message);
 	response_.set_success(message);
+}
+
+void Create_event_procedure::yeld_missing_tags_error(const std::vector<std::string>& not_existing_tags) {
+	std::string message = "Cannot save event. Following tags do not exist: ";
+	message += utils::concatenate_string_array(not_existing_tags);
+	Logger::create().level(Log_level::INFO).info(message);
+	response_.set_failure(message);
 }
 
 std::vector<std::string> Create_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {

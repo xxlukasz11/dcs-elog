@@ -18,7 +18,7 @@ namespace utils{
 	// Excludes elements from base which are present in pattern
 	String_array exclude_from_array(const String_array& base, const String_array& pattern);
 
-	// Converts time parameter to string acrond to format parameter.
+	// Converts time parameter to string according to format parameter.
 	std::string create_date_time_string(time_t time, const std::string& format);
 
 	// converts comma and space separated string to std::vector

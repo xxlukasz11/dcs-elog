@@ -12,6 +12,7 @@ public:
 
 	void handle_attachments(const Attachment_info_array& attachments_info_);
 	void receive_and_save_attachment(const Attachment_info& attachment_info);
+	void delete_attachments_from_disc();
 
 	const Attachment_database_info_array& get_attachment_array() const;
 
