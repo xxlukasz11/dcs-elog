@@ -47,6 +47,7 @@ void Update_tag_procedure::update_tag(const Update_tag_query& query) {
 			response_.set_failure("Cannot update reserved tag: '" + empty_tag_name + "'");
 		}
 	}
-	
-	response_.set_failure("Cannot update tag. It does not exist.");
+	else {
+		response_.set_failure("Cannot update tag. It does not exist.");
+	}
 }
