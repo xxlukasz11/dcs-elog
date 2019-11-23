@@ -6,6 +6,7 @@
 
 class Delete_tag_query {
 public:
+	Delete_tag_query();
 	void set_tag_id(const std::string& tag_id);
 	const std::string& get_tag_id() const;
 

@@ -54,6 +54,7 @@ private:
 
 	void open();
 	void close();
+	void turn_on_foreign_keys();
 	void begin_transaction();
 	void commit();
 	void rollback();

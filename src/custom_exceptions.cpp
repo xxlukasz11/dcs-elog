@@ -35,3 +35,20 @@ Unknown_message_format::Unknown_message_format(const std::string& message_name, 
 const std::string& Unknown_message_format::what() const noexcept {
 	return message_;
 }
+
+Database_error::Database_error(const std::string& description, int error_code, const char* error_msg) :
+	message_(description + "; code: " + std::to_string(error_code) + "; msg: " + error_msg) {
+}
+
+Database_error::Database_error(const std::string& description) :
+	message_(description) {
+}
+
+int Database_error::get_error_code() const {
+	return error_code_;
+}
+
+const std::string& Database_error::what() const noexcept {
+	return message_;
+}
+

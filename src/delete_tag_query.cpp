@@ -1,26 +1,38 @@
 #include "delete_tag_query.h"
 #include "administrator.h"
+#include <mutex>
 
 namespace {
 		
-auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
+std::once_flag binding_flag;
 
-	namespace sql {
-		std::string select_tag_name = "SELECT tag FROM Tags_list WHERE id = ?;";
-		std::string get_parent_id_or_default = "SELECT CASE WHEN (sub.parent_id IS NULL OR sub.parent_id = '') THEN (SELECT id FROM Tags_list WHERE Tag = '"
-			+ empty_tag_name + "') ELSE (SELECT parent_id FROM Tags_tree WHERE id = ?) END AS parent_id FROM (SELECT parent_id FROM Tags_tree WHERE id = ?) sub;";
-		std::string get_parent_id_or_null = "SELECT parent_id FROM Tags_tree WHERE id = ?";
+namespace sql {
+	const std::string select_tag_name = "SELECT tag FROM Tags_list WHERE id = ?;";
+	std::string get_parent_id_or_default;
+	const std::string get_parent_id_or_null = "SELECT parent_id FROM Tags_tree WHERE id = ?";
 		
-		std::string delete_events_tag = "DELETE FROM tags_of_events WHERE event_id IN (SELECT event_id FROM tags_of_events WHERE tag_id = ?) AND tag_id = ?;";
-		std::string update_events_tag = "UPDATE Tags_of_events SET tag_id = ? WHERE tag_id = ?;";
-		std::string delete_redundant_records = "DELETE FROM Tags_of_events WHERE event_id IN (SELECT event_id FROM (SELECT event_id, count(event_id) AS num_of_tags FROM tags_of_events WHERE event_id IN(SELECT event_id FROM Tags_of_events WHERE tag_id = (SELECT id FROM Tags_list WHERE tag = '"
-			+ empty_tag_name + "')) GROUP BY event_id) where num_of_tags > 1) AND tag_id = (SELECT id FROM Tags_list WHERE tag = '"
-			+ empty_tag_name + "');";
+	const std::string delete_events_tag = "DELETE FROM tags_of_events WHERE event_id IN (SELECT event_id FROM tags_of_events WHERE tag_id = ?) AND tag_id = ?;";
+	const std::string update_events_tag = "UPDATE Tags_of_events SET tag_id = ? WHERE tag_id = ?;";
+	std::string delete_redundant_records;
 
-		std::string update_tree = "UPDATE tags_tree SET parent_id = ? WHERE parent_id = ?;";
-		std::string delete_from_tree = "DELETE from Tags_tree WHERE id = ?";
-		std::string delete_from_list = "DELETE FROM Tags_list WHERE id = ?";
-	}
+	const std::string update_tree = "UPDATE tags_tree SET parent_id = ? WHERE parent_id = ?;";
+	const std::string delete_from_tree = "DELETE from Tags_tree WHERE id = ?";
+	const std::string delete_from_list = "DELETE FROM Tags_list WHERE id = ?";
+}
+
+void bind_empty_tag_name() {
+	auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
+	sql::get_parent_id_or_default = "SELECT CASE WHEN (sub.parent_id IS NULL OR sub.parent_id = '') THEN (SELECT id FROM Tags_list WHERE Tag = '"
+		+ empty_tag_name + "') ELSE (SELECT parent_id FROM Tags_tree WHERE id = ?) END AS parent_id FROM (SELECT parent_id FROM Tags_tree WHERE id = ?) sub;";
+
+	sql::delete_redundant_records = "DELETE FROM Tags_of_events WHERE event_id IN (SELECT event_id FROM (SELECT event_id, count(event_id) AS num_of_tags FROM tags_of_events WHERE event_id IN(SELECT event_id FROM Tags_of_events WHERE tag_id = (SELECT id FROM Tags_list WHERE tag = '"
+		+ empty_tag_name + "')) GROUP BY event_id) where num_of_tags > 1) AND tag_id = (SELECT id FROM Tags_list WHERE tag = '"
+		+ empty_tag_name + "');";
+}
+}
+
+Delete_tag_query::Delete_tag_query() {
+	std::call_once(binding_flag, bind_empty_tag_name);
 }
 
 void Delete_tag_query::set_tag_id(const std::string& tag_id) {

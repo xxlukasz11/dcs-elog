@@ -112,7 +112,7 @@ app.controller('insert_data', function ($scope, sender, logger) {
 	$scope.pack_parameters = function () {
 		return {
 			title: $scope.title,
-			description: $scope.description,
+			description: encode_line_breaks($scope.description),
 			tags: $scope.tags.toLowerCase(),
 			author: $scope.author,
 			attachments: $scope.create_attachment_list()

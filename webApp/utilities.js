@@ -6,8 +6,8 @@ function read_error_msg(response) {
 		return "Connection failed: PHP server may be unavialiable.";
 }
 
-function convert_description_to_send(description) {
-	return description.replace(/\r?\n/g, '<br/>');
+function encode_line_breaks(multiline_string) {
+	return multiline_string.replace(/\r?\n/g, '<br/>');
 }
 
 function read_from_input(input_id) {

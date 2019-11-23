@@ -17,7 +17,7 @@ Database::~Database(){}
 void Database::open(){
 	sqlite3* db;
 	if (sqlite3_open(path_.c_str(), &db) != SQLITE_OK){
-		throw Database_error("Cant open database: ", path_);
+		throw Database_error("Cannot open database: " + path_);
 	}
 	handler_ = std::unique_ptr<sqlite3, Database::deleter_type>(db, [](sqlite3* ptr){
 		sqlite3_close(ptr);
@@ -29,6 +29,10 @@ void Database::close() {
 		sqlite3* db = handler_.release();
 		sqlite3_close(db);
 	}
+}
+
+void Database::turn_on_foreign_keys() {
+	execute("PRAGMA foreign_keys = ON;");
 }
 
 void Database::begin_transaction() {
@@ -59,8 +63,9 @@ bool Database::is_database_opened() const {
 void Database::execute(const std::string& query, Database::callback_type callback){
 	assert_database_opened();
 	char *err_msg;
-	if( sqlite3_exec(handler_.get(), query.c_str(), callback, 0, &err_msg) != SQLITE_OK ){
-		throw Database_error("Error executing statement: ", err_msg);
+	int error_code;
+	if(error_code = sqlite3_exec(handler_.get(), query.c_str(), callback, 0, &err_msg) != SQLITE_OK ){
+		throw Database_error("Error executing statement", error_code, sqlite3_errmsg(handler_.get()));
 	}
 }
 
@@ -84,7 +89,7 @@ Result_set Database::execute(const std::string& query){
 	}, &data, &err_msg);
 
 	if( err != SQLITE_OK ){
-		throw Database_error("Error executing statement: ", err_msg);
+		throw Database_error("Error while executing statement", err, sqlite3_errmsg(handler_.get()));
 	}
 
 	data.set_last_row_id( get_last_row_id() );
@@ -96,19 +101,23 @@ Result_set Database::execute(const Prepared_statement& statement){
 	int err;
 
 	if( (err = sqlite3_prepare_v2( handler_.get(), statement.get_sql().c_str(), -1, &stmt, 0 )) != SQLITE_OK )
-		throw Database_error("Error executing statement: Cannot prepare statement");
+		throw Database_error("Cannot prepare statement", err, sqlite3_errmsg(handler_.get()));
 
 	bind_params(stmt, statement.get_params());
 
 	Result_set data;
-	while ( sqlite3_step( stmt ) == SQLITE_ROW ){
+	while (err = sqlite3_step( stmt ) == SQLITE_ROW ){
 		if(data.is_header_empty())
 			set_header(stmt, data);
 		insert_data(stmt, data);
 	}
+	if (err != SQLITE_OK) {
+		throw Database_error("Cannot execute statement", err, sqlite3_errmsg(handler_.get()));
+	}
 
-	if( sqlite3_finalize(stmt) != SQLITE_OK )
-		throw Database_error("Error executing statement: Cannot finalize statement");
+	if (err = sqlite3_finalize(stmt) != SQLITE_OK) {
+		throw Database_error("Cannot finalize statement", err, sqlite3_errmsg(handler_.get()));
+	}
 
 	data.set_last_row_id( get_last_row_id() );
 	return data;
@@ -122,7 +131,7 @@ void Database::bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_
 		else
 			err = sqlite3_bind_text(stmt, i+1, params[i].c_str(), -1, SQLITE_TRANSIENT);
 		if(err != SQLITE_OK)
-			throw Database_error("Error executing statement: Cannot bind parameters");
+			throw Database_error("Cannot bind parameters to statement", err, sqlite3_errmsg(handler_.get()));
 	}
 }
 
@@ -205,12 +214,13 @@ void Database::Transaction::rollback() {
 }
 
 Database::Transaction::Transaction(Database& database) : database_(database) {
+	database_.turn_on_foreign_keys();
 	database_.begin_transaction();
 }
 
 Database::Transaction::~Transaction() {
 	if(!closed_) {
 		database_.rollback();
-		Logger::create().location("DATABSE").warning("Implicitly performed ROLLBACK");
+		Logger::create().location("DATABASE").warning("Implicitly performed ROLLBACK");
 	}
 }
