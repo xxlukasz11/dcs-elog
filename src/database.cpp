@@ -2,12 +2,10 @@
 #include <string>
 #include <vector>
 #include <mutex>
-
 #include "custom_exceptions.h"
 #include "result_set.h"
 #include "logger.h"
 #include "sqlite3.h"
-
 #include "database.h"
 
 Database::Database(std::string path) : path_(path) {}
@@ -65,7 +63,7 @@ void Database::execute(const std::string& query, Database::callback_type callbac
 	char *err_msg;
 	int error_code;
 	if(error_code = sqlite3_exec(handler_.get(), query.c_str(), callback, 0, &err_msg) != SQLITE_OK ){
-		throw Database_error("Error executing statement", error_code, sqlite3_errmsg(handler_.get()));
+		throw_database_error("Error executing statement", error_code);
 	}
 }
 
@@ -89,7 +87,7 @@ Result_set Database::execute(const std::string& query){
 	}, &data, &err_msg);
 
 	if( err != SQLITE_OK ){
-		throw Database_error("Error while executing statement", err, sqlite3_errmsg(handler_.get()));
+		throw_database_error("Error while executing statement", err);
 	}
 
 	data.set_last_row_id( get_last_row_id() );
@@ -100,8 +98,9 @@ Result_set Database::execute(const Prepared_statement& statement){
 	sqlite3_stmt* stmt = 0;
 	int err;
 
-	if( (err = sqlite3_prepare_v2( handler_.get(), statement.get_sql().c_str(), -1, &stmt, 0 )) != SQLITE_OK )
-		throw Database_error("Cannot prepare statement", err, sqlite3_errmsg(handler_.get()));
+	if ((err = sqlite3_prepare_v2(handler_.get(), statement.get_sql().c_str(), -1, &stmt, 0)) != SQLITE_OK) {
+		throw_database_error("Cannot prepare statement", err);
+	}
 
 	bind_params(stmt, statement.get_params());
 
@@ -112,11 +111,11 @@ Result_set Database::execute(const Prepared_statement& statement){
 		insert_data(stmt, data);
 	}
 	if (err != SQLITE_OK) {
-		throw Database_error("Cannot execute statement", err, sqlite3_errmsg(handler_.get()));
+		throw_database_error("Cannot execute statement", err);
 	}
 
 	if (err = sqlite3_finalize(stmt) != SQLITE_OK) {
-		throw Database_error("Cannot finalize statement", err, sqlite3_errmsg(handler_.get()));
+		throw_database_error("Cannot finalize statement", err);
 	}
 
 	data.set_last_row_id( get_last_row_id() );
@@ -126,12 +125,15 @@ Result_set Database::execute(const Prepared_statement& statement){
 void Database::bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_type& params){
 	for(size_t i = 0; i < params.size(); ++i){
 		int err;
-		if (params[i].size() == 0)
-			err = sqlite3_bind_null(stmt, i+1);
-		else
-			err = sqlite3_bind_text(stmt, i+1, params[i].c_str(), -1, SQLITE_TRANSIENT);
-		if(err != SQLITE_OK)
-			throw Database_error("Cannot bind parameters to statement", err, sqlite3_errmsg(handler_.get()));
+		if (params[i].size() == 0) {
+			err = sqlite3_bind_null(stmt, i + 1);
+		}
+		else {
+			err = sqlite3_bind_text(stmt, i + 1, params[i].c_str(), -1, SQLITE_TRANSIENT);
+		}
+		if (err != SQLITE_OK) {
+			throw_database_error("Cannot bind parameters to statement", err);
+		}
 	}
 }
 
@@ -182,6 +184,10 @@ std::string Database::get_last_row_id(){
 	}, &row_id, 0);
 
 	return row_id;
+}
+
+void Database::throw_database_error(const std::string& description, int sqlite_error_code) {
+	throw Database_error(description, sqlite_error_code, sqlite3_errmsg(handler_.get()));
 }
 
 Database::Accessor::Accessor(Database& database) : database_(database), locker_(database.mtx_, std::defer_lock) {

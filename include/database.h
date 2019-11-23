@@ -64,6 +64,7 @@ private:
 	void bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_type& params);
 	void insert_data(sqlite3_stmt* stmt, Result_set& result_set);
 	void set_header(sqlite3_stmt* stmt, Result_set& result_set);
+	void throw_database_error(const std::string& description, int sqlite_error_code);
 
 	std::unique_ptr<sqlite3, deleter_type> handler_;
 	std::string path_;
