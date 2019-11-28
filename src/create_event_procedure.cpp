@@ -49,11 +49,11 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 			database_.execute(query.create_attachments_statement(last_id));
 		}
 		transaction.commit();
+		attachment_handler_.commit();
 		yeld_success(last_id);
 	}
 	else {
 		accessor.close();
-		attachment_handler_.delete_attachments_from_disc();
 		yeld_missing_tags_error(not_existing_tags);
 	}
 }

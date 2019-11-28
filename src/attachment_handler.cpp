@@ -19,6 +19,12 @@ std::atomic<unsigned long> Attachment_handler::attachment_control_index_{ 0 };
 Attachment_handler::Attachment_handler(Socket socket) : socket_(socket) {
 }
 
+Attachment_handler::~Attachment_handler() {
+	if (!commited_) {
+		delete_attachments_from_disc();
+	}
+}
+
 void Attachment_handler::handle_attachments(const Attachment_info_array& attachments_info) {
 	attachment_array_.clear();
 	for (const auto& att_info : attachments_info) {
@@ -57,6 +63,10 @@ void Attachment_handler::delete_attachments_from_disc() {
 				attachment.get_file_name() + " aka " + attachment.get_name());
 		}
 	}
+}
+
+void Attachment_handler::commit() {
+	commited_ = true;
 }
 
 const Attachment_database_info_array& Attachment_handler::get_attachment_array() const {

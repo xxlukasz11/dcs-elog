@@ -12,7 +12,7 @@ void Return_events_procedure::start() {
 	Result_set events = load_events(stmt);
 
 	response_.set_success(ON_SUCCESS_MESSAGE);
-	response_.set_data(events);
+	response_.set_data(std::move(events));
 	send_response(std::move(response_));
 }
 
