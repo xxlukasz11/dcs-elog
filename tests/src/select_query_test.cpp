@@ -1,4 +1,3 @@
-#include <iostream>
 #include "gtest/gtest.h"
 #include "select_query.h"
 #include "prepared_statement.h"

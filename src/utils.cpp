@@ -48,13 +48,16 @@ String_array string_to_vector(std::string string) {
 }
 
 Pair_array string_to_pair_array(char pair_separator, std::string string) {
-	std::replace(string.begin(), string.end(), pair_separator, SPACE_SEPARATOR);
 	std::istringstream ss(std::move(string));
 	Pair_array pair_array;
-	for (std::string first; ss >> first;) {
-		std::string second;
-		ss >> second;
-		pair_array.emplace_back(first, second);
+	for (std::string pair_string; ss >> pair_string;) {
+		auto separator_index = pair_string.find(pair_separator);
+		if (separator_index != std::string::npos) {
+			auto size = pair_string.size();
+			auto first = pair_string.substr(0, separator_index);
+			auto second = pair_string.substr(separator_index + 1, size - separator_index);
+			pair_array.emplace_back(first, second);
+		}
 	}
 	return pair_array;
 }

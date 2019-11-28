@@ -24,7 +24,10 @@ namespace utils{
 	// converts comma and space separated string to std::vector
 	String_array string_to_vector(std::string string);
 
-	// converts space separated string of pairs to std::vector<pair>
+	/*
+	converts space separated string of pairs to std::vector<pair>
+	pair format: "<value_1_1><separator><value_1_2> <value_2_1><separator><value_2_2>"
+	*/
 	Pair_array string_to_pair_array(char pair_separator, std::string string);
 
 	// creates attachment objects from pair values
