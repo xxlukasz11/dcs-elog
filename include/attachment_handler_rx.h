@@ -1,15 +1,15 @@
-#ifndef _ATTACHMENT_HANDLER_H_
-#define _ATTACHMENT_HANDLER_H_
+#ifndef _ATTACHMENT_HANDLER_RX_H_
+#define _ATTACHMENT_HANDLER_RX_H_
 
 #include "attachment_info.h"
 #include "attachment_database_info.h"
 #include "socket.h"
 #include <atomic>
 
-class Attachment_handler {
+class Attachment_handler_rx {
 public:
-	Attachment_handler(Socket socket);
-	~Attachment_handler();
+	Attachment_handler_rx(Socket socket);
+	~Attachment_handler_rx();
 	void handle_attachments(const Attachment_info_array& attachments_info_);
 	void receive_and_save_attachment(const Attachment_info& attachment_info);
 	void commit();
@@ -29,4 +29,4 @@ private:
 	bool commited_{ false };
 };
 
-#endif // !_ATTACHMENT_HANDLER_H_
+#endif // !_ATTACHMENT_HANDLER_RX_H_

@@ -7,12 +7,12 @@
 #include "socket.h"
 #include "website_response.h"
 #include "json_stringifier.h"
-#include "attachment_handler.h"
+#include "attachment_handler_rx.h"
 #include "message.h"
 
 class Procedure {
 public:
-	Procedure(Database& database, const Socket& socket, Attachment_handler& attachment_handler);
+	Procedure(Database& database, const Socket& socket, Attachment_handler_rx& attachment_handler_rx);
 	virtual ~Procedure() = default;
 	virtual void start() = 0;
 	virtual std::string name() = 0;
@@ -25,7 +25,7 @@ protected:
 
 	Database& database_;
 	Socket socket_;
-	Attachment_handler& attachment_handler_;
+	Attachment_handler_rx& attachment_handler_rx_;
 };
 
 template<typename T>

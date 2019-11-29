@@ -6,7 +6,7 @@
 #include "socket.h"
 #include "database.h"
 #include "procedure.h"
-#include "attachment_handler.h"
+#include "attachment_handler_rx.h"
 
 class Message_handler {
 public:
@@ -22,12 +22,12 @@ private:
 
 	Socket socket_;
 	Database& database_;
-	Attachment_handler attachment_handler_;
+	Attachment_handler_rx attachment_handler_rx_;
 };
 
 template<typename T>
 inline std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_ptr<Message>& message) {
-	auto procedure = std::make_unique<T>(database_, socket_, attachment_handler_);
+	auto procedure = std::make_unique<T>(database_, socket_, attachment_handler_rx_);
 	procedure->set_message(message);
 	return procedure;
 }

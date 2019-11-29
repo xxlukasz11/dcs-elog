@@ -7,7 +7,7 @@
 #include "logger.h"
 
 void Create_event_procedure::start() {
-	attachment_handler_.handle_attachments(
+	attachment_handler_rx_.handle_attachments(
 		message_->get_attachments_info());
 	Insert_query query = prepare_query();
 	run_main_procedure(query);
@@ -28,7 +28,7 @@ Insert_query Create_event_procedure::prepare_query() const {
 	query.set_desc(message_->get_description());
 	query.set_tags(utils::string_to_vector(message_->get_tags()));
 	query.set_author(message_->get_author());
-	query.set_attachments(attachment_handler_.get_attachment_array());
+	query.set_attachments(attachment_handler_rx_.get_attachment_array());
 	return query;
 }
 
@@ -49,7 +49,7 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 			database_.execute(query.create_attachments_statement(last_id));
 		}
 		transaction.commit();
-		attachment_handler_.commit();
+		attachment_handler_rx_.commit();
 		yeld_success(last_id);
 	}
 	else {
