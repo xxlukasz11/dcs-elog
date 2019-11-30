@@ -14,8 +14,8 @@ require_once("utils.php");
 	
 $params = decode_input_message();
 $message = prepare_message($params);
-$response = send_message($message);
-yeld_success($response);
+send_return_event_request($message);
+http_response_code(200);
 
 function prepare_message($params){
 	$min_date = $params->min_date;

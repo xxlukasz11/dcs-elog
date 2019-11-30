@@ -54,9 +54,18 @@ function read_response($socket) {
 	while ($bff = socket_read($socket, 1024)) {
 		$resp .= $bff;
 	}
-	
-	socket_close($socket);
 	return $resp;
+}
+
+function read_response_and_forward($socket) {
+	$resp = '';
+	while ($bff = socket_read($socket, 1024)) {
+		echo $bff;
+	}
+}
+
+function close_server_connection($socket) {
+	socket_close($socket);
 }
 
 function send_payload($socket, $payload) {

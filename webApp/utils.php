@@ -25,7 +25,15 @@ function send_message($message) {
 	$socket = create_server_connection();
 	send_payload($socket, $message);
 	$response = read_response($socket);
+	close_server_connection($socket);
 	return $response;
+}
+
+function send_return_event_request($message) {
+	$socket = create_server_connection();
+	send_payload($socket, $message);
+	read_response_and_forward($socket);
+	close_server_connection($socket);
 }
 
 function send_message_with_attachments($message, $params) {
