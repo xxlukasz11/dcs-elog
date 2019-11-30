@@ -13,7 +13,9 @@ public:
 	void set_tags(std::vector<std::string>&& tags);
 
 	Prepared_statement create_statement() const;
+	Prepared_statement create_attachments_statement(const std::vector<std::string>& event_ids) const;
 private:
+	std::string create_attachment_query_string(const std::vector<std::string>& event_ids) const;
 	bool min_date_is_set_{ false };
 	bool max_date_is_set_{ false };
 

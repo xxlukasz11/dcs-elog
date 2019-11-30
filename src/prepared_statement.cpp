@@ -1,7 +1,8 @@
 #include <string>
 #include <vector>
-
 #include "prepared_statement.h"
+
+const std::string Prepared_statement::PARAM_PLACEHOLDER = "?";
 
 Prepared_statement::Prepared_statement(std::string query_string)
 	: query_string_(query_string) {}

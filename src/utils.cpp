@@ -9,8 +9,9 @@
 
 namespace utils {
 
-const char SPACE_SEPARATOR = ' ';
-const char COMMA_SEPARATOR = ',';
+constexpr char SPACE_SEPARATOR = ' ';
+constexpr char COMMA_SEPARATOR = ',';
+const std::string COMMA_SPACE_SEPARATOR = ", ";
 
 std::string concatenate_string_array(const String_array& array) {
 	std::string text;
@@ -105,6 +106,23 @@ double convert_string(const std::string& string) {
 template<>
 std::string convert_string(const std::string& string) {
 	return string;
+}
+
+std::string create_list_string(const std::string& expression, int list_size) {
+	if (list_size <= 0) {
+		return {};
+	}
+
+	auto output_size = expression.size() * list_size + COMMA_SPACE_SEPARATOR.size() * (list_size - 1);
+	std::string output;
+	output.reserve(output_size);
+	for (int i = 0; i < list_size; ++i) {
+		output += expression;
+		if (i != list_size - 1) {
+			output += COMMA_SPACE_SEPARATOR;
+		}
+	}
+	return output;
 }
 
 }

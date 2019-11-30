@@ -12,7 +12,7 @@ namespace utils{
 	using Pair_array = std::vector<std::pair<std::string, std::string>>;
 	using Attachment_info_array = std::vector<Attachment_info>;
 
-	// Concatenate array of strings
+	// Concatenate array of strings with ", " delimiter
 	std::string concatenate_string_array(const String_array& array);
 
 	// Excludes elements from base which are present in pattern
@@ -39,6 +39,9 @@ namespace utils{
 	// Converts std::string to T
 	template<typename T>
 	T convert_string(const std::string& string);
+
+	// creates string of "," delimited list of expressions
+	std::string create_list_string(const std::string& expression, int list_size);
 }
 
 #endif

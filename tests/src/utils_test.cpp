@@ -85,6 +85,27 @@ TEST(decode_log_level, not_existing_log_level) {
 	EXPECT_GT(0, decoded_value);
 }
 
+TEST(create_list_string, multiple_elements) {
+	std::string result = utils::create_list_string(WORD_1, 3);
+	std::string expected = WORD_1 + COMMA_SPACE + WORD_1 + COMMA_SPACE + WORD_1;
+	EXPECT_EQ(expected, result);
+}
+
+TEST(create_list_string, single_element) {
+	std::string result = utils::create_list_string(WORD_1, 1);
+	EXPECT_EQ(WORD_1, result);
+}
+
+TEST(create_list_string, zero_list_size) {
+	std::string result = utils::create_list_string(WORD_1, 0);
+	EXPECT_EQ(EMPTY_STRING, result);
+}
+
+TEST(create_list_string, negative_list_size) {
+	std::string result = utils::create_list_string(WORD_1, -1);
+	EXPECT_EQ(EMPTY_STRING, result);
+}
+
 int main(int argc, char** argv) {
 	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
