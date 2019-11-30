@@ -15,6 +15,18 @@ void Array::push(const Value_ptr& value) {
 	values_.push_back(value);
 }
 
+size_t Array::size() const {
+	return values_.size();
+}
+
+Value_ptr& Array::get(size_t index) {
+	return values_[index];
+}
+
+const Value_ptr& Array::get(size_t index) const {
+	return values_[index];
+}
+
 std::string Array::values_to_string() const {
 	std::ostringstream stream;
 	size_t no_of_fields = values_.size();

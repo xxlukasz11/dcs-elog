@@ -11,7 +11,11 @@
 #include "logger.h"
 #include "message_factory.h"
 
-Message_handler::Message_handler(Socket socket, Database& database) : socket_(socket), database_(database), attachment_handler_rx_(socket) {}
+Message_handler::Message_handler(Socket socket, Database& database) :
+	socket_(socket), database_(database),
+	attachment_handler_rx_(socket),
+	attachment_handler_tx_(socket) {
+}
 
 void Message_handler::process_message(const std::string& message_string) {
 	try {

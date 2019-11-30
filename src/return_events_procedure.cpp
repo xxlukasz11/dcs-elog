@@ -3,17 +3,14 @@
 #include "json_stringifier.h"
 #include "prepared_statement.h"
 #include "return_events_procedure.h"
+#include "attachment_handler_tx.h"
 
 static const std::string ON_SUCCESS_MESSAGE = "Successfully loaded events";
 
 void Return_events_procedure::start() {
 	auto query = prepare_query();
-	auto stmt = query.create_statement();
-	Result_set events = load_events(stmt);
-
-	response_.set_success(ON_SUCCESS_MESSAGE);
-	response_.set_data(std::move(events));
-	send_response(std::move(response_));
+	run_main_procedure(query);
+	attachment_handler_tx_.inject_payload_and_send();
 }
 
 std::string Return_events_procedure::name() {
@@ -33,9 +30,27 @@ Select_query Return_events_procedure::prepare_query() const {
 	return query;
 }
 
-Result_set Return_events_procedure::load_events(const Prepared_statement& stmt) {
+Result_set Return_events_procedure::load_attachments_info(const Select_query& query, const Result_set& events) {
+	auto event_ids = events.get_column(0);
+	Prepared_statement attachment_stmt = query.create_attachments_statement(event_ids);
+	Result_set attachments = database_.execute(attachment_stmt);
+	return attachments;
+}
+
+void Return_events_procedure::run_main_procedure(const Select_query& query) {
 	Database::Accessor accessor(database_);
 	accessor.open();
+	Result_set events = load_events(query);
+	Result_set attachments = load_attachments_info(query, events);
+	accessor.close();
+
+	attachment_handler_tx_.set_events(std::move(events));
+	attachment_handler_tx_.set_attachments(std::move(attachments));
+	attachment_handler_tx_.set_on_success_message(ON_SUCCESS_MESSAGE);
+}
+
+Result_set Return_events_procedure::load_events(const Select_query& query) {
+	auto stmt = query.create_statement();
 	Result_set events = database_.execute(stmt);
 	return events;
 }

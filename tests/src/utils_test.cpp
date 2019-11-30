@@ -11,6 +11,7 @@ static const std::string WORD_3 = "word_3__";
 static const utils::String_array STRING_ARRAY_123{ WORD_1, WORD_2, WORD_3 };
 static const utils::String_array STRING_ARRAY_13{ WORD_1, WORD_3 };
 static const utils::String_array STRING_ARRAY_EMPTY;
+static const std::string DELIMITER = "$delimiter$";
 
 TEST(concatenate_string_array, simple) {
 	auto concatenated = utils::concatenate_string_array(STRING_ARRAY_123);
@@ -46,6 +47,36 @@ TEST(string_to_vector, valid_string) {
 	EXPECT_EQ(WORD_1, vector[0]);
 	EXPECT_EQ(WORD_2, vector[1]);
 	EXPECT_EQ(WORD_1, vector[2]);
+}
+
+TEST(string_to_vector, multiple_delimiters) {
+	const std::string with_spaces = WORD_3 + " with spaces";
+	auto word_list = WORD_1 + DELIMITER + WORD_2 + DELIMITER + with_spaces;
+	auto vector = utils::string_to_vector(word_list, DELIMITER);
+	EXPECT_EQ(3, vector.size());
+	EXPECT_EQ(WORD_1, vector[0]);
+	EXPECT_EQ(WORD_2, vector[1]);
+	EXPECT_EQ(with_spaces, vector[2]);
+}
+
+TEST(string_to_vector, delimiter_at_the_begining) {
+	const std::string with_spaces = WORD_3 + " with spaces";
+	auto word_list = DELIMITER + WORD_2 + DELIMITER + with_spaces;
+	auto vector = utils::string_to_vector(word_list, DELIMITER);
+	EXPECT_EQ(3, vector.size());
+	EXPECT_EQ(EMPTY_STRING, vector[0]);
+	EXPECT_EQ(WORD_2, vector[1]);
+	EXPECT_EQ(with_spaces, vector[2]);
+}
+
+TEST(string_to_vector, delimiter_at_the_end) {
+	const std::string with_spaces = WORD_3 + " with spaces";
+	auto word_list = WORD_1 + DELIMITER + WORD_2 + DELIMITER;
+	auto vector = utils::string_to_vector(word_list, DELIMITER);
+	EXPECT_EQ(3, vector.size());
+	EXPECT_EQ(WORD_1, vector[0]);
+	EXPECT_EQ(WORD_2, vector[1]);
+	EXPECT_EQ(EMPTY_STRING, vector[2]);
 }
 
 TEST(string_to_pair_array, valid_string) {

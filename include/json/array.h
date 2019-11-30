@@ -16,6 +16,10 @@ public:
 
 	static Array_ptr create();
 	void push(const Value_ptr& value);
+	size_t size() const;
+
+	Value_ptr& get(size_t index);
+	const Value_ptr& get(size_t index) const;
 private:
 	std::string values_to_string() const;
 

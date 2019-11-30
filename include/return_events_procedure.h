@@ -6,7 +6,6 @@
 #include "return_events_request.h"
 #include "select_query.h"
 #include "result_set.h"
-#include "website_response.h"
 
 class Return_events_procedure : public Procedure {
 public:
@@ -17,9 +16,10 @@ public:
 
 private:
 	Select_query prepare_query() const;
-	Result_set load_events(const Prepared_statement& stmt);
+	Result_set load_events(const Select_query& query);
+	Result_set load_attachments_info(const Select_query& query, const Result_set& events);
+	void run_main_procedure(const Select_query& query);
 
-	Website_response response_;
 	std::shared_ptr<Return_events_request> message_;
 };
 

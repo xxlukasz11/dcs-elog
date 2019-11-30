@@ -43,6 +43,14 @@ std::string Result_set::get_first_field() const {
 	return std::string{};
 }
 
+std::string Result_set::get_field(int row_index, int column_index) {
+	const auto& row = get_row(row_index);
+	if (column_index < row.size()) {
+		return row[column_index];
+	}
+	return {};
+}
+
 const Result_set::header_type& Result_set::get_header() const {
 	return header_;
 }
@@ -56,7 +64,7 @@ const Result_set::data_type& Result_set::get_data() const {
 	return data_;
 }
 
-Result_set::column_type Result_set::get_column(size_t index) {
+Result_set::column_type Result_set::get_column(size_t index) const {
 	Result_set::column_type column;
 	if (data_.size() == 0 || data_[0].size() <= index || index < 0) {
 		return column;
@@ -73,7 +81,7 @@ const Result_set::row_type& Result_set::get_row(size_t index) const {
 }
 
 void Result_set::set_last_row_id(std::string id){
-	last_row_id = id;
+	last_row_id_ = id;
 }
 
 size_t Result_set::data_size() const {
@@ -85,7 +93,7 @@ size_t Result_set::header_length() const {
 }
 
 std::string Result_set::get_last_row_id() const {
-	return last_row_id;
+	return last_row_id_;
 }
 
 bool Result_set::has_records() const {
@@ -100,6 +108,14 @@ Result_set& Result_set::operator+=(Result_set&& result_set){
 	data_.reserve(data_.size() + result_set.data_.size());
 	std::move(result_set.data_.begin(), result_set.data_.end(), std::back_inserter(data_));
 	return *this;
+}
+
+Result_set Result_set::copy_all_except_data() const {
+	Result_set output;
+	output.header_ = header_;
+	output.last_row_id_ = last_row_id_;
+	output.header_set_ = header_set_;
+	return output;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Result_set& result_set){

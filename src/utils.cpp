@@ -39,6 +39,19 @@ std::string create_date_time_string(time_t time, const std::string& format) {
 	return ss.str();
 }
 
+String_array string_to_vector(const std::string& string, const std::string& delimiter) {
+	auto delimiter_length = delimiter.size();
+	String_array vector;
+	size_t last_index = 0;
+	for (size_t index; (index = string.find(delimiter, last_index)) != std::string::npos;) {
+		std::string element = string.substr(last_index, index - last_index);
+		vector.push_back(element);
+		last_index = index + delimiter_length;
+	}
+	vector.push_back(string.substr(last_index));
+	return vector;
+}
+
 String_array string_to_vector(std::string string) {
 	std::replace(string.begin(), string.end(), COMMA_SEPARATOR, SPACE_SEPARATOR);
 	std::istringstream ss(std::move(string));

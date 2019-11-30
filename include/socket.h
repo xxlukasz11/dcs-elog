@@ -49,6 +49,9 @@ public:
 	template<typename Buffer_t>
 	void fill_buffer(Buffer_t& buffer, size_t bytes_to_fill);
 
+	template<typename Buffer_t>
+	void send_buffer(Buffer_t& buffer);
+
 	template<typename T>
 	void send_value(T value);
 
@@ -76,6 +79,16 @@ inline void Socket::fill_buffer(Buffer_t& buffer, size_t bytes_to_fill) {
 	int received = 0;
 	while (received < bytes_to_fill) {
 		received += safe_recv(&buffer[received], bytes_to_fill - received, 0);
+	}
+}
+
+template<typename Buffer_t>
+inline void Socket::send_buffer(Buffer_t& buffer) {
+	int size = buffer.size();
+	int sent = 0;
+	while (sent < size) {
+		int written = send(socket_descriptor_, &buffer[sent], size - sent, 0);
+		sent += written;
 	}
 }
 

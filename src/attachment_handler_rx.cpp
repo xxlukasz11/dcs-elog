@@ -44,9 +44,11 @@ void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& a
 		int current_buffer_size = std::min(RX_BUFFER_SIZE, file_size - bytes_received);
 		socket_.fill_buffer(buffer, current_buffer_size);
 		bytes_received += current_buffer_size;
-		auto decoded = base64.decode(buffer, current_buffer_size);
-		binary_file_size += decoded.size();
-		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
+		//auto decoded = base64.decode(buffer, current_buffer_size);
+		//binary_file_size += decoded.size();
+		//file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
+		binary_file_size += current_buffer_size;
+		file.write(reinterpret_cast<const char*>(buffer.data()), current_buffer_size);
 	}
 	file.close();
 	Logger::create().info("File " + attachment_info.get_name() + " successfully received; Size: " +
