@@ -21,7 +21,8 @@ private:
 	std::string generate_file_name_discriminator();
 	std::string create_attachment_path(const std::string& file_name);
 	std::string create_unique_file_name(const std::string& file_name);
-	int receive_attachment_size(const Attachment_info& attachment_info);
+	int receive_attachment_size();
+	void log_incoming_attachment_info(const Attachment_info& attachment_info, int file_size);
 
 	static std::atomic<unsigned long> attachment_control_index_;
 	Attachment_database_info_array attachment_array_;

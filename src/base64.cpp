@@ -6,14 +6,14 @@ static const std::string chars =
 	"abcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
-constexpr char FIRST_TWO = 0xc0;
-constexpr char LAST_TWO = 0x03;
-constexpr char FIRST_FOUR = 0xf0;
-constexpr char LAST_FOUR = 0x0f;
-constexpr char FIRST_SIX = 0xfc;
-constexpr char LAST_SIX = 0x3f;
+constexpr unsigned char FIRST_TWO = 0xc0;
+constexpr unsigned char LAST_TWO = 0x03;
+constexpr unsigned char FIRST_FOUR = 0xf0;
+constexpr unsigned char LAST_FOUR = 0x0f;
+constexpr unsigned char FIRST_SIX = 0xfc;
+constexpr unsigned char LAST_SIX = 0x3f;
 
-Base64::String_buffer Base64::encode(const String_buffer& buffer) {
+Base64::Byte_buffer_t Base64::encode(const Byte_buffer_t& buffer) {
 	auto n = buffer.size();
 	if (n == 0) {
 		return {};
@@ -23,11 +23,11 @@ Base64::String_buffer Base64::encode(const String_buffer& buffer) {
 	auto padding = n % 3;
 
 	int encoded_length = 4 * (iterations + (padding ? 1 : 0));
-	std::vector<char> encoded_buffer;
+	Byte_buffer_t encoded_buffer;
 	encoded_buffer.reserve(encoded_length);
 
 	for (int i = 0; i < iterations; ++i) {
-		int index = i * 3;
+		auto index = i * 3;
 		encoded_buffer.push_back(chars[(buffer[index] & FIRST_SIX) >> 2]);
 		encoded_buffer.push_back(chars[((buffer[index] & LAST_TWO) << 4) | ((buffer[index + 1] & FIRST_FOUR) >> 4)]);
 		encoded_buffer.push_back(chars[((buffer[index + 1] & LAST_FOUR) << 2) | ((buffer[index + 2] & FIRST_TWO) >> 6)]);
@@ -35,7 +35,7 @@ Base64::String_buffer Base64::encode(const String_buffer& buffer) {
 	}
 
 	if (padding != 0) {
-		int index = n - padding;
+		auto index = n - padding;
 		encoded_buffer.push_back(chars[(buffer[index] & FIRST_SIX) >> 2]);
 
 		if (padding == 1) {
@@ -53,14 +53,14 @@ Base64::String_buffer Base64::encode(const String_buffer& buffer) {
 	return encoded_buffer;
 }
 
-Base64::String_buffer Base64::decode(const String_buffer& buffer, size_t buffer_size) {
+Base64::Byte_buffer_t Base64::decode(const Byte_buffer_t& buffer, size_t buffer_size) {
 	if (buffer_size == 0) {
 		return {};
 	}
 
 	auto iterations = buffer_size / 4;
 	int decoded_length = 3 * iterations;
-	std::vector<char> decoded_buffer;
+	Byte_buffer_t decoded_buffer;
 	decoded_buffer.reserve(decoded_length);
 
 	for (int i = 0; i < iterations - 1; ++i) {
@@ -90,6 +90,6 @@ Base64::String_buffer Base64::decode(const String_buffer& buffer, size_t buffer_
 	return decoded_buffer;
 }
 
-Base64::String_buffer Base64::decode(const String_buffer& buffer) {
+Base64::Byte_buffer_t Base64::decode(const Byte_buffer_t& buffer) {
 	return decode(buffer, buffer.size());
 }

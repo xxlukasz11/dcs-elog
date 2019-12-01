@@ -5,10 +5,10 @@
 
 class Base64 {
 public:
-	using String_buffer = std::vector<char>;
-	String_buffer encode(const String_buffer& buffer);
-	String_buffer decode(const String_buffer& buffer);
-	String_buffer decode(const String_buffer& buffer, size_t buffer_size);
+	using Byte_buffer_t = std::vector<unsigned char>;
+	Byte_buffer_t encode(const Byte_buffer_t& buffer);
+	Byte_buffer_t decode(const Byte_buffer_t& buffer);
+	Byte_buffer_t decode(const Byte_buffer_t& buffer, size_t buffer_size);
 };
 
 #endif // !_BASE_64_H_

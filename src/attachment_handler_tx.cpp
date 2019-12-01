@@ -49,9 +49,9 @@ std::string create_attachment_path(const std::string& file_name) {
 	return Administrator::instance().params().get_attachment_storage_path() + file_name;
 }
 
-size_t fill_buffer(std::istream& stream, std::vector<char>& buffer, size_t bytes_to_read) {
+size_t fill_buffer(std::istream& stream, std::vector<unsigned char>& buffer, size_t bytes_to_read) {
 	buffer.resize(bytes_to_read);
-	stream.read(buffer.data(), bytes_to_read);
+	stream.read(reinterpret_cast<char*>(buffer.data()), bytes_to_read);
 	if (!stream) {
 		auto read_count = stream.gcount();
 		stream.clear();
@@ -146,14 +146,13 @@ void Attachment_handler_tx::send_attachment(const Result_set::row_type& attachme
 	std::ifstream file(attachment_path, std::ios::binary);
 	
 	Base64 encoder;
-	std::vector<char> buffer;
+	std::vector<unsigned char> buffer;
 	while (true) {
 		size_t bytes_to_sent = fill_buffer(file, buffer, TX_BUFFER_SIZE);
 		if (bytes_to_sent == 0) {
 			return;
 		}
-		//auto encoded_buffer = encoder.encode(buffer);
-		//socket_.send_buffer(encoded_buffer);
-		socket_.send_buffer(buffer);
+		auto encoded_buffer = encoder.encode(buffer);
+		socket_.send_buffer(encoded_buffer);
 	}
 }

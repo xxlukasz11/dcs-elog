@@ -33,22 +33,21 @@ void Attachment_handler_rx::handle_attachments(const Attachment_info_array& atta
 }
 
 void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& attachment_info) {
-	auto file_size = receive_attachment_size(attachment_info);
+	auto file_size = receive_attachment_size();
+	log_incoming_attachment_info(attachment_info, file_size);
 
 	Base64 base64;
 	int bytes_received = 0;
 	int binary_file_size = 0;
 	std::ofstream file = create_unique_file(attachment_info);
-	std::vector<char> buffer(RX_BUFFER_SIZE);
+	std::vector<unsigned char> buffer(RX_BUFFER_SIZE);
 	while (bytes_received < file_size) {
 		int current_buffer_size = std::min(RX_BUFFER_SIZE, file_size - bytes_received);
 		socket_.fill_buffer(buffer, current_buffer_size);
 		bytes_received += current_buffer_size;
-		//auto decoded = base64.decode(buffer, current_buffer_size);
-		//binary_file_size += decoded.size();
-		//file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
-		binary_file_size += current_buffer_size;
-		file.write(reinterpret_cast<const char*>(buffer.data()), current_buffer_size);
+		auto decoded = base64.decode(buffer, current_buffer_size);
+		binary_file_size += decoded.size();
+		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
 	}
 	file.close();
 	Logger::create().info("File " + attachment_info.get_name() + " successfully received; Size: " +
@@ -104,9 +103,12 @@ std::string Attachment_handler_rx::create_unique_file_name(const std::string& fi
 		+ parser.get_extension();
 }
 
-int Attachment_handler_rx::receive_attachment_size(const Attachment_info& attachment_info) {
+int Attachment_handler_rx::receive_attachment_size() {
 	int file_size = socket_.receive<int>();
-	Logger::create().level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
-		" of type: " + attachment_info.get_type());
 	return file_size;
+}
+
+void Attachment_handler_rx::log_incoming_attachment_info(const Attachment_info& attachment_info, int file_size) {
+	Logger::create().level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
+		" of type: " + attachment_info.get_type() + " - size: " + std::to_string(file_size));
 }
