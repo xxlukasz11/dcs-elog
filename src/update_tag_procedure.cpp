@@ -7,6 +7,7 @@
 void Update_tag_procedure::start() {
 	Update_tag_query query = prepare_query();
 	update_tag(query);
+	log_response_message(response_);
 	send_response(std::move(response_));
 }
 

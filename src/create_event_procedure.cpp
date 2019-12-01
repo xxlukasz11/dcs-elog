@@ -4,13 +4,13 @@
 #include "utils.h"
 #include "json_stringifier.h"
 #include "create_event_procedure.h"
-#include "logger.h"
 
 void Create_event_procedure::start() {
 	attachment_handler_rx_.handle_attachments(
 		message_->get_attachments_info());
 	Insert_query query = prepare_query();
 	run_main_procedure(query);
+	log_response_message(response_);
 	send_response(std::move(response_));
 }
 
@@ -60,14 +60,12 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 
 void Create_event_procedure::yeld_success(const std::string& event_id) {
 	std::string message = "Event with id: " + event_id + " has been successfully saved";
-	Logger::create().level(Log_level::INFO).info(message);
 	response_.set_success(message);
 }
 
 void Create_event_procedure::yeld_missing_tags_error(const std::vector<std::string>& not_existing_tags) {
 	std::string message = "Cannot save event. Following tags do not exist: ";
 	message += utils::concatenate_string_array(not_existing_tags);
-	Logger::create().level(Log_level::INFO).info(message);
 	response_.set_failure(message);
 }
 

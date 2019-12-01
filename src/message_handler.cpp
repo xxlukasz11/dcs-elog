@@ -10,6 +10,7 @@
 #include "message_handler.h"
 #include "logger.h"
 #include "message_factory.h"
+#include <stdexcept>
 
 Message_handler::Message_handler(Socket socket, Database& database) :
 	socket_(socket), database_(database),
@@ -35,6 +36,19 @@ void Message_handler::process_message(const std::string& message_string) {
 	} catch (const Send_error& e) {
 		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	} catch (const Attachment_error& e) {
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+	} catch (...) {
+		std::exception_ptr e = std::current_exception();
+		handle_exception_ptr(e);
+	}
+}
+
+void Message_handler::handle_exception_ptr(std::exception_ptr ptr) {
+	try {
+		if (ptr) {
+			std::rethrow_exception(ptr);
+		}
+	} catch (const std::exception& e) {
 		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	}
 }

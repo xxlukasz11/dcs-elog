@@ -37,7 +37,7 @@ app.controller('select_data', function ($scope, sender, logger) {
 			id: event_id,
 			title: manager.get_title_from_input(),
 			tags: manager.get_tags_from_input(),
-			description: convert_description_to_send(manager.get_description_from_input())
+			description: encode_line_breaks(manager.get_description_from_input())
 		}
 		logger.get_console().log_message("UPDATE EVENT", parameter_object)
 		manager.display_mode();

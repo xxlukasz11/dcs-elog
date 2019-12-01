@@ -2,6 +2,7 @@
 #define _MESSAGE_HANDLER_H_
 
 #include <memory>
+#include <exception>
 #include "message.h"
 #include "socket.h"
 #include "database.h"
@@ -16,6 +17,7 @@ public:
 
 private:
 	void handle(const std::shared_ptr<Message>& message_string);
+	void handle_exception_ptr(std::exception_ptr ptr);
 	std::unique_ptr<Procedure> create_procedure(const std::shared_ptr<Message>& message);
 
 	template<typename T>

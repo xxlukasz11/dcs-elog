@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "administrator.h"
 #include "database.h"
+#include "logger.h"
 #include "result_set.h"
 #include "add_tag_query.h"
 #include "json_stringifier.h"
@@ -19,7 +20,13 @@ Insert_query Create_library_event_procedure::prepare_query() const {
 
 void Create_library_event_procedure::start() {
 	Insert_query query = prepare_query();
-	run_main_procedure(query);
+	try {
+		run_main_procedure(query);
+	} catch (...) {
+		Logger::create().context(socket_).level(Log_level::CRITICAL).info("Failed to create library event");
+		throw;
+	}
+	
 	int32_t response_code = static_cast<int32_t>(response_.get_response_code());
 	socket_.send_value(response_code);
 }
@@ -57,6 +64,8 @@ void Create_library_event_procedure::run_main_procedure(Insert_query& query) {
 	database_.execute(query.create_tags_statement(last_id));
 	transaction.commit();
 	response_.set_success();
+	Logger::create().context(socket_).level(Log_level::INFO).info("Event with id: "
+		+ last_id + " has been successfully saved");
 }
 
 std::vector<std::string> Create_library_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {

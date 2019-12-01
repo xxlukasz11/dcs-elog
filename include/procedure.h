@@ -25,6 +25,7 @@ protected:
 	template<typename T>
 	std::enable_if_t<std::is_base_of<Response, std::remove_reference_t<T>>::value, void>
 	send_response(T&& response);
+	void log_response_message(const Website_response& response);
 
 	Database& database_;
 	Socket socket_;

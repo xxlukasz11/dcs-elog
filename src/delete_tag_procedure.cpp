@@ -8,6 +8,7 @@
 void Delete_tag_procedure::start() {
 	Delete_tag_query query = prepare_query();
 	run_main_procedure(query);
+	log_response_message(response_);
 	send_response(std::move(response_));
 }
 

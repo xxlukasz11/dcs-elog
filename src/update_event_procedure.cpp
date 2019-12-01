@@ -8,6 +8,7 @@ void Update_event_procedure::start() {
 	Update_event_query update_query = prepare_update_query();
 	Insert_query insert_query = prepare_insert_query();
 	run_main_procedure(update_query, insert_query);
+	log_response_message(response_);
 	send_response(std::move(response_));
 }
 

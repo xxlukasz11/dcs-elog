@@ -7,6 +7,7 @@
 void Create_tag_procedure::start() {
 	Add_tag_query query = prepare_query();
 	create_tag(query);
+	log_response_message(response_);
 	send_response(std::move(response_));
 }
 
