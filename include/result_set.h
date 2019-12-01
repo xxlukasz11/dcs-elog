@@ -33,6 +33,7 @@ public:
 	const data_type& get_data() const;
 	column_type get_column(size_t index) const;
 	const row_type& get_row(size_t index) const;
+	row_type& get_row(size_t index);
 
 	row_type& operator[](size_t index);
 	Result_set& operator+=(Result_set&& result_set);

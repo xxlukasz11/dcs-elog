@@ -50,8 +50,8 @@ void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& a
 		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
 	}
 	file.close();
-	Logger::create().info("File " + attachment_info.get_name() + " successfully received; Size: " +
-		std::to_string(binary_file_size) + " bytes");
+	Logger::create().context(socket_).level(Log_level::INFO).info("File " + attachment_info.get_name() +
+		" successfully received. Saved file size: " + std::to_string(binary_file_size) + " bytes");
 }
 
 void Attachment_handler_rx::delete_attachments_from_disc() {
@@ -60,7 +60,7 @@ void Attachment_handler_rx::delete_attachments_from_disc() {
 		std::string file_path = storage_path + attachment.get_file_name();
 		auto status = remove(file_path.c_str());
 		if (status != 0) {
-			Logger::create().level(Log_level::WARNING).warning("Failed to remove file: " +
+			Logger::create().context(socket_).level(Log_level::WARNING).warning("Failed to remove file: " +
 				attachment.get_file_name() + " aka " + attachment.get_name());
 		}
 	}
@@ -79,7 +79,7 @@ std::ofstream Attachment_handler_rx::create_unique_file(const Attachment_info& a
 	attachment_array_.emplace_back(attachment_info.get_name(), attachment_info.get_type(), unique_file_name);
 
 	std::string path = create_attachment_path(unique_file_name);
-	Logger::create().level(Log_level::ALL).info("Saving " + attachment_info.get_name() + " as " + path);
+	Logger::create().context(socket_).level(Log_level::ALL).info("Saving " + attachment_info.get_name() + " in " + path);
 	return std::ofstream(path, std::ios::binary);
 }
 
@@ -109,6 +109,6 @@ int Attachment_handler_rx::receive_attachment_size() {
 }
 
 void Attachment_handler_rx::log_incoming_attachment_info(const Attachment_info& attachment_info, int file_size) {
-	Logger::create().level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
-		" of type: " + attachment_info.get_type() + " - size: " + std::to_string(file_size));
+	Logger::create().context(socket_).level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
+		" of type: " + attachment_info.get_type() + " - size: " + std::to_string(file_size) + " bytes");
 }

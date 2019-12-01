@@ -22,8 +22,12 @@ enum class Attachment_table {
 	EVENT_ID,
 	ATTACHMENT_NAME,
 	ATTACHMENT_TYPE,
-	ATTACHMENT_FILE
+	FILE_NAME
 };
+
+int column_index(Attachment_table column_identifier) {
+	return static_cast<int>(column_identifier);
+}
 
 json::Object_ptr get_object(json::Array_ptr array, size_t index) {
 	return std::static_pointer_cast<json::Object>(array->get(index));
@@ -31,7 +35,7 @@ json::Object_ptr get_object(json::Array_ptr array, size_t index) {
 
 Result_set filter_by_event_id(const Result_set& attachments, const std::string& event_id) {
 	return attachments.filter([&event_id](const auto& row) {
-		return row[static_cast<int>(Attachment_table::EVENT_ID)] == event_id;
+		return row[column_index(Attachment_table::EVENT_ID)] == event_id;
 	});
 }
 
@@ -68,12 +72,15 @@ Attachment_handler_tx::Attachment_handler_tx(Socket socket) : socket_(socket) {
 
 void Attachment_handler_tx::inject_payload_and_send() {
 	std::string string_to_send = create_response_string();
-	if (sequenced_attachments_.data_size() == 0) {
+	if (sequenced_attachments_.size() == 0) {
+		Logger::create().context(socket_).level(Log_level::ALL).info("Sending response without attachments");
 		send_plain(string_to_send);
 	}
 	else {
+		Logger::create().context(socket_).level(Log_level::ALL).info("Sending response with attachments");
 		send_with_attachment_payload(std::move(string_to_send));
 	}
+	Logger::create().context(socket_).level(Log_level::ALL).info("Response successfully sent");
 }
 
 void Attachment_handler_tx::set_events(Result_set&& events) {
@@ -100,7 +107,7 @@ std::string Attachment_handler_tx::create_events_string() {
 
 		Result_set filtered_attachments = filter_by_event_id(attachments_, event_id);
 		auto attachments_json = create_json_attachments_array(filtered_attachments);
-		sequenced_attachments_ += std::move(filtered_attachments);
+		move_attachments_file_names(std::move(filtered_attachments));
 
 		json::Object_ptr event_object = get_object(events_json, i);
 		event_object->add_field("Attachments", attachments_json);
@@ -117,9 +124,9 @@ std::string Attachment_handler_tx::create_response_string() {
 }
 
 void Attachment_handler_tx::assert_valid_attachments_size(int size) {
-	if (sequenced_attachments_.data_size() != size) {
+	if (sequenced_attachments_.size() != size) {
 		throw Attachment_error("Error while sending attachments. Expected amount: ",
-			size, " but was: ", sequenced_attachments_.data_size());
+			size, " but was: ", sequenced_attachments_.size());
 	}
 }
 
@@ -135,14 +142,14 @@ void Attachment_handler_tx::send_with_attachment_payload(std::string&& string) {
 	for (size_t i = 0; i < no_of_chunks; ++i) {
 		send_plain(chunks[i]);
 		if (i != no_of_chunks - 1) {
-			send_attachment(sequenced_attachments_.get_row(i));
+			send_attachment(sequenced_attachments_[i]);
 		}
 	}
 }
 
-void Attachment_handler_tx::send_attachment(const Result_set::row_type& attachment_entry) {
-	std::string file_name = attachment_entry[static_cast<int>(Attachment_table::ATTACHMENT_FILE)];
+void Attachment_handler_tx::send_attachment(const std::string& file_name) {
 	std::string attachment_path = create_attachment_path(file_name);
+	Logger::create().context(socket_).level(Log_level::ALL).info("Sending " + attachment_path);
 	std::ifstream file(attachment_path, std::ios::binary);
 	
 	Base64 encoder;
@@ -150,9 +157,18 @@ void Attachment_handler_tx::send_attachment(const Result_set::row_type& attachme
 	while (true) {
 		size_t bytes_to_sent = fill_buffer(file, buffer, TX_BUFFER_SIZE);
 		if (bytes_to_sent == 0) {
-			return;
+			break;
 		}
 		auto encoded_buffer = encoder.encode(buffer);
 		socket_.send_buffer(encoded_buffer);
+	}
+	Logger::create().context(socket_).level(Log_level::ALL).info("Attachment successfully sent");
+}
+
+void Attachment_handler_tx::move_attachments_file_names(Result_set&& attachments) {
+	auto no_of_attachments = attachments.data_size();
+	for (size_t i = 0; i < no_of_attachments; ++i) {
+		auto& file_name = attachments.get_row(i)[column_index(Attachment_table::FILE_NAME)];
+		sequenced_attachments_.push_back(std::move(file_name));
 	}
 }

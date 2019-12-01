@@ -19,12 +19,13 @@ private:
 	void assert_valid_attachments_size(int size);
 	void send_plain(const std::string& string);
 	void send_with_attachment_payload(std::string&& string);
-	void send_attachment(const Result_set::row_type& attachment_entry);
+	void send_attachment(const std::string& file_name);
+	void move_attachments_file_names(Result_set&& attachments);
 
 	Socket socket_;
 	Result_set events_;
 	Result_set attachments_;
-	Result_set sequenced_attachments_;
+	std::vector<std::string> sequenced_attachments_;
 	std::string on_success_message_;
 	std::string on_failure_message_;
 };

@@ -80,6 +80,10 @@ const Result_set::row_type& Result_set::get_row(size_t index) const {
 	return data_[index];
 }
 
+Result_set::row_type& Result_set::get_row(size_t index) {
+	return data_[index];
+}
+
 void Result_set::set_last_row_id(std::string id){
 	last_row_id_ = id;
 }
