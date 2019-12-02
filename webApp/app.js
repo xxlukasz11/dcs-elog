@@ -5,6 +5,7 @@ let app = angular.module('DCS', []).run(function ($rootScope, logger) {
 app.config([
 	'$compileProvider',
 	function ($compileProvider) {
+		// to allow data URI in link address
 		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|data):/);
 	}
 ]);
@@ -28,7 +29,7 @@ app.service('sender', function ($http, host) {
 			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
 			data: {
 				date: new Date().getTime(),
-				content: JSON.stringify(parameter_object)
+				content: parameter_object
 			}
 		});
 	}

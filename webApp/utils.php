@@ -1,9 +1,8 @@
 <?php
 
 function decode_input_message() {
-	$post_message = json_decode(file_get_contents('php://input'), true);
-	$params = json_decode($post_message["content"]);
-	return $params;
+	$post_message = json_decode(file_get_contents('php://input'), false);
+	return $post_message->content;
 }
 
 function send_attachments($socket, $params) {
