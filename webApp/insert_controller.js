@@ -25,6 +25,10 @@ class Attachment {
 		this.name = name;
 		this.type = type;
 		this.payload = payload;
+
+		if (!type) {
+			this.type = "text/plain";
+		}
 	}
 }
 
