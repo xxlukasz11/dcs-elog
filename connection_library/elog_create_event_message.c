@@ -67,6 +67,9 @@ void append_header_section(Elog_create_event_message* message, const Elog_event*
 	append_string_length(message, &(event->tags));
 	append_space(message);
 	append_string_length(message, &(event->author));
+	append_space(message);
+	//attachments
+	append_number(message, 0);
 	close_section(message);
 }
 
@@ -85,6 +88,10 @@ void append_body_sections(Elog_create_event_message* message, const Elog_event* 
 
 	open_section(message);
 	append_string(message, &(event->author));
+	close_section(message);
+
+	// attachments
+	open_section(message);
 	close_section(message);
 }
 
