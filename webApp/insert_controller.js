@@ -123,18 +123,23 @@ app.controller('insert_data', function ($scope, sender, logger) {
 		};
 	}
 
-	$scope.send_insert_request = function () {
+	$scope.send_insert_request = function ($event) {
 		if (!$scope.check_all_files_loaded()) {
 			logger.get_log().error("Cannot add event. Somme attachments are still loading.");
 			return;
 		}
 
+		const button_handler = new Button_load_handler($event.target);
+		button_handler.animate();
+
 		sender.send("insert.php", $scope.pack_parameters()).then(
 		function (response) {
 			logger.get_log().data(response.data);
 			$scope.reset_fields();
+			button_handler.reset();
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
+			button_handler.reset();
 		});
 	}
 });

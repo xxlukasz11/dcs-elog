@@ -31,7 +31,10 @@ app.controller('select_data', function ($scope, sender, logger) {
 		manager.display_mode();
 	}
 
-	$scope.update_event = function(event, event_id) {
+	$scope.update_event = function (event, event_id) {
+		const button_handler = new Button_load_handler(event.target);
+		button_handler.animate();
+
 		const manager = new Update_event_manager(event.target);
 		const parameter_object = {
 			id: event_id,
@@ -39,31 +42,45 @@ app.controller('select_data', function ($scope, sender, logger) {
 			tags: manager.get_tags_from_input(),
 			description: encode_line_breaks(manager.get_description_from_input())
 		}
-		logger.get_console().log_message("UPDATE EVENT", parameter_object)
-		manager.display_mode();
-		$scope.send_update_request(parameter_object);
+		$scope.send_update_request(parameter_object, button_handler, manager);
 	}
 
-	$scope.send_update_request = function (parameter_object) {
+	$scope.send_update_request = function (parameter_object, button_handler, update_event_manager) {
 		sender.send("update_event.php", parameter_object).then(
 		function (response) {
-			$scope.send_select_request();
+			update_event_manager.display_mode();
+			$scope.trigger_load_events();
 			logger.get_log().event(response.data.message);
+			button_handler.reset();
 		}, function (response) {
 			logger.get_log().error(read_error_msg(response));
+			button_handler.reset();
 		});
 	}
 
-    $scope.send_select_request = function () {
+	$scope.load_events = function ($event) {
+		const button_handler = new Button_load_handler($event.target);
+		button_handler.animate();
+		$scope.send_select_request(button_handler);
+	}
+
+	$scope.trigger_load_events = function () {
+		const button_handler = new Button_load_handler();
+		$scope.send_select_request(button_handler);
+	}
+
+	$scope.send_select_request = function (button_handler) {
     	sender.send("select.php", getParams()).then(
 		function (response) {
 			const response_data = response.data;
 			logger.get_log().data(response_data);
 			$scope.table_data = response_data.data;
+			button_handler.reset();
         }, function (response) {
         	logger.get_log().error(read_error_msg(response));
+        	button_handler.reset();
         });
-    }
+	}
 
     $scope.sort_order = false;
 
