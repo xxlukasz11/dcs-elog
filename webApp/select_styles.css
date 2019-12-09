@@ -68,3 +68,18 @@
 .attachment_list {
 	padding: 5px 5px 0px 0px;
 }
+
+.miniature_container {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	height: 100px;
+	width: 100px;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+.miniature_max_size {
+	max-height: 100%;
+	max-width: 100%;
+}

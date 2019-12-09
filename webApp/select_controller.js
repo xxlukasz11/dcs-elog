@@ -31,6 +31,10 @@ app.controller('select_data', function ($scope, sender, logger) {
 		manager.display_mode();
 	}
 
+	$scope.is_image_type = function (type) {
+		return type.includes('image');
+	}
+
 	$scope.update_event = function (event, event_id) {
 		const button_handler = new Button_load_handler(event.target);
 		button_handler.animate();

@@ -82,8 +82,13 @@
 										<button ng-click="show_edit_view($event)">Edit</button>
 									</div>
 								</div>
-								<div class="attachment_list" ng-repeat="att in x.Attachments">
-									<a href="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}">{{ att.Name }}</a>
+								<div class="attachment_list">
+									<div class="miniature_container" ng-repeat="att in x.Attachments">
+										<a class="miniature_max_size" href="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}">
+											<img ng-if="is_image_type(att.Type)" class="miniature_max_size" src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
+											<span ng-if="!is_image_type(att.Type)">{{ att.Name }}</span>
+										</a>
+									</div>
 								</div>
 							</td>
 						</tr>
