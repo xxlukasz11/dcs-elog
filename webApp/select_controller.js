@@ -35,6 +35,18 @@ app.controller('select_data', function ($scope, sender, logger) {
 		return type.includes('image');
 	}
 
+	$scope.open_attachment_in_new_tab = function (payload, type) {
+		const byteCharacters = atob(payload);
+		const byteNumbers = new Array(byteCharacters.length);
+		for (var i = 0; i < byteCharacters.length; i++) {
+			byteNumbers[i] = byteCharacters.charCodeAt(i);
+		}
+		var byteArray = new Uint8Array(byteNumbers);
+		var blob = new Blob([byteArray], { type: type + ';base64' });
+		var url = URL.createObjectURL(blob);
+		window.open(url);
+	}
+
 	$scope.update_event = function (event, event_id) {
 		const button_handler = new Button_load_handler(event.target);
 		button_handler.animate();

@@ -1,4 +1,6 @@
-let app = angular.module('DCS', []).run(function ($rootScope, logger) {
+const ATTACHMENT_NAME_LIMIT = 15;
+
+const app = angular.module('DCS_ELOG', []).run(function ($rootScope, logger) {
 	$rootScope.event_log = logger.get_log();
 });
 
@@ -16,9 +18,19 @@ app.filter('replace_line_breaks', function () {
 	};
 });
 
-// remote server
-//app.value("host", "http://lukboz.000webhostapp.com/");
-// localhost
+app.filter('limit_attachment_name', function () {
+	return function (name) {
+		if (name.length > ATTACHMENT_NAME_LIMIT) {
+			return name.substr(0, ATTACHMENT_NAME_LIMIT) + "...";
+		}
+		else {
+			return name;
+		}
+	}
+});
+
+
+// address and location of php handlers
 app.value("host", "");
 
 app.service('sender', function ($http, host) {

@@ -23,7 +23,7 @@
 			</ul>
 		</div>
 
-		<div id="app_container" ng-app="DCS">
+		<div id="app_container" ng-app="DCS_ELOG">
 
 			<div id="select_tab" class="tab" ng-controller="select_data">
 				<div class="input_wrapper">
@@ -53,7 +53,7 @@
 					<tbody class="table_body" ng-repeat="x in table_data | orderBy:active_th:sort_order">
 						<tr class="event_info">
 							<td class="event_id">{{ x.Id }}</td>
-							<td class="event_date">{{ x.Date }}</td>
+							<td class="event_date cell_fit_content">{{ x.Date }}</td>
 							<td class="event_title">
 								<span class="display_view">{{ x.Title }}</span>
 								<input type="text" class="edit_view hidden" value="{{ x.Title }}" />
@@ -63,7 +63,7 @@
 								<input type="text" class="edit_view hidden" value="{{ x.Tags }}" />
 							</td>
 							<td class="event_author">{{ x.Author }}</td>
-							<td>
+							<td class="details_cell">
 								<input class="details_button" type="button" value="deltails" ng-click="toggle_description($event)" />
 							</td>
 						</tr>
@@ -83,11 +83,12 @@
 									</div>
 								</div>
 								<div class="attachment_list">
-									<div class="miniature_container" ng-repeat="att in x.Attachments">
-										<a class="miniature_max_size" href="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}">
-											<img ng-if="is_image_type(att.Type)" class="miniature_max_size" src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
-											<span ng-if="!is_image_type(att.Type)">{{ att.Name }}</span>
-										</a>
+									<div class="miniature_wrapper" ng-repeat="att in x.Attachments">
+										<div class="miniature_container" ng-click="open_attachment_in_new_tab(att.Payload, att.Type)" title="{{ att.Name }}">
+											<img ng-if="is_image_type(att.Type)" class="miniature_max_size"
+												 src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
+											<span ng-if="!is_image_type(att.Type)" class="miniature_max_size">{{ att.Name | limit_attachment_name }}</span>
+										</div>
 									</div>
 								</div>
 							</td>

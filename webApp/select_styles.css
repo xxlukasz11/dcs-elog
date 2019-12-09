@@ -9,6 +9,7 @@
 #select_tab table {
 	margin-top: 20px;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 #select_tab td, th {
@@ -76,10 +77,25 @@
 	height: 100px;
 	width: 100px;
 	border: 1px solid black;
-	border-radius: 5px;
+	cursor: pointer;
+	word-break: break-all;
+}
+
+.miniature_wrapper {
+	float: left;
+	margin: 1px;
 }
 
 .miniature_max_size {
 	max-height: 100%;
 	max-width: 100%;
+}
+
+.details_cell {
+	width: 100px;
+}
+
+.cell_fit_content {
+	width: 1%;
+	white-space: nowrap;
 }
