@@ -5,7 +5,7 @@
 #include "custom_exceptions.h"
 #include "administrator.h"
 #include "website_response.h"
-#include "base64.h"
+#include "base64_encoder.h"
 #include <utility>
 #include <string>
 #include <fstream>
@@ -152,7 +152,7 @@ void Attachment_handler_tx::send_attachment(const std::string& file_name) {
 	Logger::create().context(socket_).level(Log_level::ALL).info("Sending " + attachment_path);
 	std::ifstream file(attachment_path, std::ios::binary);
 	
-	Base64 encoder;
+	Base64_encoder encoder;
 	std::vector<unsigned char> buffer;
 	while (true) {
 		size_t bytes_to_sent = fill_buffer(file, buffer, TX_BUFFER_SIZE);

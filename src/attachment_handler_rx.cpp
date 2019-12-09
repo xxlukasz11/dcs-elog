@@ -4,7 +4,7 @@
 #include <cstdio>
 #include "attachment_handler_rx.h"
 #include "logger.h"
-#include "base64.h"
+#include "base64_encoder.h"
 #include "file_name_parser.h"
 #include "custom_exceptions.h"
 #include "administrator.h"
@@ -36,7 +36,7 @@ void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& a
 	auto file_size = receive_attachment_size();
 	log_incoming_attachment_info(attachment_info, file_size);
 
-	Base64 base64;
+	Base64_encoder encoder;
 	int bytes_received = 0;
 	int binary_file_size = 0;
 	std::ofstream file = create_unique_file(attachment_info);
@@ -45,7 +45,7 @@ void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& a
 		int current_buffer_size = std::min(RX_BUFFER_SIZE, file_size - bytes_received);
 		socket_.fill_buffer(buffer, current_buffer_size);
 		bytes_received += current_buffer_size;
-		auto decoded = base64.decode(buffer, current_buffer_size);
+		auto decoded = encoder.decode(buffer, current_buffer_size);
 		binary_file_size += decoded.size();
 		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
 	}

@@ -1,5 +1,5 @@
 #include <string>
-#include "base64.h"
+#include "base64_encoder.h"
 
 static const std::string chars =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -13,7 +13,7 @@ constexpr unsigned char LAST_FOUR = 0x0f;
 constexpr unsigned char FIRST_SIX = 0xfc;
 constexpr unsigned char LAST_SIX = 0x3f;
 
-Base64::Byte_buffer_t Base64::encode(const Byte_buffer_t& buffer) {
+Base64_encoder::Byte_buffer_t Base64_encoder::encode(const Byte_buffer_t& buffer) {
 	auto n = buffer.size();
 	if (n == 0) {
 		return {};
@@ -53,7 +53,7 @@ Base64::Byte_buffer_t Base64::encode(const Byte_buffer_t& buffer) {
 	return encoded_buffer;
 }
 
-Base64::Byte_buffer_t Base64::decode(const Byte_buffer_t& buffer, size_t buffer_size) {
+Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer, size_t buffer_size) {
 	if (buffer_size == 0) {
 		return {};
 	}
@@ -90,6 +90,6 @@ Base64::Byte_buffer_t Base64::decode(const Byte_buffer_t& buffer, size_t buffer_
 	return decoded_buffer;
 }
 
-Base64::Byte_buffer_t Base64::decode(const Byte_buffer_t& buffer) {
+Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer) {
 	return decode(buffer, buffer.size());
 }
