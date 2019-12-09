@@ -17,6 +17,7 @@ Logbook for NA61/SHINE experiment
 - enter it, and type: `cmake ..`
 - If you ommited step 2, add NOSQLITE flag: `-DNOSQLITE=True`. CMake will then link against your system sqlite3 library
 - If you want to build project without unit tests, add NOTESTS flag: `-DNOTESTS=True`
+- Build command: `make -j 4`
 
 ### 4. Run
 - Execute `scripts/start_elog.sh`
@@ -25,4 +26,4 @@ Logbook for NA61/SHINE experiment
 
 To stop, execute: `scripts/elog_stop.sh`
 
-Log file appears in `scripts/` directory
+Behaviour of the program can be adjusted by editing parameter file: `resources/parameters.conf`
