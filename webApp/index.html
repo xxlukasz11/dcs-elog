@@ -83,8 +83,9 @@
 									</div>
 								</div>
 								<div class="attachment_list">
-									<div class="miniature_wrapper" ng-repeat="att in x.Attachments">
+									<div class="miniature_wrapper noselect" ng-repeat="att in x.Attachments">
 										<div class="miniature_container" ng-click="open_attachment_in_new_tab(att.Payload, att.Type)" title="{{ att.Name }}">
+											<span class="close_button" ng-click="remove_attachment($event, x.Id, att.Id)">X</span>
 											<img ng-if="is_image_type(att.Type)" class="miniature_max_size"
 												 src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
 											<span ng-if="!is_image_type(att.Type)" class="miniature_max_size">{{ att.Name | limit_attachment_name }}</span>

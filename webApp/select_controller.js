@@ -35,6 +35,18 @@ app.controller('select_data', function ($scope, sender, logger) {
 		return type.includes('image');
 	}
 
+	$scope.disable_bubble_event = function($event) {
+		if ($event.stopPropagation) $event.stopPropagation();
+		if ($event.preventDefault) $event.preventDefault();
+		$event.cancelBubble = true;
+		$event.returnValue = false;
+	}
+
+	$scope.remove_attachment = function ($event, event_id, attachment_id) {
+		$scope.disable_bubble_event($event);
+		console.log("Event id: " + event_id + " Attachment id: " + attachment_id);
+	}
+
 	$scope.open_attachment_in_new_tab = function (payload, type) {
 		const byteCharacters = atob(payload);
 		const byteNumbers = new Array(byteCharacters.length);
