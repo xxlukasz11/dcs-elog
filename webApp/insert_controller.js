@@ -43,12 +43,19 @@ app.controller('insert_data', function ($scope, sender, logger) {
 	$scope.append_file = function () {
 		const file_input = document.createElement('input');
 		file_input.type = "file";
-		file_input.onchange = $scope.load_file;
+		file_input.onchange = $scope.load_files;
+		file_input.multiple = true;
 		file_input.click();
 	}
 
-	$scope.load_file = function () {
-		const file = this.files[0];
+	$scope.load_files = function () {
+		const file_list = this.files;
+		for(let file of file_list) {
+			$scope.load_single_file(file);
+		}
+	}
+
+	$scope.load_single_file = function (file) {
 		const attachment = new Attachment_item(file.name, file.type);
 		$scope.file_list.push(attachment);
 		$scope.$apply();
