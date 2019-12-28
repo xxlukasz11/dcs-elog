@@ -37,6 +37,7 @@ void Connection_handler::handle_connection() {
 		Logger::create().context(socket_).level(Log_level::WARNING).error("Error while setting recieve timeout opt");
 		return;
 	}
+	socket_.set_no_signal();
 	recieve_data_from_socket();
 }
 
@@ -52,5 +53,8 @@ void Connection_handler::recieve_data_from_socket() {
 	}
 	catch (const Client_disconnected_error& e) {
 		Logger::create().context(socket_).level(Log_level::WARNING).warning(e.what());
+	}
+	catch (const Send_error& e) {
+		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
 	}
 }

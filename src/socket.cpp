@@ -33,6 +33,12 @@ int Socket::set_to_nonblock_mode() {
 	return ::fcntl(socket_descriptor_, F_SETFL, O_NONBLOCK);
 }
 
+// disable SIGPIPE signal
+void Socket::set_no_signal() {
+	send_flags_ |= MSG_NOSIGNAL;
+	recv_flags_ |= MSG_NOSIGNAL;
+}
+
 int Socket::bind(Addr_in_wrapper& config) {
 	sockaddr_in& addr_in = config.unwrap();
 	return ::bind(socket_descriptor_, (struct sockaddr*) &addr_in, sizeof(addr_in));
@@ -77,7 +83,7 @@ std::string Socket::recv_string() {
 	while (total_bytes_read < length) {
 		int current_buffer_size = std::min(message_length_, length - total_bytes_read);
 		recv_buffer.resize(current_buffer_size + 1);
-		int bytes_read = safe_recv(recv_buffer.data(), current_buffer_size, 0);
+		int bytes_read = safe_recv(recv_buffer.data(), current_buffer_size);
 
 		total_bytes_read += bytes_read;
 		recv_buffer[bytes_read] = '\0';
@@ -95,7 +101,7 @@ void Socket::send_string(const std::string& msg) {
 	while (total_bytes_sent < length) {
 		int remaining_bytes = length - total_bytes_sent;
 		int packet_size = (max_buffer_size < remaining_bytes) ? max_buffer_size : remaining_bytes;
-		int bytes_sent = send(socket_descriptor_, buffer + total_bytes_sent, packet_size, 0);
+		int bytes_sent = safe_send(buffer + total_bytes_sent, packet_size);
 
 		if (bytes_sent <= 0) {
 			throw Send_error();
@@ -133,8 +139,8 @@ timeval Socket::create_time_val(int seconds, int u_seconds) {
 	return timeval { seconds, u_seconds };
 }
 
-int Socket::safe_recv(void * buffer, size_t size, int flags) {
-	int bytes_read = recv(socket_descriptor_, buffer, size, flags);
+int Socket::safe_recv(void * buffer, size_t size) {
+	int bytes_read = recv(socket_descriptor_, buffer, size, recv_flags_);
 
 	if (bytes_read == 0) {
 		throw Client_disconnected_error();
@@ -144,6 +150,16 @@ int Socket::safe_recv(void * buffer, size_t size, int flags) {
 	}
 
 	return bytes_read;
+}
+
+int Socket::safe_send(const void* buffer, size_t size) {
+	int bytes_sent = send(socket_descriptor_, buffer, size, send_flags_);
+
+	if (bytes_sent <= 0) {
+		throw Send_error();
+	}
+
+	return bytes_sent;
 }
 
 Socket::Addr_in_wrapper::Addr_in_wrapper() {

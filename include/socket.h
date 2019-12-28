@@ -7,6 +7,8 @@
 class Socket {
 	int socket_descriptor_;
 	int message_length_{ 1024 };
+	int send_flags_{ 0 };
+	int recv_flags_{ 0 };
 
 public:
 	enum class Domain { IPV4 = AF_INET };
@@ -32,6 +34,7 @@ public:
 	int set_sock_opt(int property, int value);
 	int set_reuse_address();
 	int set_to_nonblock_mode();
+	void set_no_signal();
 	int bind(Addr_in_wrapper& config);
 	int listen(int max_no_of_connections);
 	int set_recieve_timeout(int seconds, int u_seconds);
@@ -64,13 +67,14 @@ public:
 
 private:
 	timeval create_time_val(int seconds, int u_seconds);
-	int safe_recv(void* buffer, size_t size, int flags);
+	int safe_recv(void* buffer, size_t size);
+	int safe_send(const void* buffer, size_t size);
 };
 
 template<typename T>
 inline T Socket::receive() {
 	T buffer;
-	safe_recv(&buffer, sizeof(buffer), 0);
+	safe_recv(&buffer, sizeof(buffer));
 	return buffer;
 }
 
@@ -78,7 +82,7 @@ template<typename Buffer_t>
 inline void Socket::fill_buffer(Buffer_t& buffer, size_t bytes_to_fill) {
 	int received = 0;
 	while (received < bytes_to_fill) {
-		received += safe_recv(&buffer[received], bytes_to_fill - received, 0);
+		received += safe_recv(&buffer[received], bytes_to_fill - received);
 	}
 }
 
@@ -87,7 +91,7 @@ inline void Socket::send_buffer(Buffer_t& buffer) {
 	int size = buffer.size();
 	int sent = 0;
 	while (sent < size) {
-		int written = send(socket_descriptor_, &buffer[sent], size - sent, 0);
+		int written = safe_send(&buffer[sent], size - sent);
 		sent += written;
 	}
 }
