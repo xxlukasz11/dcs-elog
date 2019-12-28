@@ -50,15 +50,14 @@ void Attachment_handler_rx::receive_and_save_attachment(const Attachment_info& a
 		file.write(reinterpret_cast<const char*>(decoded.data()), decoded.size());
 	}
 	file.close();
-	Logger::create().context(socket_).level(Log_level::INFO).info("File " + attachment_info.get_name() +
-		" successfully received. Saved file size: " + std::to_string(binary_file_size) + " bytes");
+	log_successfull_attachent_reception(attachment_info.get_name(), binary_file_size);
 }
 
 void Attachment_handler_rx::delete_attachments_from_disc() {
 	std::string storage_path = Administrator::instance().params().get_attachment_storage_path();
 	for (const auto& attachment : attachment_array_) {
 		std::string file_path = storage_path + attachment.get_file_name();
-		auto status = remove(file_path.c_str());
+		int status = ::remove(file_path.c_str());
 		if (status != 0) {
 			Logger::create().context(socket_).level(Log_level::WARNING).warning("Failed to remove file: " +
 				attachment.get_file_name() + " aka " + attachment.get_name());
@@ -111,4 +110,9 @@ int Attachment_handler_rx::receive_attachment_size() {
 void Attachment_handler_rx::log_incoming_attachment_info(const Attachment_info& attachment_info, int file_size) {
 	Logger::create().context(socket_).level(Log_level::ALL).info("Receiving " + attachment_info.get_name() +
 		" of type: " + attachment_info.get_type() + " - size: " + std::to_string(file_size) + " bytes");
+}
+
+void Attachment_handler_rx::log_successfull_attachent_reception(const std::string& attachment_name, int binary_size) {
+	Logger::create().context(socket_).level(Log_level::INFO).info("File " + attachment_name +
+		" successfully received. Saved file size: " + std::to_string(binary_size) + " bytes");
 }

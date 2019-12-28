@@ -23,6 +23,7 @@ private:
 	std::string create_unique_file_name(const std::string& file_name);
 	int receive_attachment_size();
 	void log_incoming_attachment_info(const Attachment_info& attachment_info, int file_size);
+	void log_successfull_attachent_reception(const std::string& attachment_name, int binary_size);
 
 	static std::atomic<unsigned long> attachment_control_index_;
 	Attachment_database_info_array attachment_array_;

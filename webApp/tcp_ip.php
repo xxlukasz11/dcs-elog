@@ -17,10 +17,7 @@ function create_server_connection() {
 	//error_reporting(E_ALL);
 	//release
 	error_reporting(E_ERROR);
-	
-	// remote server
-	//$server_address = "194.29.174.79";
-	// localhost
+
 	$server_address = "127.0.0.1";
 	$server_port = 9100;
 
