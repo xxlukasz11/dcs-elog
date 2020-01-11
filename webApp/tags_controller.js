@@ -45,7 +45,7 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 			$scope.trigger_load_tags();
 			button_handler.reset();
 		}, function (response) {
-			logger.get_log().error("Cannot add '" + tag_name + "' tag");
+			logger.get_log().error(read_error_msg(response));
 			button_handler.reset();
 		});
 	}
@@ -61,7 +61,7 @@ app.controller('edit_tags', function ($scope, sender, logger) {
 			$scope.trigger_load_tags();
 			button_handler.reset();
 		}, function (response) {
-			logger.get_log().error("Cannot delete '" + tag_name_ + "' tag");
+			logger.get_log().error(read_error_msg(response));
 			button_handler.reset();
 		});
 	}
