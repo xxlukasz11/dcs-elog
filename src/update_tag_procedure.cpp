@@ -28,27 +28,34 @@ Update_tag_query Update_tag_procedure::prepare_query() const {
 
 void Update_tag_procedure::update_tag(const Update_tag_query& query) {
 	Prepared_statement select_stmt = query.create_select_tag_statement();
+	Prepared_statement select_new_tag_stmt = query.create_select_new_tag_statement();
 	Prepared_statement update_stmt = query.create_update_statement();
 	Database::Accessor accessor(database_);
 	accessor.open();
 
 	Result_set tag_exists_result = database_.execute(select_stmt);
 	bool tag_exists = tag_exists_result.has_records();
-
-	if (tag_exists) {
-		auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
-		std::string old_tag_name = tag_exists_result.get_first_field();
-		if (old_tag_name != empty_tag_name) {
-			Database::Transaction transaction(database_);
-			database_.execute(update_stmt);
-			transaction.commit();
-			response_.set_success("Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'");
-		}
-		else {
-			response_.set_failure("Cannot update reserved tag: '" + empty_tag_name + "'");
-		}
-	}
-	else {
+	if (!tag_exists) {
 		response_.set_failure("Cannot update tag. It does not exist.");
+		return;
 	}
+
+	Result_set new_tag_exists_result = database_.execute(select_new_tag_stmt);
+	bool new_tag_exists = new_tag_exists_result.has_records();
+	if (new_tag_exists) {
+		response_.set_failure("Cannot update tag. Name '" + query.get_new_tag_name() +"' is already used.");
+		return;
+	}
+
+	auto empty_tag_name = Administrator::instance().params().get_empty_tag_name();
+	std::string old_tag_name = tag_exists_result.get_first_field();
+	if (old_tag_name == empty_tag_name) {
+		response_.set_failure("Cannot update reserved tag: '" + empty_tag_name + "'");
+		return;
+	}
+
+	Database::Transaction transaction(database_);
+	database_.execute(update_stmt);
+	transaction.commit();
+	response_.set_success("Tag name has been changed from '" + old_tag_name + "' to '" + query.get_tag_name() + "'");
 }
