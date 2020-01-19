@@ -1,10 +1,12 @@
 #include <string>
 #include "base64_encoder.h"
+#include "logger.h"
 
 static const std::string chars =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	"abcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
+static const char PADDING = '=';
 
 constexpr unsigned char FIRST_TWO = 0xc0;
 constexpr unsigned char LAST_TWO = 0x03;
@@ -13,7 +15,7 @@ constexpr unsigned char LAST_FOUR = 0x0f;
 constexpr unsigned char FIRST_SIX = 0xfc;
 constexpr unsigned char LAST_SIX = 0x3f;
 
-Base64_encoder::Byte_buffer_t Base64_encoder::encode(const Byte_buffer_t& buffer) {
+Base64_encoder::Byte_buffer_t Base64_encoder::encode(const Byte_buffer_t& buffer) const {
 	auto n = buffer.size();
 	if (n == 0) {
 		return {};
@@ -40,21 +42,21 @@ Base64_encoder::Byte_buffer_t Base64_encoder::encode(const Byte_buffer_t& buffer
 
 		if (padding == 1) {
 			encoded_buffer.push_back(chars[(buffer[index] & LAST_TWO) << 4]);
-			encoded_buffer.push_back('=');
-			encoded_buffer.push_back('=');
+			encoded_buffer.push_back(PADDING);
+			encoded_buffer.push_back(PADDING);
 		}
 		else if (padding == 2) {
 			encoded_buffer.push_back(chars[((buffer[index] & LAST_TWO) << 4) | ((buffer[index + 1] & FIRST_FOUR) >> 4)]);
 			encoded_buffer.push_back(chars[(buffer[index + 1] & LAST_FOUR) << 2]);
-			encoded_buffer.push_back('=');
+			encoded_buffer.push_back(PADDING);
 		}
 	}
 
 	return encoded_buffer;
 }
 
-Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer, size_t buffer_size) {
-	if (buffer_size == 0) {
+Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer, size_t buffer_size) const {
+	if (buffer_size == 0 || buffer_size % 4 != 0) {
 		return {};
 	}
 
@@ -90,6 +92,6 @@ Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer
 	return decoded_buffer;
 }
 
-Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer) {
+Base64_encoder::Byte_buffer_t Base64_encoder::decode(const Byte_buffer_t& buffer) const {
 	return decode(buffer, buffer.size());
 }
