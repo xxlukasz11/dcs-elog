@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <memory>
-#include "dcs_thread.h"
+#include "thread_base.h"
 
 class Thread_manager{
-	using Thread_element = std::shared_ptr<Dcs_thread>;
+	using Thread_element = std::shared_ptr<Thread_base>;
 	using Thread_list = std::vector<Thread_element>;
 public:
 	Thread_manager() = default;

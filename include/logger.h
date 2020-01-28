@@ -3,7 +3,7 @@
 
 #include <string>
 #include <chrono>
-#include "dcs_thread.h"
+#include "thread_base.h"
 #include "concurrent_queue.h"
 #include "log_event_provider.h"
 #include "log_item.h"
@@ -11,7 +11,7 @@
 #include "log_level.h"
 #include "file_stream.h"
 
-class Logger : public Dcs_thread {
+class Logger : public Thread_base {
 public:
 	using Timeout_t = std::chrono::seconds;
 

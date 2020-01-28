@@ -1,5 +1,6 @@
 #include <string>
 #include <memory>
+#include "thread_base.h"
 #include "tcp_server.h"
 #include "socket.h"
 #include "custom_exceptions.h"
@@ -14,7 +15,7 @@ namespace {
 }
 
 Connection_handler::Connection_handler(Socket_queue& queue, Database& database, const std::shared_ptr<Tcp_server>& server)
-	: Dcs_thread(), queue_(queue), database_(database), server_(server), socket_(Socket::Descriptor::INVALID) {
+	: Thread_base(), queue_(queue), database_(database), server_(server), socket_(Socket::Descriptor::INVALID) {
 }
 
 void Connection_handler::run() {

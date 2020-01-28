@@ -3,9 +3,9 @@
 
 #include <atomic>
 #include "concurrent_queue.h"
-#include "dcs_thread.h"
+#include "thread_base.h"
 
-class Tcp_server : public Dcs_thread {
+class Tcp_server : public Thread_base {
 public:
 	Tcp_server(Socket_queue& socket_queue);
 	virtual ~Tcp_server();

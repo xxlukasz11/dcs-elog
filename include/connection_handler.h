@@ -4,12 +4,12 @@
 #include "concurrent_queue.h"
 #include "database.h"
 #include "msg_parser.h"
-#include "dcs_thread.h"
+#include "thread_base.h"
 #include "socket.h"
 
 class Tcp_server;
 
-class Connection_handler : public Dcs_thread {
+class Connection_handler : public Thread_base {
 public:
 	Connection_handler(Socket_queue& queue, Database& database, const std::shared_ptr<Tcp_server>& server);
 
