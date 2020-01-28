@@ -1,0 +1,19 @@
+REQUIREMENTS
+cmake 2.8.9
+gcc 6.3
+
+BUILD INSTRUCTION
+Execute the following commands:
+mkdir build
+cd build
+cmake ..
+make -j 4
+
+START
+./scripts/start_elog.sh
+
+STOP
+./scripts/stop_elog.sh
+
+PARAMETER FILE
+/resources/parameters.conf
