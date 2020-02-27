@@ -22,6 +22,10 @@ Release/
 *.sln
 /tests/include
 /.leu
+out/
+CMakeSettings.json
+
+# log file
 scripts/log.txt
 
 storage/
