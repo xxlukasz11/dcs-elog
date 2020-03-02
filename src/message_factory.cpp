@@ -16,7 +16,7 @@ Message_factory::Message_factory(const std::string& message_string) : message_st
 
 std::shared_ptr<Message> Message_factory::create() const {
 	Msg_parser parser(message_string_);
-	auto message_type = extract_message_type(parser);
+	const auto message_type = extract_message_type(parser);
 	std::shared_ptr<Message> message = create_message(message_type);
 	read_message_contents(message, parser);
 	return message;
@@ -28,7 +28,7 @@ Message::Type Message_factory::extract_message_type(Msg_parser& parser) const {
 	} catch (const Msg_parser_exception& e) {
 		throw Unknown_message(e.what());
 	}
-	int parser_mode = parser.get_mode();
+	const int parser_mode = parser.get_mode();
 	return Message::int_to_message_type(parser_mode);
 }
 

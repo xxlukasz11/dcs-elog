@@ -21,7 +21,7 @@ int open_connection(Elog_error_code* error_code) {
 		.sin_port = htons(elog_port())
 	};
 
-	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	const int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1) {
 		*error_code = ELOG_CREATE_SOCKET_ERROR;
 		return -1;
@@ -68,7 +68,7 @@ void close_connection(int sockfd) {
 
 Elog_error_code send_event(const Elog_event* event) {
 	Elog_error_code error_code = ELOG_SUCCESS;
-	int sockfd = open_connection(&error_code);
+	const int sockfd = open_connection(&error_code);
 	if (error_code != ELOG_SUCCESS) {
 		return error_code;
 	}

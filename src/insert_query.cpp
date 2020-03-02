@@ -61,7 +61,7 @@ bool Insert_query::has_attachments() const {
 }
 
 Prepared_statement Insert_query::create_tags_exist_statement() const {
-	size_t n_of_tags = tags_.size();
+	const size_t n_of_tags = tags_.size();
 	if (n_of_tags == 0)
 		return Prepared_statement();
 
@@ -93,7 +93,7 @@ Prepared_statement Insert_query::create_tags_statement(const std::string& event_
 	Prepared_statement stmt{ sql::insert_tags_before };
 	stmt.add_param(event_id);
 
-	size_t n_tags = tags_.size();
+	const size_t n_tags = tags_.size();
 	for (size_t i = 0; i < n_tags; ++i) {
 		if (i != 0)
 			stmt += " OR ";

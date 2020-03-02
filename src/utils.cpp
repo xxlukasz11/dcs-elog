@@ -15,7 +15,7 @@ const std::string COMMA_SPACE_SEPARATOR = ", ";
 
 std::string concatenate_string_array(const String_array& array) {
 	std::string text;
-	size_t array_size = array.size();
+	const size_t array_size = array.size();
 	for (size_t i = 0; i < array_size; ++i) {
 		text += array[i];
 		if (i != array_size - 1)
@@ -33,18 +33,18 @@ String_array exclude_from_array(const String_array& base, const String_array& pa
 }
 
 std::string create_date_time_string(time_t time, const std::string& format) {
-	tm t_local = *std::localtime(&time);
+	const tm t_local = *std::localtime(&time);
 	std::ostringstream ss;
 	ss << std::put_time(&t_local, format.c_str());
 	return ss.str();
 }
 
 String_array string_to_vector(const std::string& string, const std::string& delimiter) {
-	auto delimiter_length = delimiter.size();
+	const auto delimiter_length = delimiter.size();
 	String_array vector;
 	size_t last_index = 0;
 	for (size_t index; (index = string.find(delimiter, last_index)) != std::string::npos;) {
-		std::string element = string.substr(last_index, index - last_index);
+		const std::string element = string.substr(last_index, index - last_index);
 		vector.push_back(element);
 		last_index = index + delimiter_length;
 	}
@@ -67,9 +67,9 @@ Pair_array string_to_pair_array(char pair_separator, std::string string) {
 	for (std::string pair_string; ss >> pair_string;) {
 		auto separator_index = pair_string.find(pair_separator);
 		if (separator_index != std::string::npos) {
-			auto size = pair_string.size();
-			auto first = pair_string.substr(0, separator_index);
-			auto second = pair_string.substr(separator_index + 1, size - separator_index);
+			const auto size = pair_string.size();
+			const auto first = pair_string.substr(0, separator_index);
+			const auto second = pair_string.substr(separator_index + 1, size - separator_index);
 			pair_array.emplace_back(first, second);
 		}
 	}
@@ -126,7 +126,7 @@ std::string create_list_string(const std::string& expression, int list_size) {
 		return {};
 	}
 
-	auto output_size = expression.size() * list_size + COMMA_SPACE_SEPARATOR.size() * (list_size - 1);
+	const auto output_size = expression.size() * list_size + COMMA_SPACE_SEPARATOR.size() * (list_size - 1);
 	std::string output;
 	output.reserve(output_size);
 	for (int i = 0; i < list_size; ++i) {

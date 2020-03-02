@@ -5,7 +5,7 @@
 #include "create_tag_procedure.h"
 
 void Create_tag_procedure::start() {
-	Add_tag_query query = prepare_query();
+	const Add_tag_query query = prepare_query();
 	create_tag(query);
 	log_response_message(response_);
 	send_response(std::move(response_));
@@ -27,20 +27,20 @@ Add_tag_query Create_tag_procedure::prepare_query() const {
 }
 
 void Create_tag_procedure::create_tag(const Add_tag_query& query) {
-	Prepared_statement tag_exists_statement = query.create_get_tag_id_statement();
-	Prepared_statement add_tag_statement = query.create_tag_statement();
+	const Prepared_statement tag_exists_statement = query.create_get_tag_id_statement();
+	const Prepared_statement add_tag_statement = query.create_tag_statement();
 
 	Database::Accessor accessor(database_);
 	accessor.open();
 
-	Result_set tag_exists_result = database_.execute(tag_exists_statement);
+	const Result_set tag_exists_result = database_.execute(tag_exists_statement);
 	if (tag_exists_result.has_records()) {
 		response_.set_failure("Tag '" + query.get_tag_name() + "' already exists");
 	}
 	else {
 		Database::Transaction transaction(database_);
-		Result_set res = database_.execute(add_tag_statement);
-		std::string last_id = res.get_last_row_id();
+		const Result_set res = database_.execute(add_tag_statement);
+		const std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tree_statement(last_id));
 		transaction.commit();
 		response_.set_success("Tag '" + query.get_tag_name() + "' has been created");

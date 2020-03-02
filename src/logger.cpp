@@ -52,7 +52,7 @@ void Logger::release() {
 */
 Log_entry Logger::create_log_entry(const Log_item& log_item) {
 	std::string date_time_string = utils::create_date_time_string(log_item.get_time(), LOG_DATE_FORMAT);
-	std::string entry_type = determine_entry_type(log_item);
+	const std::string entry_type = determine_entry_type(log_item);
 	std::string context;
 	if (log_item.has_context()) {
 		context = std::to_string(log_item.get_context()) + COLON_AND_SPACE;
@@ -73,7 +73,7 @@ Log_entry Logger::create_log_entry(const Log_item& log_item) {
 
 std::string Logger::determine_entry_type(const Log_item& log_item) {
 	using T = Log_item::Type;
-	auto item_type = log_item.get_type();
+	const auto item_type = log_item.get_type();
 
 	switch (item_type) {
 		case T::INFO: return "INFO";

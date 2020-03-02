@@ -20,7 +20,7 @@ Message_handler::Message_handler(Socket socket, Database& database) :
 
 void Message_handler::process_message(const std::string& message_string) {
 	try {
-		Message_factory factory(message_string);
+		const Message_factory factory(message_string);
 		auto internal_message = factory.create();
 		Logger::create().context(socket_).level(Log_level::INFO).info(internal_message);
 		handle(internal_message);
@@ -60,7 +60,7 @@ void Message_handler::handle(const std::shared_ptr<Message>& message) {
 
 std::unique_ptr<Procedure> Message_handler::create_procedure(const std::shared_ptr<Message>& message) {
 	using T = Message::Type;
-	auto message_type = message->get_message_type();
+	const auto message_type = message->get_message_type();
 
 	switch (message_type) {
 		case T::create_event:

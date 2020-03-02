@@ -44,7 +44,7 @@ void Connection_handler::handle_connection() {
 
 void Connection_handler::recieve_data_from_socket() {
 	try {
-		auto recv_msg = socket_.recv_string();
+		const auto recv_msg = socket_.recv_string();
 		Logger::create().context(socket_).level(Log_level::ALL).info("Recieved payload: " + recv_msg);
 		Message_handler handler(socket_, database_);
 		handler.process_message(recv_msg);

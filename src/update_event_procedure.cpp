@@ -5,8 +5,8 @@
 #include "update_event_procedure.h"
 
 void Update_event_procedure::start() {
-	Update_event_query update_query = prepare_update_query();
-	Insert_query insert_query = prepare_insert_query();
+	const Update_event_query update_query = prepare_update_query();
+	const Insert_query insert_query = prepare_insert_query();
 	run_main_procedure(update_query, insert_query);
 	log_response_message(response_);
 	send_response(std::move(response_));
@@ -36,11 +36,11 @@ Insert_query Update_event_procedure::prepare_insert_query() const {
 }
 
 void Update_event_procedure::run_main_procedure(const Update_event_query& update_query, const Insert_query& insert_query) {
-	Prepared_statement event_exists_stmt = update_query.create_event_exists_stmt();
-	Prepared_statement tags_exists_stmt = insert_query.create_tags_exist_statement();
-	Prepared_statement update_event_stmt = update_query.create_update_event_stmt();
-	Prepared_statement delete_event_tags_stmt = update_query.create_delete_event_tags_statement();
-	Prepared_statement insert_event_tags_stmt = insert_query.create_tags_statement(message_->get_event_id());
+	const Prepared_statement event_exists_stmt = update_query.create_event_exists_stmt();
+	const Prepared_statement tags_exists_stmt = insert_query.create_tags_exist_statement();
+	const Prepared_statement update_event_stmt = update_query.create_update_event_stmt();
+	const Prepared_statement delete_event_tags_stmt = update_query.create_delete_event_tags_statement();
+	const Prepared_statement insert_event_tags_stmt = insert_query.create_tags_statement(message_->get_event_id());
 
 	Database::Accessor accessor(database_);
 	accessor.open();
@@ -50,10 +50,10 @@ void Update_event_procedure::run_main_procedure(const Update_event_query& update
 		return;
 	}
 
-	auto not_existing_tags = load_not_existing_tags(tags_exists_stmt);
+	const auto not_existing_tags = load_not_existing_tags(tags_exists_stmt);
 	if (!not_existing_tags.empty()) {
-		std::string message = "Cannot update event. Following tags do not exist: ";
-		message += utils::concatenate_string_array(not_existing_tags);
+		const std::string message = "Cannot update event. Following tags do not exist: "
+			+ utils::concatenate_string_array(not_existing_tags);
 		response_.set_failure(message);
 		return;
 	}
@@ -70,12 +70,12 @@ void Update_event_procedure::run_main_procedure(const Update_event_query& update
 }
 
 bool Update_event_procedure::check_if_event_exists(const Prepared_statement& stmt) {
-	Result_set event_exists_result = database_.execute(stmt);
+	const Result_set event_exists_result = database_.execute(stmt);
 	bool has_event = event_exists_result.has_records();
 	return has_event;
 }
 
 std::vector<std::string> Update_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {
-	Result_set not_existing_tags = database_.execute(stmt);
+	const Result_set not_existing_tags = database_.execute(stmt);
 	return not_existing_tags.get_column(0);
 }

@@ -26,7 +26,7 @@ void Log_event_provider::info(const std::string& message) {
 }
 
 void Log_event_provider::info(const std::shared_ptr<Message>& message) {
-	std::string message_string = "Recieved " + message->name();
+	const std::string message_string = "Recieved " + message->name();
 	log_item_.set_message(Log_item::Type::INFO, message_string);
 	push_to_queue();
 }

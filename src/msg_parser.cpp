@@ -10,7 +10,7 @@ Msg_parser::Msg_parser(const std::string& msg) : msg_(msg) {
 }
 
 void Msg_parser::parse_header() {
-	std::string mode_str = raw_next();
+	const std::string mode_str = raw_next();
 	try {
 		mode_ = std::stoi(mode_str);
 	} catch (...) {
@@ -38,16 +38,16 @@ std::string Msg_parser::next() {
 	if (!has_next())
 		throw Msg_parser_exception("Cant obtain next chunk with index: ", current_chunk_);
 
-	auto x1 = msg_.find("[", position_);
-	auto x2 = msg_.find("]", x1 + chunks_sizes_[current_chunk_]);
+	const auto x1 = msg_.find("[", position_);
+	const auto x2 = msg_.find("]", x1 + chunks_sizes_[current_chunk_]);
 	position_ = x2;
 	++current_chunk_;
 	return msg_.substr(x1+1, x2-x1-1);
 }
 
 std::string Msg_parser::raw_next(){
-	auto x1 = msg_.find("[", position_);
-	auto x2 = msg_.find("]", x1);
+	const auto x1 = msg_.find("[", position_);
+	const auto x2 = msg_.find("]", x1);
 	position_ = x2;
 	return msg_.substr(x1+1, x2-x1-1);
 }

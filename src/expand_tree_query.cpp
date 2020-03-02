@@ -15,7 +15,7 @@ Expand_tree_query::Expand_tree_query(const std::vector<std::string>& tags_vector
 Prepared_statement Expand_tree_query::create_statement() {
 	Prepared_statement stmt(sql::before_tags);
 
-	int n = tags_.size();
+	const int n = tags_.size();
 	for (int i = 0; i < n; ++i) {
 		stmt += sql::tag_str;
 		if (i != n-1)

@@ -7,8 +7,8 @@ bool File_name_parser::parse(const std::string& file_name) {
 		return false;
 	}
 
-	auto last_dot_index = file_name.rfind('.');
-	auto last_slash_index = file_name.rfind('/');
+	const auto last_dot_index = file_name.rfind('.');
+	const auto last_slash_index = file_name.rfind('/');
 	bool has_extension = last_dot_index != std::string::npos
 		&& (last_slash_index == std::string::npos || last_slash_index < last_dot_index);
 

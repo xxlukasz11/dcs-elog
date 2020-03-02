@@ -47,20 +47,20 @@ void Create_library_event_procedure::leave_only_existing_tags(Insert_query& quer
 }
 
 void Create_library_event_procedure::run_main_procedure(Insert_query& query) {
-	Prepared_statement events_stmt = query.create_events_statement();
-	Prepared_statement exists_stmt = query.create_tags_exist_statement();
+	const Prepared_statement events_stmt = query.create_events_statement();
+	const Prepared_statement exists_stmt = query.create_tags_exist_statement();
 
 	Database::Accessor accessor(database_);
 	accessor.open();
 
-	auto not_existing_tags = load_not_existing_tags(exists_stmt);
+	const auto not_existing_tags = load_not_existing_tags(exists_stmt);
 	if (!not_existing_tags.empty()) {
 		leave_only_existing_tags(query, not_existing_tags);
 	}
 	
 	Database::Transaction transaction(database_);
-	Result_set res = database_.execute(events_stmt);
-	std::string last_id = res.get_last_row_id();
+	const Result_set res = database_.execute(events_stmt);
+	const std::string last_id = res.get_last_row_id();
 	database_.execute(query.create_tags_statement(last_id));
 	transaction.commit();
 	response_.set_success();
@@ -69,6 +69,6 @@ void Create_library_event_procedure::run_main_procedure(Insert_query& query) {
 }
 
 std::vector<std::string> Create_library_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {
-	Result_set not_existing_tags = database_.execute(stmt);
+	const Result_set not_existing_tags = database_.execute(stmt);
 	return not_existing_tags.get_column(0);
 }

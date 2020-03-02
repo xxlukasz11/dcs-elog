@@ -90,7 +90,7 @@ void Administrator::setup_server() {
 void Administrator::prepare_threads() {
 	thread_manager_.add_server(server_);
 
-	int number_of_consumers = parameters_.get_no_of_connection_handlers();
+	const int number_of_consumers = parameters_.get_no_of_connection_handlers();
 	for (int i = 0; i < number_of_consumers; ++i) {
 		thread_manager_.add_consumer(
 			std::make_shared<Connection_handler>(socket_queue_, *database_, server_));

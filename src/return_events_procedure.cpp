@@ -8,7 +8,7 @@
 static const std::string ON_SUCCESS_MESSAGE = "Successfully loaded events";
 
 void Return_events_procedure::start() {
-	auto query = prepare_query();
+	const auto query = prepare_query();
 	run_main_procedure(query);
 	attachment_handler_tx_.inject_payload_and_send();
 }
@@ -31,9 +31,9 @@ Select_query Return_events_procedure::prepare_query() const {
 }
 
 Result_set Return_events_procedure::load_attachments_info(const Select_query& query, const Result_set& events) {
-	auto event_ids = events.get_column(0);
+	const auto event_ids = events.get_column(0);
 	Prepared_statement attachment_stmt = query.create_attachments_statement(event_ids);
-	Result_set attachments = database_.execute(attachment_stmt);
+	const Result_set attachments = database_.execute(attachment_stmt);
 	return attachments;
 }
 
@@ -50,7 +50,7 @@ void Return_events_procedure::run_main_procedure(const Select_query& query) {
 }
 
 Result_set Return_events_procedure::load_events(const Select_query& query) {
-	auto stmt = query.create_statement();
-	Result_set events = database_.execute(stmt);
+	const auto stmt = query.create_statement();
+	const Result_set events = database_.execute(stmt);
 	return events;
 }

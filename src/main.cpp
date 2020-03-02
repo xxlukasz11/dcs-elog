@@ -11,7 +11,7 @@ Parameters load_parameters(const std::string& parameter_file_path) {
 }
 
 void assert_valid_no_of_args(int args_count) {
-	int expected_no_of_args = 1;
+	const int expected_no_of_args = 1;
 	if (args_count < expected_no_of_args + 1) {
 		std::cerr << "Wrong nmber of invocation arguments. Expected " << expected_no_of_args
 			<< " but " << args_count - 1 << " were provided\n";
@@ -27,7 +27,7 @@ const char* get_parameter_file(char** argv) {
 int main(int argc, char** argv){
 	assert_valid_no_of_args(argc);
 	try {
-		auto parameters = load_parameters(get_parameter_file(argv));
+		const auto parameters = load_parameters(get_parameter_file(argv));
 		Administrator::instance().initialize(parameters);
 		Administrator::instance().start();
 	} catch (const Base_exception& e) {

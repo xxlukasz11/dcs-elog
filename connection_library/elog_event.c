@@ -20,7 +20,7 @@ Elog_string create_elog_string(const char* value) {
 }
 
 Elog_event elog_create_event() {
-	Elog_event event = {
+	const Elog_event event = {
 		.title = create_empty_elog_string(),
 		.description = create_empty_elog_string(),
 		.tags = create_empty_elog_string(),

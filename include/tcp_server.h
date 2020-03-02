@@ -2,6 +2,7 @@
 #define _TCP_SERVER_H_
 
 #include <atomic>
+#include <cstdint>
 #include "concurrent_queue.h"
 #include "thread_base.h"
 
@@ -41,8 +42,8 @@ public:
 	void initialize();
 	void stop_and_release_consumers();
 
-	enum Constants {
-		DUMMY_SOCKET_ = -123456,
+	enum Constants : int {
+		DUMMY_SOCKET_ = -0xFFFFFFF
 	};
 
 private:

@@ -7,12 +7,12 @@
 static const std::string ON_SUCCESS_MESSAGE = "Tags tree has been loaded";
 
 void Return_tags_tree_procedure::start() {
-	Select_tags_query query;
-	auto stmt = query.create_sql();
+	const Select_tags_query query;
+	const auto stmt = query.create_sql();
 	Result_set tags_tree = load_tags_tree(stmt);
 
 	response_.set_success(ON_SUCCESS_MESSAGE);
-	response_.set_data(tags_tree);
+	response_.set_data(std::move(tags_tree));
 	log_response_message(response_);
 	send_response(std::move(response_));
 }

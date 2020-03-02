@@ -103,10 +103,10 @@ std::string Attachment_handler_tx::create_events_string() {
 	auto events_json = Json_stringifier::to_json_array(events_);
 	auto no_of_events = events_.data_size();
 	for (int i = 0; i < no_of_events; ++i) {
-		std::string event_id = events_.get_field(i, 0);
+		const std::string event_id = events_.get_field(i, 0);
 
 		Result_set filtered_attachments = filter_by_event_id(attachments_, event_id);
-		auto attachments_json = create_json_attachments_array(filtered_attachments);
+		const auto attachments_json = create_json_attachments_array(filtered_attachments);
 		move_attachments_file_names(std::move(filtered_attachments));
 
 		json::Object_ptr event_object = get_object(events_json, i);
@@ -135,8 +135,8 @@ void Attachment_handler_tx::send_plain(const std::string& string) {
 }
 
 void Attachment_handler_tx::send_with_attachment_payload(std::string&& string) {
-	std::vector<std::string> chunks = utils::string_to_vector(string, PAYLOAD_PLACEHOLDER);
-	auto no_of_chunks = chunks.size();
+	const std::vector<std::string> chunks = utils::string_to_vector(string, PAYLOAD_PLACEHOLDER);
+	const auto no_of_chunks = chunks.size();
 	assert_valid_attachments_size(no_of_chunks - 1);
 
 	for (size_t i = 0; i < no_of_chunks; ++i) {
@@ -148,11 +148,11 @@ void Attachment_handler_tx::send_with_attachment_payload(std::string&& string) {
 }
 
 void Attachment_handler_tx::send_attachment(const std::string& file_name) {
-	std::string attachment_path = create_attachment_path(file_name);
+	const std::string attachment_path = create_attachment_path(file_name);
 	Logger::create().context(socket_).level(Log_level::ALL).info("Sending " + attachment_path);
 	std::ifstream file(attachment_path, std::ios::binary);
 	
-	Base64_encoder encoder;
+	const Base64_encoder encoder;
 	std::vector<unsigned char> buffer;
 	while (true) {
 		size_t bytes_to_sent = fill_buffer(file, buffer, TX_BUFFER_SIZE);
@@ -166,7 +166,7 @@ void Attachment_handler_tx::send_attachment(const std::string& file_name) {
 }
 
 void Attachment_handler_tx::move_attachments_file_names(Result_set&& attachments) {
-	auto no_of_attachments = attachments.data_size();
+	const auto no_of_attachments = attachments.data_size();
 	for (size_t i = 0; i < no_of_attachments; ++i) {
 		auto& file_name = attachments.get_row(i)[column_index(Attachment_table::FILE_NAME)];
 		sequenced_attachments_.push_back(std::move(file_name));

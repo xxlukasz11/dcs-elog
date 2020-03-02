@@ -68,7 +68,7 @@ Prepared_statement Select_query::create_statement() const {
 	if(!or_conds.empty()) {
 		p_stmt += " WHERE ";
 
-		size_t n_or_conds = or_conds.size();
+		const size_t n_or_conds = or_conds.size();
 		if (n_or_conds > 1)
 			p_stmt += "(";
 		for (size_t i = 0; i < n_or_conds; ++i) {
@@ -86,7 +86,7 @@ Prepared_statement Select_query::create_statement() const {
 		p_stmt += " WHERE ";
 		if (and_conds.size() > 1)
 			p_stmt += "(";
-		size_t n_conds = and_conds.size();
+		const size_t n_conds = and_conds.size();
 		for (size_t i = 0; i < n_conds; ++i) {
 			p_stmt += and_conds[i];
 			if (i != n_conds - 1)

@@ -33,17 +33,17 @@ Insert_query Create_event_procedure::prepare_query() const {
 }
 
 void Create_event_procedure::run_main_procedure(Insert_query & query) {
-	Prepared_statement events_stmt = query.create_events_statement();
-	Prepared_statement exists_stmt = query.create_tags_exist_statement();
+	const Prepared_statement events_stmt = query.create_events_statement();
+	const Prepared_statement exists_stmt = query.create_tags_exist_statement();
 
 	Database::Accessor accessor(database_);
 	accessor.open();
 
-	auto not_existing_tags = load_not_existing_tags(exists_stmt);
+	const auto not_existing_tags = load_not_existing_tags(exists_stmt);
 	if (not_existing_tags.empty()) {
 		Database::Transaction transaction(database_);
-		Result_set res = database_.execute(events_stmt);
-		std::string last_id = res.get_last_row_id();
+		const Result_set res = database_.execute(events_stmt);
+		const std::string last_id = res.get_last_row_id();
 		database_.execute(query.create_tags_statement(last_id));
 		if (query.has_attachments()) {
 			database_.execute(query.create_attachments_statement(last_id));
@@ -59,17 +59,17 @@ void Create_event_procedure::run_main_procedure(Insert_query & query) {
 }
 
 void Create_event_procedure::yeld_success(const std::string& event_id) {
-	std::string message = "Event with id: " + event_id + " has been successfully saved";
+	const std::string message = "Event with id: " + event_id + " has been successfully saved";
 	response_.set_success(message);
 }
 
 void Create_event_procedure::yeld_missing_tags_error(const std::vector<std::string>& not_existing_tags) {
-	std::string message = "Cannot save event. Following tags do not exist: ";
-	message += utils::concatenate_string_array(not_existing_tags);
+	const std::string message = "Cannot save event. Following tags do not exist: "
+		+ utils::concatenate_string_array(not_existing_tags);
 	response_.set_failure(message);
 }
 
 std::vector<std::string> Create_event_procedure::load_not_existing_tags(const Prepared_statement& stmt) {
-	Result_set not_existing_tags = database_.execute(stmt);
+	const Result_set not_existing_tags = database_.execute(stmt);
 	return not_existing_tags.get_column(0);
 }
