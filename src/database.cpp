@@ -138,10 +138,10 @@ void Database::bind_params(sqlite3_stmt* stmt, const Prepared_statement::params_
 }
 
 void Database::insert_data(sqlite3_stmt* stmt, Result_set& result_set){
-	auto n = sqlite3_column_count( stmt );
-	std::vector<std::string> row(n);
+	const auto no_of_columns = sqlite3_column_count( stmt );
+	std::vector<std::string> row(no_of_columns);
 
-	for ( int i = 0; i < n; i++ ) {
+	for ( int i = 0; i < no_of_columns; i++ ) {
 		auto* col = sqlite3_column_text(stmt, i);
 		if(col != nullptr)
 			row[i] = (const char*)col;
