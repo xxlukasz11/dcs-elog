@@ -1,7 +1,26 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		id,
+		title,
+		description,
+		tags
+	}
+
+Creates EDIT_EVENT_REQUEST:
+	[6]
+	[...]
+	[id]
+	[title]
+	[description]
+	[tags]
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
+
 header("Access-Control-Allow-Methods: POST");
 header('Content-type: text/plain; charset=UTF-8');
 

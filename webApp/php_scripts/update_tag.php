@@ -1,7 +1,22 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		tag_id,
+		tag_name
+	}
+
+Creates UPDATE_TAG_REQUEST:
+	[5]
+	[...]
+	[tag_id]
+	[tag_name]
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
+
 header("Access-Control-Allow-Methods: POST");
 header('Content-type: text/plain; charset=UTF-8');
 

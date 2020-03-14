@@ -1,7 +1,24 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		min_date,
+		max_date,
+		tags
+	}
+
+Creates RETURN_EVENTS_REQUEST:
+	[1]
+	[...]
+	[min_date]
+	[max_date]
+	[tags]
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
+
 header("Access-Control-Allow-Methods: POST");
 header('Content-type: text/plain; charset=UTF-8');
 

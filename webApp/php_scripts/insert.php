@@ -1,13 +1,41 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		title : "",
+		description : "",
+		tags : "",
+		author : "",
+		attachments : [
+			{
+				name: "",
+				type: "",
+				payload: ""
+			}, ...
+		]
+	}
+
+Creates INSERT_EVENT_REQUEST:
+	[0]
+	[...]
+	[title]
+	[description]
+	[tags]
+	[author]
+	[attachment info]
+	
+	+ block of binary data (attachments)
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
+
 header("Access-Control-Allow-Methods: POST");
 header('Content-type: text/plain; charset=UTF-8');
 
 require_once("tcp_ip.php");
 require_once("utils.php");
-
 	
 // debug
 //$params = json_decode('{"title":"","description":"","tags":"","author":"","attachments":[{"name":"bit.txt","type":"text/plain","payload":"0123456789abcde"}]}');

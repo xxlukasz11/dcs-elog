@@ -1,7 +1,20 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		tag_id,
+	}
+
+Creates DELETE_TAG_REQUEST:
+	[4]
+	[...]
+	[tag_id]
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
+
 header("Access-Control-Allow-Methods: POST");
 header('Content-type: text/plain; charset=UTF-8');
 

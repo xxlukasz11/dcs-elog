@@ -1,5 +1,19 @@
 <?php
 
+/*
+Expects HTTP POST with fields:
+	content {
+		tag_name,
+		parent_id
+	}
+
+Creates ADD_TAG_REQUEST:
+	[3]
+	[...]
+	[tag_name]
+	[parent_id]
+*/
+
 // in order to run on localhost
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
