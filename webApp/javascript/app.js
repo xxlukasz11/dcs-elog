@@ -32,11 +32,12 @@ app.filter('limit_attachment_name', function () {
 
 // address and location of php handlers
 app.value("host", "");
+app.value("php_scripts_location", "php_scripts/");
 
-app.service('sender', function ($http, host) {
+app.service('sender', function ($http, host, php_scripts_location) {
 	this.send = function (destination, parameter_object) {
 		return $http({
-			url: host + destination,
+			url: host + php_scripts_location + destination,
 			method: "POST",
 			headers: { 'Content-Type': 'application/json; charset=UTF-8' },
 			data: {
