@@ -45,6 +45,7 @@ app.controller('select_data', function ($scope, sender, logger) {
 	$scope.remove_attachment = function ($event, event_id, attachment_id) {
 		$scope.disable_bubble_event($event);
 		console.log("Event id: " + event_id + " Attachment id: " + attachment_id);
+		// TODO
 	}
 
 	$scope.open_attachment_in_new_tab = function (payload, type) {

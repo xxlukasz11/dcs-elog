@@ -57,6 +57,10 @@
 	background-color: #9bd0ef;
 }
 
+.pages_cell {
+	text-align: center;
+}
+
 .description_input {
 	width: 100%;
 	height: 100px;

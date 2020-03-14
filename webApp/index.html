@@ -42,6 +42,7 @@
 				</div>
 
 				<table>
+					<tr><td class="pages_cell" colspan="6">Karty</td></tr>
 					<tr>
 						<th ng-click="order_by_th('Id')">Id</th>
 						<th ng-click="order_by_th('Date')">Date</th>
@@ -71,6 +72,16 @@
 							<td class="description_cell" colspan="6">
 								<div class="edit_view hidden">
 									<textarea class="description_input">{{ x.Description | replace_line_breaks }}</textarea>
+									<div class="attachment_list">
+										<div class="miniature_wrapper noselect" ng-repeat="att in x.Attachments">
+											<div class="miniature_container" ng-click="open_attachment_in_new_tab(att.Payload, att.Type)" title="{{ att.Name }}">
+												<span class="close_button" ng-click="remove_attachment($event, x.Id, att.Id)">X</span>
+												<img ng-if="is_image_type(att.Type)" class="miniature_max_size"
+													 src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
+												<span ng-if="!is_image_type(att.Type)" class="miniature_max_size">{{ att.Name | limit_attachment_name }}</span>
+											</div>
+										</div>
+									</div>
 									<div class="event_control">
 										<button ng-click="close_edit_view($event, x)">Cancel</button>
 										<button ng-click="update_event($event, x.Id)">OK</button>
@@ -78,18 +89,17 @@
 								</div>
 								<div class="display_view">
 									<div class="description_field">{{ x.Description | replace_line_breaks }}</div>
+									<div class="attachment_list">
+										<div class="miniature_wrapper noselect" ng-repeat="att in x.Attachments">
+											<div class="miniature_container" ng-click="open_attachment_in_new_tab(att.Payload, att.Type)" title="{{ att.Name }}">
+												<img ng-if="is_image_type(att.Type)" class="miniature_max_size"
+													 src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
+												<span ng-if="!is_image_type(att.Type)" class="miniature_max_size">{{ att.Name | limit_attachment_name }}</span>
+											</div>
+										</div>
+									</div>
 									<div class="event_control">
 										<button ng-click="show_edit_view($event)">Edit</button>
-									</div>
-								</div>
-								<div class="attachment_list">
-									<div class="miniature_wrapper noselect" ng-repeat="att in x.Attachments">
-										<div class="miniature_container" ng-click="open_attachment_in_new_tab(att.Payload, att.Type)" title="{{ att.Name }}">
-											<span class="close_button" ng-click="remove_attachment($event, x.Id, att.Id)">X</span>
-											<img ng-if="is_image_type(att.Type)" class="miniature_max_size"
-												 src="data:{{ att.Type }};base64,{{ att.Payload }}" alt="{{ att.Name }}" />
-											<span ng-if="!is_image_type(att.Type)" class="miniature_max_size">{{ att.Name | limit_attachment_name }}</span>
-										</div>
 									</div>
 								</div>
 							</td>
