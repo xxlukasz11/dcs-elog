@@ -5,7 +5,9 @@ Expects HTTP POST with fields:
 	content {
 		min_date,
 		max_date,
-		tags
+		tags,
+		limit,
+		offset
 	}
 
 Creates RETURN_EVENTS_REQUEST:
@@ -61,8 +63,14 @@ function prepare_message($params){
 	
 	$tags = $params->tags;
 	$tags_len = strlen($tags);
+
+	$limit = $params->limit;
+	$limit_len = strlen($limit);
+
+	$offset = $params->offset;
+	$offset_len = strlen($offset);
 	
-	$str = "[1][$min_date_len $max_date_len $tags_len 0 0][$min_date][$max_date][$tags][][]";
+	$str = "[1][$min_date_len $max_date_len $tags_len $limit_len $offset_len][$min_date][$max_date][$tags][$limit][$offset]";
 	return $str;
 }
 

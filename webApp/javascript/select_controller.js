@@ -1,12 +1,15 @@
 function getParams() {
-    let min_date_input = document.getElementById('min_date_input');
-    let max_date_input = document.getElementById('max_date_input');
-    let tags_input_value = read_lower_from_input('tags_input');
+    const min_date_input = document.getElementById('min_date_input');
+    const max_date_input = document.getElementById('max_date_input');
+    const tags_input_value = read_lower_from_input('tags_input');
+	const limit_select = document.getElementById('events_per_page_select');
 
     return {
         min_date: min_date_input.value,
         max_date: max_date_input.value,
-        tags: tags_input_value
+        tags: tags_input_value,
+		limit: limit_select.value,
+		offset: 0
     };
 }
 

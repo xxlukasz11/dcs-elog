@@ -42,7 +42,17 @@
 				</div>
 
 				<table>
-					<tr><td class="pages_cell" colspan="6">Placeholder for cards</td></tr>
+					<tr>
+						<td class="pages_cell" colspan="6">
+							<span>Events per page:</span>
+							<select id="events_per_page_select">
+								<option value="10">10</option>
+								<option value="20">20</option>
+								<option value="30">30</option>
+							</select>
+							<span>Placeholder for cards</span>
+						</td>
+					</tr>
 					<tr>
 						<th ng-click="order_by_th('Id')">Id</th>
 						<th ng-click="order_by_th('Date')">Date</th>
