@@ -14,6 +14,8 @@ Creates RETURN_EVENTS_REQUEST:
 	[min_date]
 	[max_date]
 	[tags]
+	[limit] (not supported yet)
+	[offset] (not supported yet)
 */
 
 // in order to run on localhost
@@ -60,7 +62,7 @@ function prepare_message($params){
 	$tags = $params->tags;
 	$tags_len = strlen($tags);
 	
-	$str = "[1][$min_date_len $max_date_len $tags_len][$min_date][$max_date][$tags]";
+	$str = "[1][$min_date_len $max_date_len $tags_len 0 0][$min_date][$max_date][$tags][][]";
 	return $str;
 }
 

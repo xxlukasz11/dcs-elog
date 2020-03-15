@@ -15,6 +15,7 @@ public:
 	template<typename T>
 	void add_params(const T& param_array);
 	Prepared_statement& operator+=(std::string query_part);
+	void set_end();
 
 	const std::string& get_sql() const;
 	const params_type& get_params() const;

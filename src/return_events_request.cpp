@@ -4,6 +4,8 @@ void Return_events_request::extract_parameters(Msg_parser& parser) {
 	min_date_ = parser.next();
 	max_date_ = parser.next();
 	tags_ = parser.next();
+	limit_ = parser.next();
+	offset_ = parser.next();
 }
 
 std::string Return_events_request::name() const {
@@ -24,4 +26,12 @@ const std::string& Return_events_request::get_max_date() const {
 
 const std::string& Return_events_request::get_tags() const {
 	return tags_;
+}
+
+const std::string& Return_events_request::get_limit() const {
+	return limit_;
+}
+
+const std::string& Return_events_request::get_offset() const {
+	return offset_;
 }

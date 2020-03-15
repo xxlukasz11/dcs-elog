@@ -12,10 +12,15 @@ public:
 	const std::string& get_min_date() const;
 	const std::string& get_max_date() const;
 	const std::string& get_tags() const;
+	const std::string& get_limit() const;
+	const std::string& get_offset() const;
+
 private:
 	std::string min_date_;
 	std::string max_date_;
 	std::string tags_;
+	std::string limit_;
+	std::string offset_;
 };
 
 #endif

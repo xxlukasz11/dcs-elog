@@ -12,7 +12,9 @@ const auto EVENT_IDS_PLACEHOLDER_LENGTH = EVENT_IDS_PLACEHOLDER.size();
 namespace sql {
 	const std::string before_tags_where = "SELECT Events.Id, datetime(Events.Date, 'unixepoch') AS Date, Events.Title AS Title, Events.Description AS Description, group_concat(Tags_list.Tag) AS Tags, Events.author AS Author FROM ( SELECT DISTINCT events.id FROM Events JOIN Tags_of_events ON Events.id = Tags_of_events.Event_id JOIN ( WITH RECURSIVE nodes(tag_id) AS ( SELECT Tags_tree.id FROM Tags_tree WHERE Tags_tree.id IN (SELECT id FROM Tags_list";
 	const std::string after_tags_where = ") UNION ALL SELECT Tags_tree.id FROM Tags_tree JOIN nodes ON Tags_tree.parent_id = nodes.tag_id) SELECT Tags_list.id AS id FROM Tags_list JOIN (SELECT DISTINCT tag_id FROM nodes) tmp_table ON tmp_table.tag_id = Tags_list.id) tags_ids ON Tags_of_events.Tag_id = tags_ids.id) sub JOIN Tags_of_events ON sub.Id = Tags_of_events.Event_id JOIN Tags_list ON Tags_of_events.Tag_id = Tags_list.id JOIN Events ON sub.Id = Events.Id";
-	const std::string after_date_where = " GROUP BY sub.Id ORDER BY Events.Date DESC;";
+	const std::string after_date_where = " GROUP BY sub.Id ORDER BY Events.Date DESC";
+	const std::string limit = " LIMIT ?";
+	const std::string offset = " OFFSET ?";
 	const std::string tag_sql = "Tags_list.tag = ?";
 	const std::string min_date_sql = "Events.Date >= strftime('%s', ?)";
 	const std::string max_date_sql = "Events.Date <= strftime('%s', ?)";
@@ -21,26 +23,34 @@ namespace sql {
 }
 }
 
-void Select_query::set_min_date(std::string date){
+void Select_query::set_min_date(const std::string& date){
 	if (!date.empty()) {
 		min_date_ = date;
 		min_date_is_set_ = true;
 	}
 }
 
-void Select_query::set_max_date(std::string date){
+void Select_query::set_max_date(const std::string& date){
 	if (!date.empty()) {
 		max_date_ = date;
 		max_date_is_set_ = true;
 	}
 }
 
-void Select_query::create_tag(std::string tag){
+void Select_query::create_tag(const std::string& tag){
 	tags_.push_back(tag);
 }
 
 void Select_query::set_tags(std::vector<std::string>&& tags){
 	tags_ = std::move(tags);
+}
+
+void Select_query::set_limit(const std::string& limit) {
+	limit_ = limit;
+}
+
+void Select_query::set_offset(const std::string& offset) {
+	offset_ = offset;
 }
 
 Prepared_statement Select_query::create_statement() const {
@@ -98,6 +108,17 @@ Prepared_statement Select_query::create_statement() const {
 	
 	p_stmt += sql::after_date_where;
 
+	if (!limit_.empty()) {
+		p_stmt += sql::limit;
+		p_stmt.add_param(limit_);
+	}
+	
+	if (!offset_.empty()) {
+		p_stmt += sql::offset;
+		p_stmt.add_param(offset_);
+	}
+
+	p_stmt.set_end();
 	return p_stmt;
 }
 

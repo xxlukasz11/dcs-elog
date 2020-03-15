@@ -25,6 +25,8 @@ Select_query Return_events_procedure::prepare_query() const {
 	Select_query query;
 	query.set_min_date(message_->get_min_date());
 	query.set_max_date(message_->get_max_date());
+	query.set_limit(message_->get_limit());
+	query.set_offset(message_->get_offset());
 	auto extracted_tags = utils::string_to_vector(message_->get_tags());
 	query.set_tags(std::move(extracted_tags));
 	return query;
