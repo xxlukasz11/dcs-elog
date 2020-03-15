@@ -1,16 +1,16 @@
 function getParams() {
-    const min_date_input = document.getElementById('min_date_input');
-    const max_date_input = document.getElementById('max_date_input');
-    const tags_input_value = read_lower_from_input('tags_input');
+	const min_date_input = document.getElementById('min_date_input');
+	const max_date_input = document.getElementById('max_date_input');
+	const tags_input_value = read_lower_from_input('tags_input');
 	const limit_select = document.getElementById('events_per_page_select');
 
-    return {
-        min_date: min_date_input.value,
-        max_date: max_date_input.value,
-        tags: tags_input_value,
+	return {
+		min_date: min_date_input.value,
+		max_date: max_date_input.value,
+		tags: tags_input_value,
 		limit: limit_select.value,
 		offset: 0
-    };
+	};
 }
 
 app.controller('select_data', function ($scope, sender, logger) {
@@ -102,23 +102,23 @@ app.controller('select_data', function ($scope, sender, logger) {
 	}
 
 	$scope.send_select_request = function (button_handler) {
-    	sender.send("select.php", getParams()).then(
+		sender.send("select.php", getParams()).then(
 		function (response) {
 			const response_data = response.data;
 			logger.get_log().data(response_data);
 			$scope.table_data = response_data.data;
 			button_handler.reset();
-        }, function (response) {
-        	logger.get_log().error(read_error_msg(response));
-        	button_handler.reset();
-        });
+		}, function (response) {
+			logger.get_log().error(read_error_msg(response));
+			button_handler.reset();
+		});
 	}
 
-    $scope.sort_order = false;
+	$scope.sort_order = false;
 
-    $scope.order_by_th = function (th) {
-        $scope.active_th = th;
-        $scope.sort_order = !$scope.sort_order;
-    }
+	$scope.order_by_th = function (th) {
+		$scope.active_th = th;
+		$scope.sort_order = !$scope.sort_order;
+	}
 
 });
