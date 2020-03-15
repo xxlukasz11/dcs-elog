@@ -18,6 +18,8 @@ public:
 private:
 	void handle(const std::shared_ptr<Message>& message_string);
 	void handle_exception_ptr(std::exception_ptr ptr);
+	void log_warning_and_send_errror_reponse(const std::string& message);
+	void send_error_response(const std::string& message);
 	std::unique_ptr<Procedure> create_procedure(const std::shared_ptr<Message>& message);
 
 	template<typename T>

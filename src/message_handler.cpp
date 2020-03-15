@@ -7,10 +7,13 @@
 #include "create_event_procedure.h"
 #include "update_event_procedure.h"
 #include "create_library_event_procedure.h"
-#include "message_handler.h"
 #include "logger.h"
 #include "message_factory.h"
+#include "website_response.h"
+#include "json_stringifier.h"
 #include <stdexcept>
+
+#include "message_handler.h"
 
 Message_handler::Message_handler(Socket socket, Database& database) :
 	socket_(socket), database_(database),
@@ -26,15 +29,15 @@ void Message_handler::process_message(const std::string& message_string) {
 		handle(internal_message);
 
 	} catch (const Unknown_message_format& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		log_warning_and_send_errror_reponse(e.what());
 	} catch (const Unknown_message& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		log_warning_and_send_errror_reponse(e.what());
 	} catch (const Database_error& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		log_warning_and_send_errror_reponse(e.what());
 	} catch (const Query_error& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		log_warning_and_send_errror_reponse(e.what());
 	} catch (const Attachment_error& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		log_warning_and_send_errror_reponse(e.what());
 	} catch (...) {
 		std::exception_ptr e = std::current_exception();
 		handle_exception_ptr(e);
@@ -47,8 +50,20 @@ void Message_handler::handle_exception_ptr(std::exception_ptr ptr) {
 			std::rethrow_exception(ptr);
 		}
 	} catch (const std::exception& e) {
-		Logger::create().context(socket_).level(Log_level::WARNING).error(e.what());
+		Logger::create().context(socket_).level(Log_level::CRITICAL).error(e.what());
+		send_error_response("Unhandled exception on the server side. See logs on the main server.");
 	}
+}
+
+void Message_handler::log_warning_and_send_errror_reponse(const std::string& message) {
+	Logger::create().context(socket_).level(Log_level::WARNING).error(message);
+	send_error_response("Internal server error: " + message);
+}
+
+void Message_handler::send_error_response(const std::string& message) {
+	Website_response response;
+	response.set_failure(message);
+	socket_.send_string(Json_stringifier::stringify(response));
 }
 
 void Message_handler::handle(const std::shared_ptr<Message>& message) {
