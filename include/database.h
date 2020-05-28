@@ -19,7 +19,7 @@ class Database{
 public:
 
 	/*
-	Allows to open database. Make sure that it is accessed only by single thread.
+	Allows to open database. Makes sure that it is accessed only by single thread.
 	Releases lock in destructor.
 	*/
 	class Accessor {

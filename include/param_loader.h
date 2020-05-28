@@ -18,7 +18,7 @@ public:
 	T get_parameter(const std::string& param_name);
 
 private:
-	std::string parameter_fiile_path_;
+	std::string parameter_file_path_;
 	std::unordered_map<std::string, std::string> parameters_;
 };
 
@@ -27,7 +27,7 @@ inline T Param_loader::get_parameter(const std::string& param_name) {
 	auto parameter = parameters_.find(param_name);
 	if (parameter == parameters_.end()) {
 		throw Load_parameters_error(
-			"Param_loader error: Could not find ", param_name, " parameter in ", parameter_fiile_path_, " file");
+			"Param_loader error: Could not find ", param_name, " parameter in ", parameter_file_path_, " file");
 	}
 	try {
 		auto value = utils::convert_string<T>(parameter->second);
