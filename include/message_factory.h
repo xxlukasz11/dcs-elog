@@ -5,6 +5,9 @@
 #include <memory>
 #include "message.h"
 
+/*
+Creates message basing on message type
+*/
 class Message_factory {
 public:
 	Message_factory(const std::string& message_string);

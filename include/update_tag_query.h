@@ -4,6 +4,9 @@
 #include <string>
 #include "prepared_statement.h"
 
+/*
+Creates prepared statements for tag update
+*/
 class Update_tag_query {
 public:
 	void set_tag_id(const std::string& tag_id);

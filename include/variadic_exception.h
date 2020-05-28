@@ -10,6 +10,9 @@ template<typename Base, typename Derived>
 using is_not_copy_constructor = std::enable_if_t<
 	!std::is_base_of<Base, typename std::remove_reference_t<Derived>>::value>;
 
+/*
+Base class for exceptions where message is concatenated from constructor parameters
+*/
 class Variadic_exception : public Base_exception {
 public:
 	Variadic_exception() = default;

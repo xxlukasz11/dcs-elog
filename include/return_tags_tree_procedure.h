@@ -7,6 +7,9 @@
 #include "result_set.h"
 #include "website_response.h"
 
+/*
+Reads tags tree from database and send it back
+*/
 class Return_tags_tree_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

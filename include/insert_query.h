@@ -7,6 +7,9 @@
 #include "attachment_database_info.h"
 #include "database.h"
 
+/*
+Creates prepared statements for event creation
+*/
 class Insert_query{
 public:
 

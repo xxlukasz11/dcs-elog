@@ -9,6 +9,9 @@
 #include "insert_query.h"
 #include "website_response.h"
 
+/*
+Creates new event in database and send feedback. Triggers attachments receival.
+*/
 class Create_event_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

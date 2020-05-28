@@ -6,6 +6,9 @@
 #include "socket.h"
 #include <atomic>
 
+/*
+Receives and saves attachments
+*/
 class Attachment_handler_rx {
 public:
 	Attachment_handler_rx(Socket socket);

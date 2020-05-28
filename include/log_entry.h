@@ -4,6 +4,9 @@
 #include <sstream>
 #include <utility>
 
+/*
+Part of the logger. Used to build string to be printed in logs.
+*/
 class Log_entry {
 public:
 	template<typename T>

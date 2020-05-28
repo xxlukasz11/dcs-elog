@@ -3,6 +3,9 @@
 
 #include <string>
 
+/*
+Base class for exceptions in E-Log
+*/
 class Base_exception {
 public:
 	virtual ~Base_exception() = default;

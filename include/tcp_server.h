@@ -6,6 +6,9 @@
 #include "concurrent_queue.h"
 #include "thread_base.h"
 
+/*
+Listens to incoming connections, pushes them to queue and wakes up one ofthe connection handlers
+*/
 class Tcp_server : public Thread_base {
 public:
 	Tcp_server(Socket_queue& socket_queue);

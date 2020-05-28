@@ -5,6 +5,9 @@
 #include <string>
 #include <iostream>
 
+/*
+Stores output from the SQL command execution as a table
+*/
 class Result_set{
 public:
 	using column_type = std::vector<std::string>;

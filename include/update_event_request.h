@@ -3,6 +3,9 @@
 
 #include "message.h"
 
+/*
+Message used to trigger update_event_procedure
+*/
 class Update_event_request : public Message {
 public:
 	virtual void extract_parameters(Msg_parser& parser);

@@ -11,6 +11,9 @@
 #include "log_level.h"
 #include "file_stream.h"
 
+/*
+Main class os the logger. Manage log file and writes to it
+*/
 class Logger : public Thread_base {
 public:
 	using Timeout_t = std::chrono::seconds;

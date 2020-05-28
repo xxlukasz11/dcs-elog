@@ -8,6 +8,9 @@
 #include "update_tag_query.h"
 #include "website_response.h"
 
+/*
+Updates tag in database and sends feedback
+*/
 class Update_tag_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

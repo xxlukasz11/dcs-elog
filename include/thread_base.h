@@ -4,6 +4,9 @@
 #include <atomic>
 #include "raii_thread.h"
 
+/*
+Base class for every class which is supposed to run on separate thread
+*/
 class Thread_base {
 public:
 	void join();

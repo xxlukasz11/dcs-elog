@@ -5,6 +5,9 @@
 #include "attachment_info.h"
 #include <vector>
 
+/*
+Message used to trigger create_event_procedure
+*/
 class Create_event_request : public Message {
 public:
 	virtual void extract_parameters(Msg_parser& parser);

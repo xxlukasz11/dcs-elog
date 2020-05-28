@@ -5,6 +5,9 @@
 #include "result_set.h"
 #include <string>
 
+/*
+Response sent to the website
+*/
 class Website_response final : public Response {
 public:
 	Code get_response_code() const;

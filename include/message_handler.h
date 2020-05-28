@@ -10,6 +10,9 @@
 #include "attachment_handler_rx.h"
 #include "attachment_handler_tx.h"
 
+/*
+Decodes received message and starts right procedure
+*/
 class Message_handler {
 public:
 	Message_handler(Socket socket, Database& database);

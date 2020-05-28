@@ -11,6 +11,9 @@
 
 #include "variadic_exception.h"
 
+/*
+Decodes and extracts parameters from received message
+*/
 class Msg_parser {
 public:
 	Msg_parser(const std::string& msg);

@@ -8,6 +8,9 @@
 
 namespace json {
 
+/*
+Represents field of JSON object
+*/
 class Field final : public Item {
 public:
 	virtual std::string to_string() const override;

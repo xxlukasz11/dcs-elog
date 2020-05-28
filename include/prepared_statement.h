@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+/*
+Stores SQL command with placeholders in place of parameters. Prevents SQL injection
+*/
 class Prepared_statement{
 public:
 	using params_type = std::vector<std::string>;

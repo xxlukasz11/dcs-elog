@@ -9,6 +9,9 @@
 #include "logger.h"
 #include "parameters.h"
 
+/*
+Main class for E-Log. Takes care of reading parameter file, starting and stopping all threads.
+*/
 class Administrator {
 public:
 	static Administrator& instance();

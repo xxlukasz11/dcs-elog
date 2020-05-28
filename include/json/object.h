@@ -9,6 +9,10 @@ namespace json {
 class Object;
 using Object_ptr = std::shared_ptr<Object>;
 
+
+/*
+Represents JSON object
+*/
 class Object final : public Value {
 public:
 	virtual std::string to_string() const override;

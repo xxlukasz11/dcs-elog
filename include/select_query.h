@@ -5,6 +5,9 @@
 #include <string>
 #include "prepared_statement.h"
 
+/*
+Creates prepared statements for events reading
+*/
 class Select_query{
 public:
 	void set_min_date(const std::string& date);

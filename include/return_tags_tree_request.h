@@ -3,6 +3,9 @@
 
 #include "message.h"
 
+/*
+Message used to trigger return_tags_tree_procedure
+*/
 class Return_tags_tree_request : public Message {
 public:
 	virtual void extract_parameters(Msg_parser& parser);

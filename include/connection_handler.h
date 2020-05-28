@@ -9,6 +9,9 @@
 
 class Tcp_server;
 
+/*
+Accepts connection and receives first message
+*/
 class Connection_handler : public Thread_base {
 public:
 	Connection_handler(Socket_queue& queue, Database& database, const std::shared_ptr<Tcp_server>& server);

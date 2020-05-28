@@ -3,6 +3,9 @@
 
 #include "message.h"
 
+/*
+Message used to trigger return_events_procedure
+*/
 class Return_events_request : public Message {
 public:
 	virtual void extract_parameters(Msg_parser& parser);

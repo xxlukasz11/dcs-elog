@@ -5,6 +5,9 @@
 #include <memory>
 #include "thread_base.h"
 
+/*
+Contains E-Log threads, siplifies multiple thread management
+*/
 class Thread_manager{
 	using Thread_element = std::shared_ptr<Thread_base>;
 	using Thread_list = std::vector<Thread_element>;

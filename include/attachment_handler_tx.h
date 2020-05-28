@@ -5,6 +5,9 @@
 #include "socket.h"
 #include <string>
 
+/*
+Reads attachments and send them
+*/
 class Attachment_handler_tx {
 public:
 	Attachment_handler_tx(Socket socket);

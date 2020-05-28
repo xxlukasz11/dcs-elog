@@ -15,6 +15,9 @@ class Number;
 template<typename T, arithmetic_t<T> = 0>
 using Number_ptr = std::shared_ptr<Number<T>>;
 
+/*
+Represents JSON number
+*/
 template<typename T, arithmetic_t<T>>
 class Number final : public Value {
 public:

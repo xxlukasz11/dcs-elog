@@ -3,6 +3,9 @@
 
 #include "message.h"
 
+/*
+Message used to trigger update_tag_procedure
+*/
 class Update_tag_request : public Message {
 public:
 	virtual void extract_parameters(Msg_parser& parser);

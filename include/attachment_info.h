@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+/*
+Stores information about attachment name and its MIME type
+*/
 class Attachment_info {
 public:
 	Attachment_info(const std::string& name, const std::string& type);

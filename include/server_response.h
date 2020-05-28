@@ -3,6 +3,9 @@
 
 #include "response.h"
 
+/*
+Response sent back to Connection Library
+*/
 class Server_response final : public Response {
 public:
 	Code get_response_code() const;

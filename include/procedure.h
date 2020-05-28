@@ -11,6 +11,9 @@
 #include "attachment_handler_tx.h"
 #include "message.h"
 
+/*
+Base class for every procedure
+*/
 class Procedure {
 public:
 	Procedure(Database& database, const Socket& socket,

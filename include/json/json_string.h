@@ -8,6 +8,9 @@ namespace json {
 class Json_string;
 using Json_string_ptr = std::shared_ptr<Json_string>;
 
+/*
+Represents raw JSON string
+*/
 class Json_string final : public Value {
 public:
 	virtual std::string to_string() const override;

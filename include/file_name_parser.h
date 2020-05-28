@@ -3,6 +3,9 @@
 
 #include <string>
 
+/*
+Extract extension and filename from full path
+*/
 class File_name_parser {
 public:
 	bool parse(const std::string& file_name);

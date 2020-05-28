@@ -7,6 +7,9 @@
 #include "log_level.h"
 #include "attachment_info.h"
 
+/*
+Namespace containing useful functions
+*/
 namespace utils{
 	using String_array = std::vector<std::string>;
 	using Pair_array = std::vector<std::pair<std::string, std::string>>;

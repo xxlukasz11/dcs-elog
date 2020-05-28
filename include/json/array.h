@@ -9,6 +9,9 @@ namespace json {
 class Array;
 using Array_ptr = std::shared_ptr<Array>;
 
+/*
+Represents JSON array
+*/
 class Array final : public Value {
 public:
 	virtual std::string to_string() const override;

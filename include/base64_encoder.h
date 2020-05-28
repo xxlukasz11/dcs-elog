@@ -3,6 +3,9 @@
 
 #include <vector>
 
+/*
+Endoces and decodes from base64
+*/
 class Base64_encoder {
 public:
 	using Byte_buffer_t = std::vector<unsigned char>;

@@ -6,6 +6,9 @@
 
 namespace json {
 
+/*
+Base class for JSON object property
+*/
 class Item {
 public:
 	virtual std::string to_string() const = 0;

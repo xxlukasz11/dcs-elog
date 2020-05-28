@@ -7,6 +7,9 @@
 #include "prepared_statement.h"
 #include "database.h"
 
+/*
+Creates prepared statements for event update
+*/
 class Update_event_query {
 public:
 

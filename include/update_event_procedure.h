@@ -10,6 +10,9 @@
 #include "insert_query.h"
 #include "website_response.h"
 
+/*
+Updates event in database and sends feedback
+*/
 class Update_event_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

@@ -9,6 +9,9 @@
 
 namespace json {
 
+/*
+Allows to create every JSON object
+*/
 class Json {
 public:
 	template<typename T>

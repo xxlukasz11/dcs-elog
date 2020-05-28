@@ -7,6 +7,9 @@
 #include "server_response.h"
 #include "json/json.h"
 
+/*
+Converts objects to JSON string
+*/
 class Json_stringifier {
 public:
 	static json::Array_ptr to_json_array(const Result_set& result_set);

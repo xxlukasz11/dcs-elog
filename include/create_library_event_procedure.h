@@ -9,6 +9,9 @@
 #include "server_response.h"
 #include "insert_query.h"
 
+/*
+Creates event received through Connection Library and sends feedback
+*/
 class Create_library_event_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

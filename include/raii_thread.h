@@ -4,6 +4,9 @@
 #include <utility>
 #include <thread>
 
+/*
+Wrapper for std::tread. Makes sure that thread is joined before destruction
+*/
 class Raii_thread {
 public:
 

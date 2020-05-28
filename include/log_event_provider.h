@@ -6,6 +6,9 @@
 #include "message.h"
 #include "log_level.h"
 
+/*
+Part of the logger. Allows to build log message
+*/
 class Log_event_provider {
 public:
 	Log_event_provider(Log_item_queue& queue);

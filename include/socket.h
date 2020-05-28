@@ -4,6 +4,9 @@
 #include <string>
 #include <arpa/inet.h>
 
+/*
+Convinient wrapper for C-style interface for sockets
+*/
 class Socket {
 	int socket_descriptor_;
 	int message_length_{ 1024 };

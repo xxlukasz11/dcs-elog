@@ -4,6 +4,9 @@
 #include <string>
 #include "msg_parser.h"
 
+/*
+Base class for every incoming message
+*/
 class Message {
 public:
 	enum class Type {

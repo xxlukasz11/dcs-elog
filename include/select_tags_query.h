@@ -3,6 +3,9 @@
 
 #include <string>
 
+/*
+Creates prepared statements for reading tags tree
+*/
 class Select_tags_query {
 public:
 	std::string create_sql() const;

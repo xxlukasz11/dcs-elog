@@ -8,6 +8,9 @@
 #include "delete_tag_query.h"
 #include "website_response.h"
 
+/*
+Deletes tag from database and sends feedback
+*/
 class Delete_tag_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

@@ -4,6 +4,9 @@
 #include <string>
 #include "parameters.h"
 
+/*
+Creates parameter objects using param_loader
+*/
 class Param_manager {
 public:
 	Param_manager(const std::string& parameter_file_path);

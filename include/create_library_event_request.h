@@ -4,6 +4,9 @@
 #include "create_event_request.h"
 #include <string>
 
+/*
+Message used to trigger create_library_event_procedure
+*/
 class Create_library_event_request : public Create_event_request {
 public:
 	virtual std::string name() const;

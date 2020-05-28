@@ -5,6 +5,9 @@
 #include <ctime>
 #include "log_level.h"
 
+/*
+Part of the logger. Stores information about log to be printed
+*/
 class Log_item {
 public:
 	enum class Type { INFO, WARNING, ERROR, STATUS };

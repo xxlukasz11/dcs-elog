@@ -5,6 +5,9 @@
 #include <chrono>
 #include "log_level.h"
 
+/*
+Stores parameters which have been read from parameter file
+*/
 class Parameters {
 public:
 	int get_no_of_connection_handlers() const;

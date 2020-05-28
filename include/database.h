@@ -11,9 +11,17 @@
 #include "prepared_statement.h"
 #include "result_set.h"
 
+/*
+Wrapper for SQLite3 C interface
+*/
 class Database{
 	using deleter_type = std::function<void(sqlite3*)>;
 public:
+
+	/*
+	Allows to open database. Make sure that it is accessed only by single thread.
+	Releases lock in destructor.
+	*/
 	class Accessor {
 	public:
 		Accessor(Database& database);
@@ -24,6 +32,11 @@ public:
 		Database& database_;
 		std::unique_lock<std::mutex> locker_;
 	};
+
+	/*
+	Makes sure that transation ends with commit or rollback.
+	At destruction, if transaction is not ended, performs rollback.
+	*/
 	class Transaction {
 	public:
 		void commit();

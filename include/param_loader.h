@@ -6,6 +6,9 @@
 #include "custom_exceptions.h"
 #include "utils.h"
 
+/*
+Reads parameter file and gathers all parameters
+*/
 class Param_loader {
 public:
 	Param_loader(const std::string& parameter_file_path);

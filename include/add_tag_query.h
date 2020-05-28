@@ -4,6 +4,9 @@
 #include <string>
 #include "prepared_statement.h"
 
+/*
+Creates prepared statements for tag creation
+*/
 class Add_tag_query {
 public:
 	void set_tag_name(const std::string& tag_name);

@@ -6,6 +6,9 @@
 #include <utility>
 #include <fstream>
 
+/*
+Convinient wrapper for file I/O operations
+*/
 class File_stream {
 public:
 	File_stream(std::string file_name);

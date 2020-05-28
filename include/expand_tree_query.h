@@ -5,6 +5,10 @@
 #include <string>
 #include "prepared_statement.h"
 
+/*
+Creates prepared statements for tags tree unwinding
+Not used anymore, since handling is moved to return_events_query
+*/
 class Expand_tree_query {
 public:
 	Expand_tree_query(const std::vector<std::string>& tags_vector);

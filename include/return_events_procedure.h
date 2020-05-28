@@ -7,6 +7,9 @@
 #include "select_query.h"
 #include "result_set.h"
 
+/*
+Read requested events from database and sends them. Triggers attachments sending
+*/
 class Return_events_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

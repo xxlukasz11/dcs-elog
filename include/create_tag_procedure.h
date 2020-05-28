@@ -7,6 +7,9 @@
 #include "add_tag_query.h"
 #include "website_response.h"
 
+/*
+Creates new tag in database and sends feedback
+*/
 class Create_tag_procedure : public Procedure {
 public:
 	using Procedure::Procedure;

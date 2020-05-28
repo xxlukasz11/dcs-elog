@@ -11,6 +11,9 @@
 
 namespace stdd = std::experimental;
 
+/*
+Thread safe generic queue
+*/
 template<typename Queue_element>
 class Concurrent_queue {
 public:

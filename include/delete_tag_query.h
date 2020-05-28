@@ -4,6 +4,9 @@
 #include <string>
 #include "prepared_statement.h"
 
+/*
+Creates prepared statements for tag deletion
+*/
 class Delete_tag_query {
 public:
 	Delete_tag_query();
